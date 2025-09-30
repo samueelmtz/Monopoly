@@ -2,8 +2,7 @@ package monopoly;
 
 import partida.*;
 import java.util.ArrayList;
-//hhjsfabbhjasb
-
+//hasjajscjascjah cjavs
 public class Casilla {
 
     //Atributos:
