@@ -18,32 +18,52 @@ public class Casilla {
 
     //Constructores:
     public Casilla() {
+        this.avatares = new ArrayList<>();
     }//Parámetros vacíos
 
     /*Constructor para casillas tipo Solar, Servicios o Transporte:
     * Parámetros: nombre casilla, tipo (debe ser solar, serv. o transporte), posición en el tablero, valor y dueño.
      */
     public Casilla(String nombre, String tipo, int posicion, float valor, Jugador duenho) {
+        this.nombre = nombre;
+        this.tipo = tipo;
+        this.posicion = posicion;
+        this.valor = valor;
+        this.duenho = duenho;
+        this.avatares = new ArrayList<>();
     }
 
     /*Constructor utilizado para inicializar las casillas de tipo IMPUESTOS.
     * Parámetros: nombre, posición en el tablero, impuesto establecido y dueño.
      */
     public Casilla(String nombre, int posicion, float impuesto, Jugador duenho) {
+        this.nombre = nombre;
+        this.tipo = "Impuesto";
+        this.posicion = posicion;
+        this.impuesto = impuesto;
+        this.duenho = duenho;
+        this.avatares = new ArrayList<>();
     }
 
     /*Constructor utilizado para crear las otras casillas (Suerte, Caja de comunidad y Especiales):
     * Parámetros: nombre, tipo de la casilla (será uno de los que queda), posición en el tablero y dueño.
      */
     public Casilla(String nombre, String tipo, int posicion, Jugador duenho) {
+        this.nombre = nombre;
+        this.tipo = tipo;
+        this.posicion = posicion;
+        this.duenho = duenho;
+        this.avatares = new ArrayList<>();
     }
 
     //Método utilizado para añadir un avatar al array de avatares en casilla.
     public void anhadirAvatar(Avatar av) {
+        this.avatares.add(av);
     }
 
     //Método utilizado para eliminar un avatar del array de avatares en casilla.
     public void eliminarAvatar(Avatar av) {
+        this.avatares.remove(av);
     }
 
     /*Método para evaluar qué hacer en una casilla concreta. Parámetros:
@@ -78,5 +98,6 @@ public class Casilla {
      */
     public String casEnVenta() {
     }
+
 
 }
