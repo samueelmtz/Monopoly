@@ -19,13 +19,115 @@ public class Menu {
 
 
     // Método para inciar una partida: crea los jugadores y avatares.
-    private void iniciarPartida(){
+    private void iniciarPartida() {
+        // Crear lista de jugadores y avatares
+        jugadores = new ArrayList<>();
+        avatares = new ArrayList<>();
+
+        // Inicializar tablero
+        tablero = new Tablero();
+
+        // Inicializar dados
+        dado1 = new Dado();
+        dado2 = new Dado();
+
+        // Crear la banca
+        banca = new Jugador("Banca", null); // null porque no tiene avatar
+        banca.setFortuna(Long.MAX_VALUE);   // o alguna representación de dinero ilimitado
+
+        // Dar a la banca todas las propiedades del tablero
+        for (Casilla c : tablero.getCasillas()) {
+            if (c instanceof Propiedad) {
+                ((Propiedad) c).setPropietario(banca);
+            }
+        }
+
+        // Variables de control de turno
+        turno = 0;
+        lanzamientos = 0;
+        tirado = false;
+        solvente = true;
+
+        System.out.println("Partida iniciada. Tablero preparado. Esperando jugadores...");
     }
+
     
     /*Método que interpreta el comando introducido y toma la accion correspondiente.
     * Parámetro: cadena de caracteres (el comando).
     */
     private void analizarComando(String comando) {
+        String[] comandos = comando.split(" ");
+        switch (comandos[0]) {
+            case "describir":
+                if (comandos.length < 2) {
+                    System.out.println("Comando incompleto. Uso: describir <jugador|avatar|nombre_casilla> [ID|nombre]");
+                } else {
+                    switch (comandos[1]) {
+                        case "jugador":
+                            descJugador(comandos);
+                            break;
+                        case "avatar":
+                            if (comandos.length < 3) {
+                                System.out.println("Falta el ID del avatar. Uso: describir avatar <ID>");
+                            } else {
+                                descAvatar(comandos[2]);
+                            }
+                            break;
+                        default:
+                            String nombreCasilla = comando.substring(comando.indexOf(" ") + 1);
+                            descCasilla(nombreCasilla);
+                            break;
+                    }
+                }
+                break;
+            case "lanzar":
+                if (comandos.length == 2 && comandos[1].equals("dados")) {
+                    lanzarDados();
+                } else {
+                    System.out.println("Comando incorrecto. Uso: lanzar dados");
+                }
+                break;
+            case "comprar":
+                if (comandos.length < 2) {
+                    System.out.println("Falta el nombre de la casilla. Uso: comprar <nombre_casilla>");
+                } else {
+                    String nombreCasilla = comando.substring(comando.indexOf(" ") + 1);
+                    comprar(nombreCasilla);
+                }
+                break;
+            case "salir":
+                if (comandos.length == 2 && comandos[1].equals("carcel")) {
+                    salirCarcel();
+                } else {
+                    System.out.println("Comando incorrecto. Uso: salir carcel");
+                }
+                break;
+            case "listar":
+                if (comandos.length < 2) {
+                    System.out.println("Comando incompleto. Uso: listar <enventa|jugadores|avatares>");
+                } else {
+                    switch (comandos[1]) {
+                        case "enventa":
+                            listarVenta();
+                            break;
+                        case "jugadores":
+                            listarJugadores();
+                            break;
+                        case "avatares":
+                            listarAvatares();
+                            break;
+                        default:
+                            System.out.println("Comando incorrecto. Uso: listar <enventa|jugadores|avatares>");
+                            break;
+                    }
+                }
+                break;
+            case "acabar":
+                if (comandos.length == 2 && comandos[1].equals("turno")) {
+                    acabarTurno();
+                } else {
+                    System.out.println("Comando incorrecto. Uso: acabar turno");
+        }
     }
 
     /*Método que realiza las acciones asociadas al comando 'describir jugador'.

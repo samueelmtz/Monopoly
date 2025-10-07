@@ -99,5 +99,4 @@ public class Casilla {
     public String casEnVenta() {
     }
 
-
 }
