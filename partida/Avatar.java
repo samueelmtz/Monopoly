@@ -1,6 +1,7 @@
 package partida;
 
 import monopoly.*;
+
 import java.util.Ramdom;
 import java.util.ArrayList;
 
@@ -29,14 +30,31 @@ public class Avatar {
         this.avCreados.add(this);
     }
 
-    /**
-     * Método que permite generar un ID para un avatar. Sólo lo usamos en esta clase (por ello es privado).
-     * El ID generado será una letra mayúscula entre A y Z.
-     *
-     * @param avCreados Arraylist de los avatares ya creados (objetivo: evitar que se generen dos ID iguales)
+    ///A continuación, tenemos otros métodos útiles para el desarrollo del juego.
+    /**Método que permite mover a un avatar a una casilla concreta. Parámetros:
+    * - Un array con las casillas del tablero. Se trata de un arrayList de arrayList de casillas (uno por lado).
+    * - Un entero que indica el numero de casillas a moverse (será el valor sacado en la tirada de los dados).
+    * EN ESTA VERSIÓN SUPONEMOS QUE valorTirada siempre es positivo.
      */
-    private void generarID(ArrayList<Avatar> avCreados) {
-        Ramdom num = new Ramdom();
+    public void moverAvatar(ArrayList<ArrayList<Casilla>> casillas, int valorTirada) {
+
+        // PASO 1: calcular la nueva posición
+        int posicionActual = this.lugar.getPosicion();
+
+        // Calcular la nueva posición en el tablero después de la tirada
+        int nuevaPosicion;
+        nuevaPosicion = (posicionActual + valorTirada) % 40;
+
+        // PASO 2: colocar el avatar en la nueva posicion
+        this.colocar(casillas, nuevaPosicion);
+    }
+
+    /**Método que permite generar un ID para un avatar. Sólo lo usamos en esta clase (por ello es privado).
+    * El ID generado será una letra mayúscula. Parámetros:
+    * - Un arraylist de los avatares ya creados, con el objetivo de evitar que se generen dos ID iguales.
+     */
+    private void generarId(ArrayList<Avatar> avCreados) {
+        Ramdom num = new.Ramdom();
         String id;
         boolean repetido = true;
         while (repetido) {
@@ -54,22 +72,6 @@ public class Avatar {
                 this.id = ID;
             }
         }
-    }
-
-    ///A continuación, tenemos otros métodos útiles para el desarrollo del juego.
-    /**Método que permite mover a un avatar a una casilla concreta. Parámetros:
-    * - Un array con las casillas del tablero. Se trata de un arrayList de arrayList de casillas (uno por lado).
-    * - Un entero que indica el numero de casillas a moverse (será el valor sacado en la tirada de los dados).
-    * EN ESTA VERSIÓN SUPONEMOS QUE valorTirada siemrpe es positivo.
-     */
-    public void moverAvatar(ArrayList<ArrayList<Casilla>> casillas, int valorTirada) {
-    }
-
-    /**Método que permite generar un ID para un avatar. Sólo lo usamos en esta clase (por ello es privado).
-    * El ID generado será una letra mayúscula. Parámetros:
-    * - Un arraylist de los avatares ya creados, con el objetivo de evitar que se generen dos ID iguales.
-     */
-    private void generarId(ArrayList<Avatar> avCreados) {
     }
 
     ///GETTERS, SETTERS
