@@ -91,6 +91,20 @@ public class Jugador {
         }
     }
 
+    /*Método para contar cuántas casillas posee un jugador de un tipo determinado
+     * Solo se usa para las propiedades de tipo Transportes de momento
+     * @param tipo Tipo de propiedad
+     */
+    public int numeroCasillasTipo(String tipo){
+        int contador=0;
+        for(Casilla c: propiedades){
+            if(c.getTipo().equals(tipo)){
+                contador++;
+            }
+        }
+        return contador;
+    }
+
     //Getters y setters:
     public String getNombre() {
         return nombre;
