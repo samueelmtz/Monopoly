@@ -13,6 +13,11 @@ public class Tablero {
 
     //Constructor: únicamente le pasamos el jugador banca (que se creará desde el menú).
     public Tablero(Jugador banca) {
+        this.banca = banca;
+        this.posiciones = new ArrayList<>();
+        this.grupos = new HashMap<>();
+        this.generarCasillas(); //Llamamos al método que genera todas las casillas del tablero.
+        this.crearGrupos(); //Llamamos al método que genera todos los grupos del tablero.
     }
 
     
@@ -26,26 +31,115 @@ public class Tablero {
     
     //Método para insertar las casillas del lado norte.
     private void insertarLadoNorte() {
+        ArrayList<Casilla> ladoNorte = this.posiciones.get(2);
+
+        // Posiciones 21-30
+        ladoNorte.add(new Casilla("Solar13", "Solar", 21, 2200000, banca)); // 2.200.000€
+        ladoNorte.add(new Casilla("Solar14", "Solar", 22, 2400000, banca)); // 2.400.000€
+        ladoNorte.add(new Casilla("Serv2", "Servicios", 23, 500000, banca)); // 500.000€
+        ladoNorte.add(new Casilla("Solar15", "Solar", 24, 2600000, banca)); // 2.600.000€
+        ladoNorte.add(new Casilla("Solar16", "Solar", 25, 2600000, banca)); // 2.600.000€
+        ladoNorte.add(new Casilla("Trans3", "Transporte", 26, 500000, banca)); // 500.000€
+        ladoNorte.add(new Casilla("Solar17", "Solar", 27, 2800000, banca)); // 2.800.000€
+        ladoNorte.add(new Casilla("Suerte3", "Suerte", 28, banca));
+        ladoNorte.add(new Casilla("Solar18", "Solar", 29, 3000000, banca)); // 3.000.000€
+        ladoNorte.add(new Casilla("Solar19", "Solar", 30, 3000000, banca)); // 3.000.000€
     }
 
     //Método para insertar las casillas del lado sur.
     private void insertarLadoSur() {
+
+        ArrayList<Casilla> ladoSur = this.posiciones.get(0);
+
+        // Posiciones 1-10
+        ladoSur.add(new Casilla("Salida", "Salida", 1, banca));
+        ladoSur.add(new Casilla("Solar1", "Solar", 2, 600000, banca));    // 600.000€
+        ladoSur.add(new Casilla("Caja1", "Comunidad", 3, banca));
+        ladoSur.add(new Casilla("Solar2", "Solar", 4, 600000, banca));    // 600.000€
+        ladoSur.add(new Casilla("Imp1", "Impuesto", 5, 2000000, banca));
+        ladoSur.add(new Casilla("Trans1", "Transporte", 6, 500000, banca)); // 500.000€
+        ladoSur.add(new Casilla("Solar3", "Solar", 7, 1000000, banca));   // 1.000.000€
+        ladoSur.add(new Casilla("Suerte1", "Suerte", 8, banca));
+        ladoSur.add(new Casilla("Solar4", "Solar", 9, 1000000, banca));   // 1.000.000€
+        ladoSur.add(new Casilla("Solar5", "Solar", 10, 1200000, banca));  // 1.200.000€
     }
 
     //Método que inserta casillas del lado oeste.
     private void insertarLadoOeste() {
+        ArrayList<Casilla> ladoOeste = this.posiciones.get(3);
+
+        // Posiciones 31-40
+        ladoOeste.add(new Casilla("Carcel", "Carcel", 31, banca));
+        ladoOeste.add(new Casilla("Solar20", "Solar", 32, 3200000, banca)); // 3.200.000€
+        ladoOeste.add(new Casilla("Solar21", "Solar", 33, 3500000, banca)); // 3.500.000€
+        ladoOeste.add(new Casilla("Serv3", "Servicios", 34, 500000, banca)); // 500.000€
+        ladoOeste.add(new Casilla("Solar22", "Solar", 35, 4000000, banca)); // 4.000.000€
+        ladoOeste.add(new Casilla("Trans4", "Transporte", 36, 500000, banca)); // 500.000€
+        ladoOeste.add(new Casilla("Caja3", "Comunidad", 37, banca));
+        ladoOeste.add(new Casilla("Parking", "Parking", 38, banca));
+        ladoOeste.add(new Casilla("Imp2", "Impuesto", 39, 2000000, banca));
+        ladoOeste.add(new Casilla("IrCarcel", "IrCarcel", 40, banca));
     }
 
     //Método que inserta las casillas del lado este.
     private void insertarLadoEste() {
+        ArrayList<Casilla> ladoEste = this.posiciones.get(1);
+
+        // Posiciones 11-20
+        ladoEste.add(new Casilla("Solar6", "Solar", 11, 1400000, banca));  // 1.400.000€
+        ladoEste.add(new Casilla("Trans2", "Transporte", 12, 500000, banca)); // 500.000€
+        ladoEste.add(new Casilla("Solar7", "Solar", 13, 1400000, banca));  // 1.400.000€
+        ladoEste.add(new Casilla("Solar8", "Solar", 14, 1600000, banca));  // 1.600.000€
+        ladoEste.add(new Casilla("Solar9", "Solar", 15, 1800000, banca));  // 1.800.000€
+        ladoEste.add(new Casilla("Caja2", "Comunidad", 16, banca));
+        ladoEste.add(new Casilla("Solar10", "Solar", 17, 1800000, banca)); // 1.800.000€
+        ladoEste.add(new Casilla("Solar11", "Solar", 18, 2200000, banca)); // 2.200.000€
+        ladoEste.add(new Casilla("Suerte2", "Suerte", 19, banca));
+        ladoEste.add(new Casilla("Solar12", "Solar", 20, 2200000, banca)); // 2.200.000€
     }
+
+    // En Tablero.java - método para obtener un grupo por color
+    public Grupo getGrupo(String color) {
+        return grupos.get(color);
+    }
+
+    // Método para verificar si un jugador tiene todo un grupo
+    public boolean tieneTodoElGrupo(Jugador jugador, String colorGrupo) {
+        Grupo grupo = grupos.get(colorGrupo);
+        return grupo != null && grupo.esDuenhoGrupo(jugador);
+    }
+
 
     //Para imprimir el tablero, modificamos el método toString().
     @Override
     public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Tablero de Monopoly:\n");
+        for (int i = 0; i < posiciones.size(); i++) {
+            sb.append("Lado ").append(i + 1).append(":\n");
+            for (Casilla casilla : posiciones.get(i)) {
+                sb.append(casilla.toString()).append("\n");
+            }
+        }
+        return sb.toString();
     }
     
     //Método usado para buscar la casilla con el nombre pasado como argumento:
     public Casilla encontrar_casilla(String nombre){
+        for (ArrayList<Casilla> lado : posiciones) {
+            for (Casilla casilla : lado) {
+                if (casilla.getNombre().equalsIgnoreCase(nombre)) {
+                    return casilla;
+                }
+            }
+        }
+        return null; // Si no se encuentra la casilla, retorna null
     }
+}
+
+
+// Getters
+public ArrayList<ArrayList<Casilla>> getPosiciones() { return posiciones; }
+public HashMap<String, Grupo> getGrupos() { return grupos; }
+public Jugador getBanca() { return banca; }
 }
