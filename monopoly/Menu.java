@@ -231,7 +231,7 @@ public class Menu {
         }
     }
 
-    }
+
 
     //Método que ejecuta todas las acciones relacionadas con el comando 'salir carcel'. 
     private void salirCarcel() {
@@ -281,7 +281,6 @@ public class Menu {
 
         Jugador siguienteJugador = jugadores.get(turno);
         System.out.println("El jugador actual es " + siguienteJugador.getNombre() + ".");
-    }
     }
 
 }
