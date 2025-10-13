@@ -2,6 +2,7 @@ package monopoly;
 
 import partida.*;
 import java.util.ArrayList;
+import java.util.Math
 
 public class Casilla {
 
@@ -29,8 +30,10 @@ public class Casilla {
         this.tipo = tipo;
         this.posicion = posicion;
         this.valor = valor;
+        this.impuesto = valor * 0.10f;
+        this.hipoteca = valor/2f;
         this.duenho = duenho;
-        this.avatares = new ArrayList<>();
+        this.avatares = new ArrayList<Avatar>();
     }
 
     /*Constructor utilizado para inicializar las casillas de tipo IMPUESTOS.
@@ -73,30 +76,242 @@ public class Casilla {
     * Valor devuelto: true en caso de ser solvente (es decir, de cumplir las deudas), y false
     * en caso de no cumplirlas.*/
     public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
+        if (actual.getAvatar().getLugar() == this) {
+
+            // Cantidad a pagar según el tipo (0 si no aplica)
+            float aPagar = 0f;
+            Jugador receptor = null; // quién cobra (dueño o banca)
+
+            switch (this.tipo) {
+                case "Impuesto":
+                    aPagar = this.impuesto;
+                    receptor = banca;
+                    break;
+
+                case "Solar":
+                    // Si no hay dueño o es la banca/no vendida, no se paga
+                    if(this.duenho == null || this.duenho == banca || this.duenho == actual){
+                        System.out.println("No tiene nada que pagar.\n");
+                        return true;
+                    }
+                    aPagar = this.impuesto;
+                    receptor = this.duenho;
+                    break;
+
+                case "Transporte": {
+                    if (this.duenho == null || this.duenho == banca || this.duenho == actual) {
+                        System.out.println("No tiene nada que pagar.\n");
+                        return true;
+                    }
+                    int n = Math.max(1, this.duenho.numeroCasillasTipo("Transporte"));
+                    aPagar = this.impuesto * 0.25f * n;
+                    receptor = this.duenho;
+                    break;
+                }
+
+                case "Servicio": {
+                    if (this.duenho == null || this.duenho == banca || this.duenho == actual){
+                        System.out.println("No tiene nada que pagar.\n");
+                        return true;
+                    }
+                    int n = Math.max(1, this.duenho.numeroCasillasTipo("Servicio"));
+                    int x; // x=4 si 1 servicio, x=10 si 2
+                    if(n = 1) x = 4;
+                    else x = 10;
+                    aPagar = (float) tirada * x * this.impuesto;
+                    receptor = this.duenho;
+                    break;
+                }
+
+                // Suerte, Comunidad, Especiales (Salida, Cárcel, Parking, etc.) no generan pago aquí
+                default:
+                    return true;
+            }
+
+            // Si no hay nada que pagar, solvente
+            if (aPagar <= 0f) return true;
+
+            // Comprobación de solvencia: si no llega, NO tocar saldos y devolver false
+            if (actual.getFortuna() < aPagar) {
+                return false;
+            }
+
+            // Eres solvente: aplicar el pago y registrar gastos/cobros
+            actual.restarFortuna(aPagar);
+            actual.sumarGastos(aPagar);
+            if (receptor != null) {
+                receptor.sumarFortuna(aPagar);
+            }
+            return true;
+        } else {
+            System.out.println("El jugador no está sobre la casilla.\n");
+            return false;
+        }
+    }
+
+
+    /*Método auxiliar para verificar si el tipo de una casilla la hace comprable*/
+    public boolean esTipoComprable() {
+        return (this.tipo.equals("Solar") || this.tipo.equals("Transporte") || this.tipo.equals("Servicio"));
     }
 
     /*Método usado para comprar una casilla determinada. Parámetros:
     * - Jugador que solicita la compra de la casilla.
     * - Banca del monopoly (es el dueño de las casillas no compradas aún).*/
     public void comprarCasilla(Jugador solicitante, Jugador banca) {
+        if(this.esTipoComprable()) { //Comprobar si la casilla es de un tipo que se puede comprar
+            if(solicitante.getAvatar().getLugar()==this) { //Verificar que el jugador está sobre la casilla
+                if(this.duenho==banca) { //Comprobar que pertenece a la banca
+                    if (solicitante.getFortuna()>=this.valor) { //Verificar que se tiene el saldo suficiente para pagarla
+                        solicitante.restarFortuna(this.valor);
+                        solicitante.sumarGastos(this.valor);
+                        banca.eliminarPropiedad(this);
+                        solicitante.anhadirPropiedad(this);
+                        this.duenho=solicitante;
+
+                        System.out.printf("%s ha comprado la propiedad %s por el precio de %,.0f€\n",
+                                solicitante.getNombre(), this.nombre, this.valor);
+                    }
+                    else {
+                        System.out.println("No tienes dinero para comprar esta casilla.\n");
+                    }
+                }
+                else {
+                    System.out.println("Esta casilla no está en venta.\n");
+                }
+            }
+            else {
+                System.out.println("¡Tienes que caer en la casilla para poder comprarla!\n");
+            }
+        }
+        else {
+            System.out.println("¡¡Esta casilla no se puede comprar!!\n");
+        }
     }
+
 
     /*Método para añadir valor a una casilla. Utilidad:
     * - Sumar valor a la casilla de parking.
     * - Sumar valor a las casillas de solar al no comprarlas tras cuatro vueltas de todos los jugadores.
     * Este método toma como argumento la cantidad a añadir del valor de la casilla.*/
     public void sumarValor(float suma) {
+        this.valor += suma;
     }
 
     /*Método para mostrar información sobre una casilla.
     * Devuelve una cadena con información específica de cada tipo de casilla.*/
     public String infoCasilla() {
+        // Cadena con la información que queremos devolver
+        String info = "\n";
+
+        // La completamos con la información correspondiente en función del tipo de casilla
+        switch (this.tipo) {
+            case "Solar":
+                info += "\tTipo: " + this.tipo + "\n";
+                info += "\tColor del grupo: " + this.grupo.getColorGrupo() + "\n";
+                info += "\tDueño: " + this.duenho.getNombre() + "\n";
+                info += String.format("\tPrecio: %,.0f€\n", this.valor);
+                info += String.format("\tAlquiler: %,.0f€\n", this.impuesto);
+                info += String.format("\tHipoteca: %,.0f€\n", this.hipoteca);
+                break;
+
+            case "Transporte":
+                info += "\tTipo: " + this.tipo + "\n";
+                info += "\tDueño: " + this.duenho.getNombre() + "\n";
+                info += String.format("\tPrecio: %,.0f€\n", this.valor);
+                info += String.format("\tPago por caer: %,.0f€\n",
+                        this.impuesto * 0.25f * this.duenho.numeroCasillasTipo("Transporte"));
+                info += String.format("\t\t(cada casilla de este tipo que tengas suma 1/4 de %,.0f€ al alquiler)\n",
+                        this.impuesto);
+                info += String.format("\tHipoteca: %,.0f€\n", this.hipoteca);
+                break;
+
+            case "Servicio":
+                info += "\tTipo: " + this.tipo + "\n";
+                info += "\tDueño: " + this.duenho.getNombre() + "\n";
+                info += String.format("\tPrecio: %,.0f€\n", this.valor);
+                info += String.format("\tPago por caer: dados * x * %,.0f€\n", this.impuesto);
+                info += "\t\t(x=4 si se posee una casilla de este tipo, x=10 si se poseen 2)\n";
+                info += String.format("\tHipoteca: %,.0f€\n", this.hipoteca);
+                break;
+
+            case "Impuesto":
+                info += "\tTipo: Impuesto\n";
+                info += String.format("\tA pagar: %,.0f€\n", this.impuesto);
+                break;
+
+            case "Especial":
+
+            default:
+                System.out.println("Error al identificar la casila.");
+        }
     }
+
 
     /* Método para mostrar información de una casilla en venta.
      * Valor devuelto: texto con esa información.
      */
     public String casEnVenta() {
+        if(this.duenho == null || this.duenho.getNombre().equals("Banca")){
+            System.out.println("La casilla " + this.nombre "está en venta por el precio de " + this.valor "€\n");
+        }
+        else{
+            System.out.println("La casilla ya está vendida o no está disponible.\n");
+        }
     }
 
+    //GETTERS Y SETTERS
+    public String getNombre(){
+        return nombre;
+    }
+
+    public String getTipo(){
+        return tipo;
+    }
+
+    public void setTipo(String tipo_casilla){
+        this.tipo = tipo_casilla;
+    }
+
+    public float getValor(){
+        return valor;
+    }
+
+    public void setValor(float valor_casilla){
+        this.valor = valor_casilla;
+    }
+
+    public int getPosicion(){
+        return posicion;
+    }
+
+    public void setPosicion(int posicion){
+        this.posicion = posicion;
+    }
+
+    public Jugador getDuenho() {
+        return duenho;
+    }
+
+    public void setDuenho(Jugador duenho){
+        this.duenho = duenho;
+    }
+
+    public float getImpuesto() {
+        return impuesto;
+    }
+
+    public void setImpuesto(float impuesto){
+        this.impuesto = impuesto;
+    }
+
+    public float getHipoteca() {
+        return hipoteca;
+    }
+
+    public void setHipoteca(float hipoteca){
+        this.hipoteca = hipoteca;
+    }
 }
+
+
