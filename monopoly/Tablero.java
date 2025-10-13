@@ -143,3 +143,4 @@ public ArrayList<ArrayList<Casilla>> getPosiciones() { return posiciones; }
 public HashMap<String, Grupo> getGrupos() { return grupos; }
 public Jugador getBanca() { return banca; }
 }
+
