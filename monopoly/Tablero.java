@@ -20,7 +20,7 @@ public class Tablero {
         this.crearGrupos(); //Llamamos al método que genera todos los grupos del tablero.
     }
 
-    
+
     //Método para crear todas las casillas del tablero. Formado a su vez por cuatro métodos (1/lado).
     private void generarCasillas() {
         this.insertarLadoSur();
@@ -28,7 +28,7 @@ public class Tablero {
         this.insertarLadoNorte();
         this.insertarLadoEste();
     }
-    
+
     //Método para insertar las casillas del lado norte.
     private void insertarLadoNorte() {
         ArrayList<Casilla> ladoNorte = this.posiciones.get(2);
@@ -123,7 +123,7 @@ public class Tablero {
         }
         return sb.toString();
     }
-    
+
     //Método usado para buscar la casilla con el nombre pasado como argumento:
     public Casilla encontrar_casilla(String nombre){
         for (ArrayList<Casilla> lado : posiciones) {
@@ -143,4 +143,3 @@ public ArrayList<ArrayList<Casilla>> getPosiciones() { return posiciones; }
 public HashMap<String, Grupo> getGrupos() { return grupos; }
 public Jugador getBanca() { return banca; }
 }
-
