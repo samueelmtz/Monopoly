@@ -56,9 +56,17 @@ public class Jugador {
     }
 
     //Método para añadir fortuna a un jugador
-    //Como parámetro se pide el valor a añadir. Si hay que restar fortuna, se pasaría un valor negativo.
+    //Como parámetro se pide el valor a añadir.
     public void sumarFortuna(float valor) {
+
         this.fortuna += valor;
+
+    }
+
+    //Método para restar fortuna a un jugador
+    //Como parámetro se pide el valor a añadir.
+    public void restarFortuna(float valor) {
+        this.fortuna -= valor;
     }
 
     //Método para sumar gastos a un jugador.
@@ -81,6 +89,20 @@ public class Jugador {
                 }
             }
         }
+    }
+
+    /*Método para contar cuántas casillas posee un jugador de un tipo determinado
+     * Solo se usa para las propiedades de tipo Transportes de momento
+     * @param tipo Tipo de propiedad
+     */
+    public int numeroCasillasTipo(String tipo){
+        int contador=0;
+        for(Casilla c: propiedades){
+            if(c.getTipo().equals(tipo)){
+                contador++;
+            }
+        }
+        return contador;
     }
 
     //Getters y setters:
