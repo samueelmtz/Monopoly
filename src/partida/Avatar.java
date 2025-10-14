@@ -15,7 +15,7 @@ public class Avatar {
     private Casilla lugar; ///Los avatares se sitúan en casillas del tablero.
 
     //Constructor vacío
-    public Avatar() {}
+    public Avatar(String tipoAvatar, Casilla inicio, ArrayList<Avatar> avCreados) {}
 
     /*Constructor principal. Requiere éstos parámetros:
     * Tipo del avatar, jugador al que pertenece, lugar en el que estará ubicado, y un arraylist con los
@@ -94,6 +94,9 @@ public class Avatar {
 
     public void setLugar(Casilla casilla_avatar) {
         this.lugar = casilla_avatar;
+    }
+
+    public void moverAvatar(Casilla cas) {
     }
 }
 

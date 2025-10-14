@@ -312,6 +312,9 @@ public class Casilla {
     public void setHipoteca(float hipoteca){
         this.hipoteca = hipoteca;
     }
+
+    public void setGrupo(Grupo grupo) {
+    }
 }
 
 
