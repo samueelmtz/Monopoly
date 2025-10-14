@@ -45,7 +45,8 @@ public class Menu {
 
         while (true) {
             try {
-                System.out.print("\n> ");
+                // Mostrar prompt con comandos disponibles
+                System.out.print("[crear|lanzar|describir|listar|comprar|salir|acabar|ayuda] > ");
                 String comando = scanner.nextLine().trim();
 
                 // Salir del juego
@@ -60,7 +61,6 @@ public class Menu {
                 }
             } catch (Exception e) {
                 System.out.println("Error procesando comando: " + e.getMessage());
-                e.printStackTrace(); // Para debugging
             }
         }
 

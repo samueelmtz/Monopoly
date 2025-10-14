@@ -15,10 +15,14 @@ public class Tablero {
     public Tablero(Jugador banca) {
         this.banca = banca;
         this.posiciones = new ArrayList<>();
+        // Inicializar los cuatro lados
+        for (int i = 0; i < 4; i++) {
+            this.posiciones.add(new ArrayList<Casilla>());
+        }
         this.grupos = new HashMap<>();
-        this.generarCasillas(); //Llamamos al método que genera todas las casillas del tablero.
+        this.generarCasillas();
+        //this.crearGrupos();
     }
-
 
     //Método para crear todas las casillas del tablero. Formado a su vez por cuatro métodos (1/lado).
     private void generarCasillas() {
