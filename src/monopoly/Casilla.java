@@ -200,7 +200,7 @@ public class Casilla {
 
     /*Método para mostrar información sobre una casilla.
     * Devuelve una cadena con información específica de cada tipo de casilla.*/
-    public String infoCasilla() {
+    public void infoCasilla() {
         // Cadena con la información que queremos devolver
         String info = "\n";
 
@@ -251,9 +251,9 @@ public class Casilla {
     /* Método para mostrar información de una casilla en venta.
      * Valor devuelto: texto con esa información.
      */
-    public String casEnVenta() {
+    public void casEnVenta() {
         if(this.duenho == null || this.duenho.getNombre().equals("Banca")){
-            System.out.println("La casilla " + this.nombre "está en venta por el precio de " + this.valor "€\n");
+            System.out.println("La casilla " + this.nombre + " está en venta por el precio de " + this.valor + "€\n");
         }
         else{
             System.out.println("La casilla ya está vendida o no está disponible.\n");
