@@ -21,6 +21,7 @@ public class Menu {
 
     // Método para inciar una partida: crea los jugadores y avatares.
     public void iniciarPartida() {
+        Scanner scanner = new Scanner(System.in);
         // Crear lista de jugadores y avatares
         jugadores = new ArrayList<>();
         avatares = new ArrayList<>();
