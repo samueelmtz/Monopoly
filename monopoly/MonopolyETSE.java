@@ -8,5 +8,5 @@ public class MonopolyETSE {
         menu.iniciarPartida;
 
     }
-    
+
 }
