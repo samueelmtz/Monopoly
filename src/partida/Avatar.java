@@ -2,7 +2,7 @@ package partida;
 
 import monopoly.*;
 
-import java.util.Ramdom;
+import java.util.Random;
 import java.util.ArrayList;
 
 
@@ -25,9 +25,8 @@ public class Avatar {
         this.tipo = tipo;
         this.jugador = jugador;
         this.lugar = lugar;
-        this.avCreados = avCreados;
         generarId(avCreados);
-        this.avCreados.add(this);
+        avCreados.add(this);
     }
 
     //A continuación, tenemos otros métodos útiles para el desarrollo del juego.
@@ -54,25 +53,50 @@ public class Avatar {
     * - Un arraylist de los avatares ya creados, con el objetivo de evitar que se generen dos ID iguales.
      */
     private void generarId(ArrayList<Avatar> avCreados) {
-        Ramdom num = new.Ramdom();
+        Random num = new Random();
         String id;
         boolean repetido = true;
         while (repetido) {
             repetido = false;
-            ID = String.valueOf((char) (num.nextInt(26) + 'A')); ///Obtiene como ID una letra entre la a
+            id = String.valueOf((char) (num.nextInt(26) + 'A')); ///Obtiene como ID una letra entre la a
 
             for (Avatar a : avCreados) {
-                if (a != null && a.getId().equals(ID)) {
+                if (a != null && a.getId().equals(id)) {
                     repetido = true;
                     break;  ///Si uno es igual no hace falta comprobar el resto
                 }
             }
             ///Si no es repetido, se asigna el ID
             if (!repetido) {
-                this.id = ID;
+                this.id = id;
             }
         }
     }
+
+    public void colocar(ArrayList<ArrayList<Casilla>> casillas, int nuevaPosicion) {
+        if (this.lugar != null) {
+            this.lugar.eliminarAvatar(this);
+        }
+
+        // Buscar la casilla con la nueva posición
+        for (ArrayList<Casilla> lado : casillas) {
+            for (Casilla casilla : lado) {
+                if (casilla.getPosicion() == nuevaPosicion) {
+                    // Establecer la nueva ubicación
+                    this.lugar = casilla;
+                    // Añadir el avatar a la nueva casilla
+                    casilla.anhadirAvatar(this);
+
+                    System.out.println("Avatar " + this.id + " se movió a " + casilla.getNombre() + " (posición " + nuevaPosicion + ")");
+                    return;
+                }
+            }
+        }
+
+        // Si no se encuentra la casilla, mostrar error
+        System.out.println("Error: No se pudo encontrar la casilla en posición " + nuevaPosicion);
+    }
+
 
     //GETTERS, SETTERS
     public String getId() {

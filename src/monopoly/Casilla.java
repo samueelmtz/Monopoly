@@ -59,14 +59,14 @@ public class Casilla {
         this.avatares = new ArrayList<>();
     }
 
-    //Método utilizado para añadir un avatar al array de avatares en casilla.
-    public void anhadirAvatar(Avatar av) {
-        this.avatares.add(av);
+    //Método utilizado para eliminar un avatar al array de avatares en casilla.
+    public void eliminarAvatar(Avatar avatar){
+        this.avatares.remove(avatar);
     }
 
-    //Método utilizado para eliminar un avatar del array de avatares en casilla.
-    public void eliminarAvatar(Avatar av) {
-        this.avatares.remove(av);
+    //Método utilizado para añadir un avatar del array de avatares en casilla.
+    public void anhadirAvatar(Avatar avatar){
+        this.avatares.add(avatar);
     }
 
     /*Método para evaluar qué hacer en una casilla concreta. Parámetros:
@@ -311,6 +311,17 @@ public class Casilla {
 
     public void setHipoteca(float hipoteca){
         this.hipoteca = hipoteca;
+    }
+
+    public Grupo getGrupo() {
+        return grupo;
+    }
+    public void setGrupo(Grupo grupo){
+        this.grupo = grupo;
+    }
+
+    public ArrayList<Avatar> getAvatares() {
+        return avatares;
     }
 }
 
