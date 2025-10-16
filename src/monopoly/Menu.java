@@ -18,6 +18,24 @@ public class Menu {
     private boolean tirado; //Booleano para comprobar si el jugador que tiene el turno ha tirado o no.
     private boolean solvente; //Booleano para comprobar si el jugador que tiene el turno es solvente, es decir, si ha pagado sus deudas.
 
+    private void mostrarTablero() {
+        System.out.println("=== ESTADO DEL TABLERO ===");
+        for (ArrayList<Casilla> lado : tablero.getPosiciones()) {
+            for (Casilla casilla : lado) {
+                System.out.print(casilla.getNombre() + " (Pos " + casilla.getPosicion() + ")");
+                if (!casilla.getAvatares().isEmpty()) {
+                    System.out.print(" [Avatares: ");
+                    for (Avatar avatar : casilla.getAvatares()) {
+                        System.out.print(avatar.getId() + " ");
+                    }
+                    System.out.print("]");
+                }
+                System.out.println();
+            }
+            System.out.println("---");
+        }
+    }
+
 
     // Método para inciar una partida: crea los jugadores y avatares.
     public void iniciarPartida() {
@@ -131,6 +149,9 @@ public class Menu {
                             break;
                     }
                 }
+                break;
+            case "tablero":
+                mostrarTablero();
                 break;
             case "acabar":
                 if (comandos.length == 2 && comandos[1].equals("turno")) {
@@ -307,4 +328,6 @@ public class Menu {
         System.out.println("El jugador actual es " + siguienteJugador.getNombre() + ".");
     }
 }
+
+
 
