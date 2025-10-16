@@ -20,6 +20,56 @@ public class Tablero {
         this.crearGrupos(); //Llamamos al método que genera todos los grupos del tablero.
     }
 
+    private void crearGrupos() {
+        // Crear los grupos y añadirlos al HashMap
+        grupos.put("Marrón", new Grupo(
+                encontrar_casilla("Solar1"),
+                encontrar_casilla("Solar2"),
+                "Marrón"
+        ));
+        grupos.put("Celeste", new Grupo(
+                encontrar_casilla("Solar3"),
+                encontrar_casilla("Solar4"),
+                encontrar_casilla("Solar5"),
+                "Celeste"
+        ));
+        grupos.put("Rosa", new Grupo(
+                encontrar_casilla("Solar6"),
+                encontrar_casilla("Solar7"),
+                encontrar_casilla("Solar8"),
+                "Rosa"
+        ));
+        grupos.put("Naranja", new Grupo(
+                encontrar_casilla("Solar9"),
+                encontrar_casilla("Solar10"),
+                encontrar_casilla("Solar11"),
+                "Naranja"
+        ));
+        grupos.put("Rojo", new Grupo(
+                encontrar_casilla("Solar12"),
+                encontrar_casilla("Solar13"),
+                encontrar_casilla("Solar14"),
+                "Rojo"
+        ));
+        grupos.put("Amarillo", new Grupo(
+                encontrar_casilla("Solar15"),
+                encontrar_casilla("Solar16"),
+                encontrar_casilla("Solar17"),
+                "Amarillo"
+        ));
+        grupos.put("Verde", new Grupo(
+                encontrar_casilla("Solar18"),
+                encontrar_casilla("Solar19"),
+                encontrar_casilla("Solar20"),
+                "Verde"
+        ));
+        grupos.put("Azul", new Grupo(
+                encontrar_casilla("Solar21"),
+                encontrar_casilla("Solar22"),
+                "Azul"
+        ));
+    }
+
 
     //Método para crear todas las casillas del tablero. Formado a su vez por cuatro métodos (1/lado).
     private void generarCasillas() {
