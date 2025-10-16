@@ -2,7 +2,7 @@ package monopoly;
 
 import partida.*;
 import java.util.ArrayList;
-import java.lang.Math;
+import java.util.Math
 
 public class Casilla {
 
@@ -116,7 +116,7 @@ public class Casilla {
                     }
                     int n = Math.max(1, this.duenho.numeroCasillasTipo("Servicio"));
                     int x; // x=4 si 1 servicio, x=10 si 2
-                    if(n == 1) x = 4;
+                    if(n = 1) x = 4;
                     else x = 10;
                     aPagar = (float) tirada * x * this.impuesto;
                     receptor = this.duenho;
@@ -311,9 +311,6 @@ public class Casilla {
 
     public void setHipoteca(float hipoteca){
         this.hipoteca = hipoteca;
-    }
-
-    public void setGrupo(Grupo grupo) {
     }
 }
 
