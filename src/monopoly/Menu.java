@@ -250,6 +250,13 @@ public class Menu {
         tirado = true;
         lanzamientos++;
 
+        // EVALUAR LA CASILLA DESPUÉS DEL MOVIMIENTO
+        Casilla casillaActual = actual.getAvatar().getLugar();
+        solvente = casillaActual.evaluarCasilla(actual, banca, suma);
+
+
+
+
         if (valorDado1 == valorDado2) {
             if (lanzamientos == 3) {
                 System.out.println("Tercer doble consecutivo. El avatar va a la cárcel.");
@@ -328,7 +335,6 @@ public class Menu {
         System.out.println("El jugador actual es " + siguienteJugador.getNombre() + ".");
     }
 }
-
 
 
 
