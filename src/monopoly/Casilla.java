@@ -17,7 +17,7 @@ public class Casilla {
     private float hipoteca; //Valor otorgado por hipotecar una casilla
     private ArrayList<Avatar> avatares; //Avatares que están situados en la casilla.
 
-    //Constructores:
+     //Constructores:
     public Casilla() {
         this.avatares = new ArrayList<>();
         this.valor = 0;
