@@ -160,4 +160,5 @@ public class Jugador {
     public void setVueltas(int vueltas) {
         this.vueltas = vueltas++;
     }
+
 }
