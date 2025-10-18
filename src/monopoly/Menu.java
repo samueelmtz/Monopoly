@@ -64,7 +64,7 @@ public class Menu {
         while (true) {
             try {
                 // Mostrar prompt con comandos disponibles
-                System.out.print("[crear|lanzar|describir|listar|comprar|salir|acabar|ayuda] > ");
+                System.out.print("[crear|lanzar|describir|listar|comprar|salir|acabar|tablero|ayuda] > ");
                 String comando = scanner.nextLine().trim();
 
                 // Salir del juego
@@ -151,7 +151,11 @@ public class Menu {
                 }
                 break;
             case "tablero":
-                mostrarTablero();
+                if (comandos.length == 1) {
+                    tablero.mostrarTablero();
+                } else {
+                    System.out.println("Comando incorrecto. Uso: tablero");
+                }
                 break;
             case "acabar":
                 if (comandos.length == 2 && comandos[1].equals("turno")) {
