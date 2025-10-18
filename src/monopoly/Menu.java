@@ -87,27 +87,36 @@ public class Menu {
      */
     private void analizarComando(String comando) {
         String[] comandos = comando.split(" ");
+        if (comandos.length == 0) return;
+
         switch (comandos[0]) {
-            case "crear jugador":
+            case "crear":
                 if (comandos.length >= 4 && comandos[1].equals("jugador")) {
-                    crearJugador(comandos[2], comandos[3]); // nombre, tipoAvatar
+                    crearJugador(comandos[2], comandos[3]);
                 } else {
                     System.out.println("Comando incorrecto. Uso: crear jugador <nombre> <tipo_avatar>");
                 }
                 break;
+
             case "jugador":
                 if (comandos.length == 1) {
                     turnoJugador();
-                } else{
+                } else {
                     System.out.println("Comando incorrecto. Uso: jugador");
                 }
+                break;
+
             case "describir":
                 if (comandos.length < 2) {
-                    System.out.println("Comando incompleto. Uso: describir <jugador|avatar|nombre_casilla> [ID|nombre]");
+                    System.out.println("Comando incompleto. Uso: describir <jugador|casilla> [nombre]");
                 } else {
                     switch (comandos[1]) {
                         case "jugador":
-                            descJugador(comandos);
+                            if (comandos.length >= 3) {
+                                descJugador(comandos);
+                            } else {
+                                System.out.println("Comando incompleto. Uso: describir jugador <nombre>");
+                            }
                             break;
                         default:
                             String nombreCasilla = comando.substring(comando.indexOf(" ") + 1);
@@ -116,6 +125,7 @@ public class Menu {
                     }
                 }
                 break;
+
             case "lanzar":
                 if (comandos.length == 2 && comandos[1].equals("dados")) {
                     lanzarDados();
@@ -123,6 +133,7 @@ public class Menu {
                     System.out.println("Comando incorrecto. Uso: lanzar dados");
                 }
                 break;
+
             case "comprar":
                 if (comandos.length < 2) {
                     System.out.println("Falta el nombre de la casilla. Uso: comprar <nombre_casilla>");
@@ -131,6 +142,7 @@ public class Menu {
                     comprar(nombreCasilla);
                 }
                 break;
+
             case "salir":
                 if (comandos.length == 2 && comandos[1].equals("carcel")) {
                     salirCarcel();
@@ -138,6 +150,7 @@ public class Menu {
                     System.out.println("Comando incorrecto. Uso: salir carcel");
                 }
                 break;
+
             case "listar":
                 if (comandos.length < 2) {
                     System.out.println("Comando incompleto. Uso: listar <enventa|jugadores|avatares>");
@@ -158,6 +171,7 @@ public class Menu {
                     }
                 }
                 break;
+
             case "tablero":
                 if (comandos.length == 1) {
                     tablero.mostrarTablero();
@@ -165,12 +179,18 @@ public class Menu {
                     System.out.println("Comando incorrecto. Uso: tablero");
                 }
                 break;
+
             case "acabar":
                 if (comandos.length == 2 && comandos[1].equals("turno")) {
                     acabarTurno();
                 } else {
                     System.out.println("Comando incorrecto. Uso: acabar turno");
                 }
+                break;
+
+            default:
+                System.out.println("Comando no reconocido: " + comando);
+                break;
         }
     }
 
