@@ -88,13 +88,19 @@ public class Menu {
     private void analizarComando(String comando) {
         String[] comandos = comando.split(" ");
         switch (comandos[0]) {
-            case "crear":
+            case "Crear jugador":
                 if (comandos.length >= 4 && comandos[1].equals("jugador")) {
                     crearJugador(comandos[2], comandos[3]); // nombre, tipoAvatar
                 } else {
                     System.out.println("Comando incorrecto. Uso: crear jugador <nombre> <tipo_avatar>");
                 }
                 break;
+            case "Jugador":
+                if (comandos.length = 1 && comandos[1].equals("jugador")) {
+                    turnoJugador();
+                } else{
+                    System.out.println("Comando incorrecto. Uso: jugador");
+                }
             case "describir":
                 if (comandos.length < 2) {
                     System.out.println("Comando incompleto. Uso: describir <jugador|avatar|nombre_casilla> [ID|nombre]");
@@ -168,7 +174,7 @@ public class Menu {
         }
     }
 
-    /*Método que realiza las acciones asociadas al comando 'describir jugador'.
+    /*Metodo que realiza las acciones asociadas al comando 'describir jugador'.
      * Parámetro: comando introducido*/
     public void descJugador(String[] partes) {
         String nombreJugador = partes[2];
@@ -188,7 +194,7 @@ public class Menu {
         System.out.println("Jugador no encontrado: " + nombreJugador);
     }
 
-    /*Método que realiza las acciones asociadas al comando 'describir avatar'.
+    /*Metodo que realiza las acciones asociadas al comando 'describir avatar'.
     * Parámetro: id del avatar a describir.
     NO HACER PRIMERA ENTREGA
      */
@@ -400,6 +406,29 @@ public class Menu {
         } catch (Exception e) {
             System.out.println("Error al crear el jugador: " + e.getMessage());
         }
+    }
+
+    public void turnoJugador(){
+        if (jugadores == null || jugadores.isEmpty()) {
+            System.out.println("No hay jugadores creados.");
+            return;
+        }
+        // Asegura que el índice esté dentro de rango
+        if (turno < 0 || turno >= jugadores.size()) {
+            turno = 0;
+        }
+
+        Jugador actual = jugadores.get(turno);
+        String avatarId = "-";
+        if (actual.getAvatar() != null && actual.getAvatar().getId() != null) {
+            avatarId = actual.getAvatar().getId();
+        }
+
+        System.out.println("> jugador");
+        System.out.println("{");
+        System.out.println("nombre: " + actual.getNombre() + ",");
+        System.out.println("avatar: " + avatarId);
+        System.out.println("}");
     }
 }
 
