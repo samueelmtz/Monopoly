@@ -86,71 +86,78 @@ public class Casilla {
     public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
         if (actual.getAvatar().getLugar() == this) {
 
-            // Cantidad a pagar según el tipo (0 si no aplica)
-            float aPagar = 0f;
-            Jugador receptor = null; // quién cobra (dueño o banca)
+            // PRIMERO: Verificar si la casilla es comprable y pertenece a la banca
+            if (this.esTipoComprable() && (this.duenho == null || this.duenho == banca || this.duenho.getNombre().equals("Banca"))) {
+                System.out.println("¡Esta casilla está disponible para compra! Usa el comando 'comprar " + this.nombre + "' para adquirirla.");
+                return true; // El jugador es solvente, puede intentar comprar
+            }
 
-            switch (this.tipo) {
-                case "Impuesto":
-                    aPagar = this.impuesto;
-                    receptor = banca;
-                    break;
+            // SEGUNDO: Si la casilla tiene dueño (no es la banca), evaluar pagos
+            if (this.duenho != null && this.duenho != banca && this.duenho != actual) {
 
-                case "Solar":
-                    // Si no hay dueño o es la banca/no vendida, no se paga
-                    if(this.duenho == null || this.duenho == banca || this.duenho == actual){
-                        System.out.println("No tiene nada que pagar.\n");
-                        return true;
+                // Cantidad a pagar según el tipo (0 si no aplica)
+                float aPagar = 0f;
+                Jugador receptor = this.duenho;
+
+                switch (this.tipo) {
+                    case "Solar":
+                        aPagar = this.impuesto;
+                        break;
+
+                    case "Transporte": {
+                        int n = this.duenho.numeroCasillasTipo("Transporte");
+                        aPagar = Valor.ALQUILER_TRANSPORTE * n; // 250.000€ por cada transporte
+                        System.out.printf("El jugador posee %d casillas de transporte. Alquiler: %,.0f€\n", n, aPagar);
+                        break;
                     }
-                    aPagar = this.impuesto;
-                    receptor = this.duenho;
-                    break;
 
-                case "Transporte": {
-                    if (this.duenho == null || this.duenho == banca || this.duenho == actual) {
-                        System.out.println("No tiene nada que pagar.\n");
-                        return true;
+                    case "Servicio": {
+                        int n = Math.max(1, this.duenho.numeroCasillasTipo("Servicio"));
+                        int x; // x=4 si 1 servicio, x=10 si 2
+                        if(n == 1) x = 4;
+                        else x = 10;
+                        aPagar = (float) tirada * x * Valor.FACTOR_SERVICIO;
+                        System.out.printf("El jugador posee %d servicios. Multiplicador: %d. Alquiler: %,.0f€\n", n, x, aPagar);
+                        break;
                     }
-                    int n = this.duenho.numeroCasillasTipo("Transporte");
-                    aPagar = Valor.ALQUILER_TRANSPORTE * n; // 250.000€ por cada transporte
-                    receptor = this.duenho;
-                    break;
+
+                    case "Impuesto":
+                        aPagar = this.impuesto;
+                        receptor = banca;
+                        System.out.printf("Impuesto a pagar: %,.0f€\n", aPagar);
+                        break;
+
+                    // Suerte, Comunidad, Especiales no generan pago aquí
+                    default:
+                        return true;
                 }
 
-                case "Servicio": {
-                    if (this.duenho == null || this.duenho == banca || this.duenho == actual){
-                        System.out.println("No tiene nada que pagar.\n");
-                        return true;
-                    }
-                    int n = Math.max(1, this.duenho.numeroCasillasTipo("Servicio"));
-                    int x; // x=4 si 1 servicio, x=10 si 2
-                    if(n == 1) x = 4;
-                    else x = 10;
-                    aPagar = (float) tirada * x * this.impuesto;
-                    receptor = this.duenho;
-                    break;
+                // Si no hay nada que pagar, solvente
+                if (aPagar <= 0f) return true;
+
+                // Comprobación de solvencia: si no llega, NO tocar saldos y devolver false
+                if (actual.getFortuna() < aPagar) {
+                    System.out.printf("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n",
+                            aPagar, actual.getFortuna());
+                    return false;
                 }
 
-                // Suerte, Comunidad, Especiales (Salida, Cárcel, Parking, etc.) no generan pago aquí
-                default:
-                    return true;
+                // Eres solvente: aplicar el pago y registrar gastos/cobros
+                actual.restarFortuna(aPagar);
+                actual.sumarGastos(aPagar);
+                if (receptor != null) {
+                    receptor.sumarFortuna(aPagar);
+                }
+
+                System.out.printf("%s ha pagado %,.0f€ a %s\n",
+                        actual.getNombre(), aPagar, receptor.getNombre());
+                return true;
             }
 
-            // Si no hay nada que pagar, solvente
-            if (aPagar <= 0f) return true;
-
-            // Comprobación de solvencia: si no llega, NO tocar saldos y devolver false
-            if (actual.getFortuna() < aPagar) {
-                return false;
-            }
-
-            // Eres solvente: aplicar el pago y registrar gastos/cobros
-            actual.restarFortuna(aPagar);
-            actual.sumarGastos(aPagar);
-            if (receptor != null) {
-                receptor.sumarFortuna(aPagar);
-            }
+            // Si la casilla es del propio jugador o no requiere pago
+            System.out.println("No tiene nada que pagar.\n");
             return true;
+
         } else {
             System.out.println("El jugador no está sobre la casilla.\n");
             return false;
