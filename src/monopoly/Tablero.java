@@ -73,7 +73,6 @@ public class Tablero {
 
     //Método para crear todas las casillas del tablero. Formado a su vez por cuatro métodos (1/lado).
     private void generarCasillas() {
-        this.posiciones = new ArrayList<ArrayList<Casilla>>();
         this.insertarLadoSur();
         this.insertarLadoOeste();
         this.insertarLadoNorte();
@@ -186,9 +185,11 @@ public class Tablero {
         }
         return null; // Si no se encuentra la casilla, retorna null
     }
+}
 
-    // Getters
-    public ArrayList<ArrayList<Casilla>> getPosiciones() { return posiciones; }
-    public HashMap<String, Grupo> getGrupos() { return grupos; }
-    public Jugador getBanca() { return banca; }
+
+// Getters
+public ArrayList<ArrayList<Casilla>> getPosiciones() { return posiciones; }
+public HashMap<String, Grupo> getGrupos() { return grupos; }
+public Jugador getBanca() { return banca; }
 }
