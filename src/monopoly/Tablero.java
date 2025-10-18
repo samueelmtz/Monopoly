@@ -186,7 +186,7 @@ public class Tablero {
         }
         return null; // Si no se encuentra la casilla, retorna null
     }
-    // En Tablero.java - añade este método
+
     // En Tablero.java - añade este método
     // En Tablero.java - añade este método
     // En Tablero.java - añade este método

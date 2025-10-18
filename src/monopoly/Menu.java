@@ -277,7 +277,7 @@ public class Menu {
 
     private void salirCarcel() {
         Jugador jugadorActual = jugadores.get(turno);
-        if (jugadorActual.salirDeCarcel()) {
+        if (jugadorActual.salirCarcel()) {
             System.out.println(jugadorActual.getNombre() + " paga 500.000€ y sale de la cárcel. Puede lanzar los datos.");
         } else {
             System.out.println("No se pudo salir de la cárcel. Asegúrate de que estás en la cárcel y tienes suficiente dinero.");
