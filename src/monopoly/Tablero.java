@@ -186,9 +186,137 @@ public class Tablero {
         }
         return null; // Si no se encuentra la casilla, retorna null
     }
+    // En Tablero.java - añade este método
+    public void mostrarTablero() {
+        System.out.println(Valor.CYAN + "========================================== TABLERO DE MONOPOLY ==========================================" + Valor.RESET);
+
+        // Mostrar todas las casillas en orden de posición
+        for (int i = 1; i <= 40; i++) {
+            Casilla casilla = encontrarCasillaPorPosicion(i);
+            if (casilla != null) {
+                String colorFondo = Valor.RESET;
+                String colorTexto = Valor.WHITE;
+
+                // Asignar colores según el tipo de casilla
+                switch (casilla.getTipo()) {
+                    case "Solar":
+                        if (casilla.getGrupo() != null) {
+                            // Usar colores de grupo si están disponibles
+                            String colorGrupo = casilla.getGrupo().getColorGrupo();
+                            switch (colorGrupo) {
+                                case "Marron": colorFondo = Valor.BG_RED; colorTexto = Valor.BLACK; break;
+                                case "Celeste": colorFondo = Valor.BG_CYAN; colorTexto = Valor.BLACK; break;
+                                case "Purpura": colorFondo = Valor.BG_PURPLE; colorTexto = Valor.WHITE; break;
+                                case "Naranja": colorFondo = Valor.BG_YELLOW; colorTexto = Valor.BLACK; break;
+                                case "Rojo": colorFondo = Valor.BG_RED; colorTexto = Valor.WHITE; break;
+                                case "Amarillo": colorFondo = Valor.BG_YELLOW; colorTexto = Valor.BLACK; break;
+                                case "Verde": colorFondo = Valor.BG_GREEN; colorTexto = Valor.BLACK; break;
+                                case "Azul": colorFondo = Valor.BG_BLUE; colorTexto = Valor.WHITE; break;
+                                case "Cian": colorFondo = Valor.BG_CYAN; colorTexto = Valor.BLACK; break;
+                                case "Rosa": colorFondo = Valor.BG_PURPLE; colorTexto = Valor.WHITE; break;
+                                default: colorFondo = Valor.RESET; colorTexto = Valor.WHITE;
+                            }
+                        }
+                        break;
+                    case "Transporte":
+                        colorFondo = Valor.BG_BLACK;
+                        colorTexto = Valor.WHITE;
+                        break;
+                    case "Servicio":
+                        colorFondo = Valor.BG_WHITE;
+                        colorTexto = Valor.BLACK;
+                        break;
+                    case "Impuesto":
+                        colorFondo = Valor.BG_RED;
+                        colorTexto = Valor.WHITE;
+                        break;
+                    case "Suerte":
+                        colorFondo = Valor.BG_YELLOW;
+                        colorTexto = Valor.BLACK;
+                        break;
+                    case "Comunidad":
+                        colorFondo = Valor.BG_BLUE;
+                        colorTexto = Valor.WHITE;
+                        break;
+                    case "Carcel":
+                        colorFondo = Valor.BG_BLACK;
+                        colorTexto = Valor.WHITE;
+                        break;
+                    case "Parking":
+                        colorFondo = Valor.BG_GREEN;
+                        colorTexto = Valor.BLACK;
+                        break;
+                    case "Salida":
+                        colorFondo = Valor.BG_GREEN;
+                        colorTexto = Valor.WHITE;
+                        break;
+                    case "IrCarcel":
+                        colorFondo = Valor.BG_RED;
+                        colorTexto = Valor.WHITE;
+                        break;
+                    default:
+                        colorFondo = Valor.RESET;
+                        colorTexto = Valor.WHITE;
+                }
+
+                // Construir información de avatares
+                String avataresStr = "";
+                if (!casilla.getAvatares().isEmpty()) {
+                    avataresStr = Valor.PURPLE + " [Avatares: ";
+                    for (Avatar avatar : casilla.getAvatares()) {
+                        avataresStr += avatar.getId() + " ";
+                    }
+                    avataresStr = avataresStr.trim() + "]" + Valor.RESET;
+                }
+
+                // Mostrar la casilla
+                System.out.printf(colorFondo + colorTexto + "│ Pos %2d: %-15s " + Valor.RESET,
+                        casilla.getPosicion(), casilla.getNombre());
+
+                // Mostrar dueño si no es la banca
+                if (casilla.getDuenho() != null && !casilla.getDuenho().getNombre().equals("Banca")) {
+                    System.out.printf(Valor.YELLOW + "| Dueño: %-10s " + Valor.RESET, casilla.getDuenho().getNombre());
+                }
+
+                // Mostrar avatares
+                System.out.println(avataresStr);
+
+                // Línea separadora cada 10 casillas
+                if (i % 10 == 0 && i < 40) {
+                    System.out.println(Valor.WHITE + "├────────────────────────────────────────────────────────────────────────────────────────┤" + Valor.RESET);
+                }
+            }
+        }
+
+        System.out.println(Valor.WHITE + "└────────────────────────────────────────────────────────────────────────────────────────┘" + Valor.RESET);
+
+        // Mostrar leyenda
+        System.out.println(Valor.CYAN + "\nLEYENDA:" + Valor.RESET);
+        System.out.println(Valor.BG_RED + Valor.BLACK + " Marrón " + Valor.RESET + " " +
+                Valor.BG_CYAN + Valor.BLACK + " Celeste " + Valor.RESET + " " +
+                Valor.BG_PURPLE + Valor.WHITE + " Púrpura " + Valor.RESET + " - Grupos de Solares");
+        System.out.println(Valor.BG_BLACK + Valor.WHITE + " Transportes " + Valor.RESET + " " +
+                Valor.BG_WHITE + Valor.BLACK + " Servicios " + Valor.RESET + " " +
+                Valor.BG_RED + Valor.WHITE + " Impuestos " + Valor.RESET + " - Propiedades especiales");
+        System.out.println(Valor.PURPLE + "● Avatares en color púrpura" + Valor.RESET);
+        System.out.println(Valor.CYAN + "========================================================================================================" + Valor.RESET);
+    }
+
+    // Método auxiliar para encontrar casilla por posición
+    private Casilla encontrarCasillaPorPosicion(int posicion) {
+        for (ArrayList<Casilla> lado : posiciones) {
+            for (Casilla casilla : lado) {
+                if (casilla.getPosicion() == posicion) {
+                    return casilla;
+                }
+            }
+        }
+        return null;
+    }
 
     // Getters
     public ArrayList<ArrayList<Casilla>> getPosiciones() { return posiciones; }
     public HashMap<String, Grupo> getGrupos() { return grupos; }
     public Jugador getBanca() { return banca; }
 }
+
