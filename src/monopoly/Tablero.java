@@ -187,118 +187,184 @@ public class Tablero {
         return null; // Si no se encuentra la casilla, retorna null
     }
     // En Tablero.java - añade este método
+    // En Tablero.java - añade este método
+    // En Tablero.java - añade este método
     public void mostrarTablero() {
-        System.out.println(Valor.CYAN + "========================================== TABLERO DE MONOPOLY ==========================================" + Valor.RESET);
+        System.out.println(Valor.CYAN + "\n========================================== TABLERO DE MONOPOLY ==========================================" + Valor.RESET);
 
-        // Mostrar todas las casillas en orden de posición
-        for (int i = 1; i <= 40; i++) {
-            Casilla casilla = encontrarCasillaPorPosicion(i);
-            if (casilla != null) {
-                String colorFondo = Valor.RESET;
-                String colorTexto = Valor.WHITE;
+        // Obtener todas las casillas organizadas como en la imagen
+        Casilla parking = encontrar_casilla("Parking");
+        Casilla solar12 = encontrar_casilla("Solar12");
+        Casilla suerte3 = encontrar_casilla("Suerte3");
+        Casilla solar13 = encontrar_casilla("Solar13");
+        Casilla solar14 = encontrar_casilla("Solar14");
+        Casilla trans3 = encontrar_casilla("Trans3");
+        Casilla solar15 = encontrar_casilla("Solar15");
+        Casilla solar16 = encontrar_casilla("Solar16");
+        Casilla serv2 = encontrar_casilla("Serv2");
+        Casilla solar17 = encontrar_casilla("Solar17");
+        Casilla irCarcel = encontrar_casilla("IrCarcel");
 
-                // Asignar colores según el tipo de casilla
-                switch (casilla.getTipo()) {
-                    case "Solar":
-                        if (casilla.getGrupo() != null) {
-                            // Usar colores de grupo si están disponibles
-                            String colorGrupo = casilla.getGrupo().getColorGrupo();
-                            switch (colorGrupo) {
-                                case "Marron": colorFondo = Valor.BG_RED; colorTexto = Valor.BLACK; break;
-                                case "Celeste": colorFondo = Valor.BG_CYAN; colorTexto = Valor.BLACK; break;
-                                case "Purpura": colorFondo = Valor.BG_PURPLE; colorTexto = Valor.WHITE; break;
-                                case "Naranja": colorFondo = Valor.BG_YELLOW; colorTexto = Valor.BLACK; break;
-                                case "Rojo": colorFondo = Valor.BG_RED; colorTexto = Valor.WHITE; break;
-                                case "Amarillo": colorFondo = Valor.BG_YELLOW; colorTexto = Valor.BLACK; break;
-                                case "Verde": colorFondo = Valor.BG_GREEN; colorTexto = Valor.BLACK; break;
-                                case "Azul": colorFondo = Valor.BG_BLUE; colorTexto = Valor.WHITE; break;
-                                case "Cian": colorFondo = Valor.BG_CYAN; colorTexto = Valor.BLACK; break;
-                                case "Rosa": colorFondo = Valor.BG_PURPLE; colorTexto = Valor.WHITE; break;
-                                default: colorFondo = Valor.RESET; colorTexto = Valor.WHITE;
-                            }
-                        }
-                        break;
-                    case "Transporte":
-                        colorFondo = Valor.BG_BLACK;
-                        colorTexto = Valor.WHITE;
-                        break;
-                    case "Servicio":
-                        colorFondo = Valor.BG_WHITE;
-                        colorTexto = Valor.BLACK;
-                        break;
-                    case "Impuesto":
-                        colorFondo = Valor.BG_RED;
-                        colorTexto = Valor.WHITE;
-                        break;
-                    case "Suerte":
-                        colorFondo = Valor.BG_YELLOW;
-                        colorTexto = Valor.BLACK;
-                        break;
-                    case "Comunidad":
-                        colorFondo = Valor.BG_BLUE;
-                        colorTexto = Valor.WHITE;
-                        break;
-                    case "Carcel":
-                        colorFondo = Valor.BG_BLACK;
-                        colorTexto = Valor.WHITE;
-                        break;
-                    case "Parking":
-                        colorFondo = Valor.BG_GREEN;
-                        colorTexto = Valor.BLACK;
-                        break;
-                    case "Salida":
-                        colorFondo = Valor.BG_GREEN;
-                        colorTexto = Valor.WHITE;
-                        break;
-                    case "IrCarcel":
-                        colorFondo = Valor.BG_RED;
-                        colorTexto = Valor.WHITE;
-                        break;
-                    default:
-                        colorFondo = Valor.RESET;
-                        colorTexto = Valor.WHITE;
-                }
+        Casilla solar11 = encontrar_casilla("Solar11");
+        Casilla solar18 = encontrar_casilla("Solar18");
+        Casilla solar10 = encontrar_casilla("Solar10");
+        Casilla solar19 = encontrar_casilla("Solar19");
+        Casilla caja2 = encontrar_casilla("Caja2");
+        Casilla caja3 = encontrar_casilla("Caja3");
+        Casilla solar9 = encontrar_casilla("Solar9");
+        Casilla solar20 = encontrar_casilla("Solar20");
+        Casilla trans2 = encontrar_casilla("Trans2");
+        Casilla trans4 = encontrar_casilla("Trans4");
+        Casilla solar8 = encontrar_casilla("Solar8");
+        Casilla suerte2 = encontrar_casilla("Suerte2");
+        Casilla solar7 = encontrar_casilla("Solar7");
+        Casilla solar21 = encontrar_casilla("Solar21");
+        Casilla serv1 = encontrar_casilla("Serv1");
+        Casilla imp2 = encontrar_casilla("Imp2");
+        Casilla solar6 = encontrar_casilla("Solar6");
+        Casilla solar22 = encontrar_casilla("Solar22");
 
-                // Construir información de avatares
-                String avataresStr = "";
+        Casilla carcel = encontrar_casilla("Carcel");
+        Casilla solar5 = encontrar_casilla("Solar5");
+        Casilla solar4 = encontrar_casilla("Solar4");
+        Casilla suerte1 = encontrar_casilla("Suerte1");
+        Casilla solar3 = encontrar_casilla("Solar3");
+        Casilla trans1 = encontrar_casilla("Trans1");
+        Casilla imp1 = encontrar_casilla("Imp1");
+        Casilla solar2 = encontrar_casilla("Solar2");
+        Casilla caja1 = encontrar_casilla("Caja1");
+        Casilla solar1 = encontrar_casilla("Solar1");
+        Casilla salida = encontrar_casilla("Salida");
+
+        // Mapeo de colores para los grupos
+        java.util.Map<String, String> coloresGrupo = new java.util.HashMap<>();
+        coloresGrupo.put("Marron", Valor.BG_RED + Valor.BLACK);
+        coloresGrupo.put("Celeste", Valor.BG_CYAN + Valor.BLACK);
+        coloresGrupo.put("Purpura", Valor.BG_PURPLE + Valor.WHITE);
+        coloresGrupo.put("Naranja", Valor.BG_YELLOW + Valor.BLACK);
+        coloresGrupo.put("Rojo", Valor.BG_RED + Valor.WHITE);
+        coloresGrupo.put("Amarillo", Valor.BG_YELLOW + Valor.BLACK);
+        coloresGrupo.put("Verde", Valor.BG_GREEN + Valor.BLACK);
+        coloresGrupo.put("Azul", Valor.BG_BLUE + Valor.WHITE);
+        coloresGrupo.put("Cian", Valor.BG_CYAN + Valor.BLACK);
+        coloresGrupo.put("Rosa", Valor.BG_PURPLE + Valor.WHITE);
+
+        // Función para obtener el color de una casilla
+        java.util.function.Function<Casilla, String> getColorCasilla = (casilla) -> {
+            if (casilla.getGrupo() != null && casilla.getTipo().equals("Solar")) {
+                String colorGrupo = casilla.getGrupo().getColorGrupo();
+                return coloresGrupo.getOrDefault(colorGrupo, Valor.RESET);
+            }
+
+            switch (casilla.getTipo()) {
+                case "Transporte": return Valor.BG_BLACK + Valor.WHITE;
+                case "Servicio": return Valor.BG_WHITE + Valor.BLACK;
+                case "Impuesto": return Valor.BG_RED + Valor.WHITE;
+                case "Suerte": return Valor.BG_YELLOW + Valor.BLACK;
+                case "Comunidad": return Valor.BG_BLUE + Valor.WHITE;
+                case "Carcel": return Valor.BG_BLACK + Valor.WHITE;
+                case "Parking": return Valor.BG_GREEN + Valor.BLACK;
+                case "Salida": return Valor.BG_GREEN + Valor.WHITE;
+                case "IrCarcel": return Valor.BG_RED + Valor.WHITE;
+                default: return Valor.RESET;
+            }
+        };
+
+        // Función para formatear el nombre de la casilla
+        java.util.function.Function<Casilla, String> formatearNombre = (casilla) -> {
+            String nombre = casilla.getNombre();
+            if (nombre.startsWith("Solar")) {
+                return nombre.replace("Solar", "S");
+            } else if (nombre.startsWith("Trans")) {
+                return nombre.replace("Trans", "T");
+            } else if (nombre.startsWith("Serv")) {
+                return nombre.replace("Serv", "Serv");
+            } else if (nombre.startsWith("Caja")) {
+                return "C.Com";
+            } else if (nombre.startsWith("Suerte")) {
+                return "Suerte";
+            } else if (nombre.equals("IrCarcel")) {
+                return "IrCarcel";
+            } else if (nombre.equals("Parking")) {
+                return "Parking";
+            } else if (nombre.equals("Carcel")) {
+                return "Cárcel";
+            } else if (nombre.equals("Salida")) {
+                return "Salida";
+            } else if (nombre.startsWith("Imp")) {
+                return "Impuesto";
+            }
+            return nombre;
+        };
+
+        // Mostrar fila superior (norte)
+        System.out.println();
+        System.out.print("     ");
+        Casilla[] filaSuperior = {parking, solar12, suerte3, solar13, solar14, trans3, solar15, solar16, serv2, solar17, irCarcel};
+        for (Casilla casilla : filaSuperior) {
+            String color = getColorCasilla.apply(casilla);
+            String nombre = formatearNombre.apply(casilla);
+            System.out.print(color + String.format(" %-8s ", nombre) + Valor.RESET + " ");
+        }
+        System.out.println();
+
+        // Mostrar filas del medio (oeste y este)
+        Casilla[][] filasMedio = {
+                {solar11, solar18},
+                {solar10, solar19},
+                {caja2, caja3},
+                {solar9, solar20},
+                {trans2, trans4},
+                {solar8, suerte2},
+                {solar7, solar21},
+                {serv1, imp2},
+                {solar6, solar22}
+        };
+
+        for (Casilla[] fila : filasMedio) {
+            System.out.print("     ");
+            String colorOeste = getColorCasilla.apply(fila[0]);
+            String nombreOeste = formatearNombre.apply(fila[0]);
+            String colorEste = getColorCasilla.apply(fila[1]);
+            String nombreEste = formatearNombre.apply(fila[1]);
+
+            System.out.print(colorOeste + String.format(" %-8s ", nombreOeste) + Valor.RESET);
+            System.out.print("     ".repeat(9)); // Espacio para el centro del tablero
+            System.out.println(colorEste + String.format(" %-8s ", nombreEste) + Valor.RESET);
+        }
+
+        // Mostrar fila inferior (sur)
+        System.out.print("     ");
+        Casilla[] filaInferior = {carcel, solar5, solar4, suerte1, solar3, trans1, imp1, solar2, caja1, solar1, salida};
+        for (Casilla casilla : filaInferior) {
+            String color = getColorCasilla.apply(casilla);
+            String nombre = formatearNombre.apply(casilla);
+            System.out.print(color + String.format(" %-8s ", nombre) + Valor.RESET + " ");
+        }
+        System.out.println();
+
+        // Mostrar información de avatares
+        System.out.println(Valor.PURPLE + "\nAVATARES EN EL TABLERO:" + Valor.RESET);
+        boolean hayAvatares = false;
+        for (ArrayList<Casilla> lado : posiciones) {
+            for (Casilla casilla : lado) {
                 if (!casilla.getAvatares().isEmpty()) {
-                    avataresStr = Valor.PURPLE + " [Avatares: ";
+                    hayAvatares = true;
+                    System.out.print("• " + casilla.getNombre() + ": ");
                     for (Avatar avatar : casilla.getAvatares()) {
-                        avataresStr += avatar.getId() + " ";
+                        System.out.print(avatar.getId() + " ");
                     }
-                    avataresStr = avataresStr.trim() + "]" + Valor.RESET;
-                }
-
-                // Mostrar la casilla
-                System.out.printf(colorFondo + colorTexto + "│ Pos %2d: %-15s " + Valor.RESET,
-                        casilla.getPosicion(), casilla.getNombre());
-
-                // Mostrar dueño si no es la banca
-                if (casilla.getDuenho() != null && !casilla.getDuenho().getNombre().equals("Banca")) {
-                    System.out.printf(Valor.YELLOW + "| Dueño: %-10s " + Valor.RESET, casilla.getDuenho().getNombre());
-                }
-
-                // Mostrar avatares
-                System.out.println(avataresStr);
-
-                // Línea separadora cada 10 casillas
-                if (i % 10 == 0 && i < 40) {
-                    System.out.println(Valor.WHITE + "├────────────────────────────────────────────────────────────────────────────────────────┤" + Valor.RESET);
+                    System.out.println();
                 }
             }
         }
+        if (!hayAvatares) {
+            System.out.println("No hay avatares en el tablero.");
+        }
 
-        System.out.println(Valor.WHITE + "└────────────────────────────────────────────────────────────────────────────────────────┘" + Valor.RESET);
-
-        // Mostrar leyenda
+        // Mostrar leyenda de colores
         System.out.println(Valor.CYAN + "\nLEYENDA:" + Valor.RESET);
-        System.out.println(Valor.BG_RED + Valor.BLACK + " Marrón " + Valor.RESET + " " +
-                Valor.BG_CYAN + Valor.BLACK + " Celeste " + Valor.RESET + " " +
-                Valor.BG_PURPLE + Valor.WHITE + " Púrpura " + Valor.RESET + " - Grupos de Solares");
-        System.out.println(Valor.BG_BLACK + Valor.WHITE + " Transportes " + Valor.RESET + " " +
-                Valor.BG_WHITE + Valor.BLACK + " Servicios " + Valor.RESET + " " +
-                Valor.BG_RED + Valor.WHITE + " Impuestos " + Valor.RESET + " - Propiedades especiales");
-        System.out.println(Valor.PURPLE + "● Avatares en color púrpura" + Valor.RESET);
+        System.out.println("S = Solar | T = Transporte | Serv = Servicio | C.Com = Caja Comunidad");
         System.out.println(Valor.CYAN + "========================================================================================================" + Valor.RESET);
     }
 
