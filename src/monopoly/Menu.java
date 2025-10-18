@@ -48,8 +48,8 @@ public class Menu {
                 // Mostrar prompt con comandos disponibles
                 System.out.println("\uD83E\uDD11 ===== MENU MONOPOLY ===== \uD83E\uDD11\n");
                 System.out.println("> crear jugador");
-                System.out.println("> jugador");
-                System.out.println("> listar jugador");
+                System.out.println("> turno");
+                System.out.println("> listar jugadores");
                 System.out.println("> lanzar dados");
                 System.out.println("> acabar turno");
                 System.out.println("> describir casilla");
@@ -98,7 +98,7 @@ public class Menu {
                 }
                 break;
 
-            case "jugador":
+            case "turno":
                 if (comandos.length == 1) {
                     turnoJugador();
                 } else {
