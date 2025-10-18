@@ -9,15 +9,38 @@ public class Tablero {
     //Atributos.
     private ArrayList<ArrayList<Casilla>> posiciones; //Posiciones del tablero: se define como un arraylist de arraylists de casillas (uno por cada lado del tablero).
     private HashMap<String, Grupo> grupos; //Grupos del tablero, almacenados como un HashMap con clave String (será el color del grupo).
-    private Jugador banca; //Un jugador que será la banca.
+    private Jugador banca;//Un jugador que será la banca.
+    private float boteParking;
 
     //Constructor: únicamente le pasamos el jugador banca (que se creará desde el menú).
     public Tablero(Jugador banca) {
         this.banca = banca;
         this.posiciones = new ArrayList<>();
         this.grupos = new HashMap<>();
+        this.boteParking = 0f;
         this.generarCasillas(); //Llamamos al método que genera todas las casillas del tablero.
         this.crearGrupos(); //Llamamos al método que genera todos los grupos del tablero.
+    }
+
+    // Método para añadir dinero al bote
+    public void añadirAlBote(float cantidad) {
+        this.boteParking += cantidad;
+        System.out.printf("Se han añadido %,.0f€ al bote del Parking. Bote actual: %,.0f€\n",
+                cantidad, this.boteParking);
+    }
+
+    // Método para que un jugador reclame el bote
+    public float reclamarBote(Jugador jugador) {
+        float boteActual = this.boteParking;
+        if (boteActual > 0) {
+            jugador.sumarFortuna(boteActual);
+            System.out.printf("¡%s ha ganado el bote del Parking: %,.0f€!\n",
+                    jugador.getNombre(), boteActual);
+            this.boteParking = 0f; // Resetear el bote
+        } else {
+            System.out.println("El bote del Parking está vacío.");
+        }
+        return boteActual;
     }
 
     private void crearGrupos() {
@@ -372,5 +395,8 @@ public class Tablero {
     public ArrayList<ArrayList<Casilla>> getPosiciones() { return posiciones; }
     public HashMap<String, Grupo> getGrupos() { return grupos; }
     public Jugador getBanca() { return banca; }
+    public float getBoteParking() {
+        return boteParking;
+    }
 }
 

@@ -89,35 +89,34 @@ public class Casilla {
             // PRIMERO: Verificar si la casilla es comprable y pertenece a la banca
             if (this.esTipoComprable() && (this.duenho == null || this.duenho == banca || this.duenho.getNombre().equals("Banca"))) {
                 System.out.println("¡Esta casilla está disponible para compra! Usa el comando 'comprar " + this.nombre + "' para adquirirla.");
-                return true; // El jugador es solvente, puede intentar comprar
+                return true;
             }
 
             // SEGUNDO: Si la casilla tiene dueño (no es la banca), evaluar pagos
             if (this.duenho != null && this.duenho != banca && this.duenho != actual) {
 
-                // Cantidad a pagar según el tipo (0 si no aplica)
                 float aPagar = 0f;
                 Jugador receptor = this.duenho;
 
                 switch (this.tipo) {
                     case "Solar":
                         aPagar = this.impuesto;
+                        System.out.printf("Alquiler de solar: %,.0f€\n", aPagar);
                         break;
 
                     case "Transporte": {
-                        int n = this.duenho.numeroCasillasTipo("Transporte");
-                        aPagar = Valor.ALQUILER_TRANSPORTE * n; // 250.000€ por cada transporte
-                        System.out.printf("El jugador posee %d casillas de transporte. Alquiler: %,.0f€\n", n, aPagar);
+                        // CORRECCIÓN: Siempre 250.000€ según especificación
+                        aPagar = Valor.ALQUILER_TRANSPORTE;
+                        System.out.printf("Alquiler de transporte: %,.0f€\n", aPagar);
                         break;
                     }
 
                     case "Servicio": {
-                        int n = Math.max(1, this.duenho.numeroCasillasTipo("Servicio"));
-                        int x; // x=4 si 1 servicio, x=10 si 2
-                        if(n == 1) x = 4;
-                        else x = 10;
+                        // CORRECCIÓN: Siempre multiplicador 4 según especificación
+                        int x = 4;
                         aPagar = (float) tirada * x * Valor.FACTOR_SERVICIO;
-                        System.out.printf("El jugador posee %d servicios. Multiplicador: %d. Alquiler: %,.0f€\n", n, x, aPagar);
+                        System.out.printf("Alquiler de servicio: dados(%d) * %d * %,.0f€ = %,.0f€\n",
+                                tirada, x, Valor.FACTOR_SERVICIO, aPagar);
                         break;
                     }
 
@@ -127,22 +126,24 @@ public class Casilla {
                         System.out.printf("Impuesto a pagar: %,.0f€\n", aPagar);
                         break;
 
-                    // Suerte, Comunidad, Especiales no generan pago aquí
+                    // Parking, Suerte, Comunidad, Especiales
+                    case "Parking":
+                        System.out.println("Has caído en Parking. Función de bote por implementar.");
+                        return true;
+
                     default:
                         return true;
                 }
 
-                // Si no hay nada que pagar, solvente
-                if (aPagar <= 0f) return true;
-
-                // Comprobación de solvencia: si no llega, NO tocar saldos y devolver false
+                // Comprobación de solvencia
                 if (actual.getFortuna() < aPagar) {
                     System.out.printf("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n",
                             aPagar, actual.getFortuna());
+                    System.out.println("Debes hipotecar propiedades o declararte en bancarrota.");
                     return false;
                 }
 
-                // Eres solvente: aplicar el pago y registrar gastos/cobros
+                // Aplicar pago
                 actual.restarFortuna(aPagar);
                 actual.sumarGastos(aPagar);
                 if (receptor != null) {
@@ -154,8 +155,18 @@ public class Casilla {
                 return true;
             }
 
-            // Si la casilla es del propio jugador o no requiere pago
-            System.out.println("No tiene nada que pagar.\n");
+            // Casillas especiales
+            switch (this.tipo) {
+                case "Parking":
+                    System.out.println("Has caído en Parking. Función de bote por implementar.");
+                    break;
+                //case "IrCarcel":
+                    //System.out.println("¡Has caído en Ir a la Cárcel!");
+                    //actual.encarcelar(((partida.Jugador) actual).getAvatar().getLugar().getTablero().getPosiciones());
+                    //break;
+                default:
+                    System.out.println("No tiene nada que pagar.\n");
+            }
             return true;
 
         } else {

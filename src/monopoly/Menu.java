@@ -78,7 +78,7 @@ public class Menu {
         }
 
         scanner.close();
-        System.out.println("Juego terminado");;
+        System.out.println("Juego terminado");
     }
 
 
@@ -257,23 +257,23 @@ public class Menu {
             return;
         }
 
-        for (ArrayList<Casilla> lado : tablero.getPosiciones()) {
-            for (Casilla c : lado) {
-                if (c.getNombre().equalsIgnoreCase(nombre)) {
-                    System.out.println("{");
-                    System.out.println("    nombre: " + casilla.getNombre() + ",");
-                    System.out.println("    tipo: " + casilla.getTipo() + ",");
-                    System.out.println("    valor: " + casilla.getValor() + ",");
-                    System.out.println("    propietario: " + (casilla.getDuenho() != null ? casilla.getDuenho().getNombre() : "Ninguno") + ",");
-                    System.out.println("    impuestos: " + (casilla.getTipo().equals("Impuesto") ? casilla.getImpuesto() : "N/A") + ",");
-                    System.out.println("    hipoteca: " + (casilla.getTipo().equals("Solar") || casilla.getTipo().equals("Transporte") || casilla.getTipo().equals("Servicio") ? casilla.getHipoteca() : "N/A") + ",");
-                    System.out.println("    grupo: " + (casilla.getTipo().equals("Solar") && casilla.getGrupo() != null ? casilla.getGrupo().getColorGrupo() : "N/A") + ",");
-                    System.out.println("    avatares: " + casilla.getAvatares());
-                    System.out.println("}");
-                    return;
-                }
-            }
+        System.out.println("{");
+        System.out.println("    nombre: " + casilla.getNombre() + ",");
+        System.out.println("    tipo: " + casilla.getTipo() + ",");
+
+        // Mostrar información especial para Parking
+        if (casilla.getNombre().equals("Parking")) {
+            System.out.println("    bote: " + String.format("%,.0f", tablero.getBoteParking()) + "€,");
+        } else {
+            System.out.println("    valor: " + casilla.getValor() + ",");
         }
+
+        System.out.println("    propietario: " + (casilla.getDuenho() != null ? casilla.getDuenho().getNombre() : "Ninguno") + ",");
+        System.out.println("    impuestos: " + (casilla.getTipo().equals("Impuesto") ? casilla.getImpuesto() : "N/A") + ",");
+        System.out.println("    hipoteca: " + (casilla.getTipo().equals("Solar") || casilla.getTipo().equals("Transporte") || casilla.getTipo().equals("Servicio") ? casilla.getHipoteca() : "N/A") + ",");
+        System.out.println("    grupo: " + (casilla.getTipo().equals("Solar") && casilla.getGrupo() != null ? casilla.getGrupo().getColorGrupo() : "N/A") + ",");
+        System.out.println("    avatares: " + casilla.getAvatares());
+        System.out.println("}");
     }
 
     //Método que ejecuta todas las acciones relacionadas con el comando 'lanzar dados'.
@@ -301,20 +301,35 @@ public class Menu {
 
         // EVALUAR LA CASILLA DESPUÉS DEL MOVIMIENTO
         Casilla casillaActual = actual.getAvatar().getLugar();
-        solvente = casillaActual.evaluarCasilla(actual, banca, suma);
 
-
-
-
-        if (valorDado1 == valorDado2) {
-            if (lanzamientos == 3) {
-                System.out.println("Tercer doble consecutivo. El avatar va a la cárcel.");
-                actual.encarcelar(tablero.getPosiciones());
-            } else {
-                System.out.println("Dados dobles. Puedes lanzar de nuevo.");
-            }
+        // Manejar caso especial "IrCarcel" antes de evaluarCasilla
+        if (casillaActual.getNombre().equals("IrCarcel")) {
+            System.out.println("¡Has caído en Ir a la Cárcel!");
+            actual.encarcelar(tablero.getPosiciones());
+            solvente = true;
+        } else if (casillaActual.getNombre().equals("Parking")) {
+            System.out.println("¡Has caído en Parking!");
+            float boteGanado = tablero.reclamarBote(actual);
+            solvente = true;
         } else {
-            lanzamientos = 0;
+            // Para impuestos, redirigir al bote del Parking
+            if (casillaActual.getTipo().equals("Impuesto")) {
+                solvente = procesarImpuesto(actual, casillaActual);
+            } else {
+                // Evaluar otros tipos de casillas normalmente
+                solvente = casillaActual.evaluarCasilla(actual, banca, suma);
+            }
+
+            if (valorDado1 == valorDado2) {
+                if (lanzamientos == 3) {
+                    System.out.println("Tercer doble consecutivo. El avatar va a la cárcel.");
+                    actual.encarcelar(tablero.getPosiciones());
+                } else {
+                    System.out.println("Dados dobles. Puedes lanzar de nuevo.");
+                }
+            } else {
+                lanzamientos = 0;
+            }
         }
     }
 
@@ -517,6 +532,31 @@ public class Menu {
         } catch (NumberFormatException e) {
             System.out.println("Error: Los valores deben ser números enteros (ej: forzar dados 3,4)");
         }
+    }
+
+    // Método para procesar pagos de impuestos (van al bote del Parking)
+    private boolean procesarImpuesto(Jugador jugador, Casilla casillaImpuesto) {
+        float impuesto = casillaImpuesto.getImpuesto();
+
+        System.out.printf("Impuesto a pagar: %,.0f€\n", impuesto);
+
+        // Verificar si el jugador tiene suficiente dinero
+        if (jugador.getFortuna() < impuesto) {
+            System.out.printf("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n", impuesto, jugador.getFortuna());
+            System.out.println("Debes hipotecar propiedades o declararte en bancarrota.");
+            return false;
+        }
+
+        // El jugador paga el impuesto
+        jugador.restarFortuna(impuesto);
+        jugador.sumarGastos(impuesto);
+
+        // El dinero va al bote del Parking en lugar de a la banca
+        tablero.añadirAlBote(impuesto);
+
+        System.out.printf("%s ha pagado %,.0f€ de impuestos al bote del Parking\n",
+                jugador.getNombre(), impuesto);
+        return true;
     }
 }
 
