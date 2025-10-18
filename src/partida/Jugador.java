@@ -29,9 +29,9 @@ public class Jugador {
     }
 
     /*Constructor principal. Requiere parámetros:
-    * Nombre del jugador, tipo del avatar que tendrá, casilla en la que empezará y ArrayList de
-    * avatares creados (usado para dos propósitos: evitar que dos jugadores tengan el mismo nombre y
-    * que dos avatares tengan mismo ID). Desde este constructor también se crea el avatar.
+     * Nombre del jugador, tipo del avatar que tendrá, casilla en la que empezará y ArrayList de
+     * avatares creados (usado para dos propósitos: evitar que dos jugadores tengan el mismo nombre y
+     * que dos avatares tengan mismo ID). Desde este constructor también se crea el avatar.
      */
     public Jugador(String nombre, String tipoAvatar, Casilla inicio, ArrayList<Avatar> avCreados) {
         this.nombre = nombre;
@@ -76,19 +76,23 @@ public class Jugador {
         this.fortuna -= valor;
     }
 
-    /*Método para establecer al jugador en la cárcel. 
-    * Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).*/
+    /*Método para establecer al jugador en la cárcel.
+     * Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).*/
     public void encarcelar(ArrayList<ArrayList<Casilla>> pos) {
         this.enCarcel = true;
         this.tiradasCarcel = 0;
+
+        // Buscar la casilla de la cárcel y mover el avatar allí
         for(ArrayList<Casilla> lado : pos) {
             for(Casilla cas : lado) {
-                if(cas.getTipo().equals("Cárcel")) {
-                    this.avatar.moverAvatar(cas);
+                if(cas.getTipo().equals("Carcel")) { // Corregido: sin tilde
+                    this.avatar.moveravatar(cas);
+                    System.out.println(this.nombre + " ha sido enviado a la cárcel.");
                     return;
                 }
             }
         }
+        System.out.println("Error: No se pudo encontrar la casilla de la cárcel.");
     }
 
     /*Método para contar cuántas casillas posee un jugador de un tipo determinado
@@ -103,6 +107,29 @@ public class Jugador {
             }
         }
         return contador;
+    }
+
+    /**
+     * Método para que un jugador salga de la cárcel pagando 500.000€
+     * @return true si pudo salir, false si no pudo (no está en cárcel o no tiene dinero)
+     */
+    public boolean salirDeCarcel() {
+        if (!this.enCarcel) {
+            System.out.println("El jugador no está en la cárcel.");
+            return false;
+        }
+
+        if (this.fortuna >= Valor.SALIR_CARCEL) {
+            this.restarFortuna(Valor.SALIR_CARCEL);
+            this.sumarGastos(Valor.SALIR_CARCEL);
+            this.enCarcel = false;
+            this.tiradasCarcel = 0;
+            System.out.println(this.nombre + " paga " + Valor.SALIR_CARCEL + "€ para salir de la cárcel.");
+            return true;
+        } else {
+            System.out.println(this.nombre + " no tiene suficiente dinero para salir de la cárcel.");
+            return false;
+        }
     }
 
     //Getters y setters:
