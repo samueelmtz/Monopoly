@@ -46,7 +46,7 @@ public class Menu {
         while (true) {
             try {
                 // Mostrar prompt con comandos disponibles
-                System.out.print("[crear|lanzar|describir|listar|comprar|salir|acabar|tablero|ayuda] > ");
+                System.out.print("[crear jugador|jugador|listar jugadores|lanzar dados|acabar turno|salir cárcel|describir casilla|describir jugador|comprar|listar|salir|ver tablero|ayuda] > ");
                 String comando = scanner.nextLine().trim();
 
                 // Salir del juego
@@ -69,7 +69,7 @@ public class Menu {
     }
 
 
-    /*Método que interpreta el comando introducido y toma la accion correspondiente.
+    /*Metodo que interpreta el comando introducido y toma la accion correspondiente.
      * Parámetro: cadena de caracteres (el comando).
      */
     private void analizarComando(String comando) {
@@ -157,8 +157,6 @@ public class Menu {
 
     /*Método que realiza las acciones asociadas al comando 'describir jugador'.
      * Parámetro: comando introducido*/
-
-
     public void descJugador(String[] partes) {
         String nombreJugador = partes[2];
         for (Jugador jugador : jugadores) {
@@ -280,18 +278,18 @@ public class Menu {
     }
 
 
-    //Método que ejecuta todas las acciones relacionadas con el comando 'salir carcel'.
+    //Metodo que ejecuta todas las acciones relacionadas con el comando 'salir carcel'.
 
     private void salirCarcel() {
         Jugador jugadorActual = jugadores.get(turno);
-        if (jugadorActual.salirCarcel()) {
+        if(jugadorActual.salirCarcel()) {
             System.out.println(jugadorActual.getNombre() + " paga 500.000€ y sale de la cárcel. Puede lanzar los datos.");
         } else {
             System.out.println("No se pudo salir de la cárcel. Asegúrate de que estás en la cárcel y tienes suficiente dinero.");
         }
     }
 
-    // Método que realiza las acciones asociadas al comando 'listar enventa'.
+    // Metodo que realiza las acciones asociadas al comando 'listar enventa'.
     private void listarVenta() {
         System.out.println("Propiedades en venta:");
 
