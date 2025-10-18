@@ -18,24 +18,6 @@ public class Menu {
     private boolean tirado; //Booleano para comprobar si el jugador que tiene el turno ha tirado o no.
     private boolean solvente; //Booleano para comprobar si el jugador que tiene el turno es solvente, es decir, si ha pagado sus deudas.
 
-    private void mostrarTablero() {
-        System.out.println("=== ESTADO DEL TABLERO ===");
-        for (ArrayList<Casilla> lado : tablero.getPosiciones()) {
-            for (Casilla casilla : lado) {
-                System.out.print(casilla.getNombre() + " (Pos " + casilla.getPosicion() + ")");
-                if (!casilla.getAvatares().isEmpty()) {
-                    System.out.print(" [Avatares: ");
-                    for (Avatar avatar : casilla.getAvatares()) {
-                        System.out.print(avatar.getId() + " ");
-                    }
-                    System.out.print("]");
-                }
-                System.out.println();
-            }
-            System.out.println("---");
-        }
-    }
-
 
     // Método para inciar una partida: crea los jugadores y avatares.
     public void iniciarPartida() {
@@ -214,19 +196,21 @@ public class Menu {
             return;
         }
 
-        for (Casilla c : tablero.getCasillas()) {
-            if (casilla.getNombre().equalsIgnoreCase(nombre)) {
-                System.out.println("{");
-                System.out.println("    nombre: " + casilla.getNombre() + ",");
-                System.out.println("    tipo: " + casilla.getTipo() + ",");
-                System.out.println("    valor: " + casilla.getValor() + ",");
-                System.out.println("    propietario: " + (casilla.getDuenho() != null ? casilla.getDuenho().getNombre() : "Ninguno") + ",");
-                System.out.println("    impuestos: " + (casilla.getTipo().equals("Impuesto") ? casilla.getImpuesto() : "N/A") + ",");
-                System.out.println("    hipoteca: " + (casilla.getTipo().equals("Solar") || casilla.getTipo().equals("Transporte") || casilla.getTipo().equals("Servicio") ? casilla.getHipoteca() : "N/A") + ",");
-                System.out.println("    grupo: " + (casilla.getTipo().equals("Solar") && casilla.getGrupo() != null ? casilla.getGrupo().getColorGrupo() : "N/A") + ",");
-                System.out.println("    avatares: " + casilla.getAvatares());
-                System.out.println("}");
-                return;
+        for (ArrayList<Casilla> lado : tablero.getPosiciones()) {
+            for (Casilla c : lado) {
+                if (c.getNombre().equalsIgnoreCase(nombre)) {
+                    System.out.println("{");
+                    System.out.println("    nombre: " + casilla.getNombre() + ",");
+                    System.out.println("    tipo: " + casilla.getTipo() + ",");
+                    System.out.println("    valor: " + casilla.getValor() + ",");
+                    System.out.println("    propietario: " + (casilla.getDuenho() != null ? casilla.getDuenho().getNombre() : "Ninguno") + ",");
+                    System.out.println("    impuestos: " + (casilla.getTipo().equals("Impuesto") ? casilla.getImpuesto() : "N/A") + ",");
+                    System.out.println("    hipoteca: " + (casilla.getTipo().equals("Solar") || casilla.getTipo().equals("Transporte") || casilla.getTipo().equals("Servicio") ? casilla.getHipoteca() : "N/A") + ",");
+                    System.out.println("    grupo: " + (casilla.getTipo().equals("Solar") && casilla.getGrupo() != null ? casilla.getGrupo().getColorGrupo() : "N/A") + ",");
+                    System.out.println("    avatares: " + casilla.getAvatares());
+                    System.out.println("}");
+                    return;
+                }
             }
         }
     }
@@ -302,8 +286,34 @@ public class Menu {
 
     // Método que realiza las acciones asociadas al comando 'listar enventa'.
     private void listarVenta() {
-        System.out.println(tablero.listarPropiedadesEnVenta());
+        System.out.println("Propiedades en venta:");
+
+        boolean hayPropiedadesEnVenta = false;
+
+        for (ArrayList<Casilla> lado : tablero.getPosiciones()) {
+            for (Casilla casilla : lado) {
+                // Verificar si la casilla es comprable y pertenece a la banca
+                if (casilla.esTipoComprable() && casilla.getDuenho() == banca) {
+                    hayPropiedadesEnVenta = true;
+                    System.out.println("{");
+                    System.out.println("    tipo: " + casilla.getTipo() + ",");
+                    System.out.println("    nombre: " + casilla.getNombre() + ",");
+
+                    if (casilla.getTipo().equals("Solar") && casilla.getGrupo() != null) {
+                        System.out.println("    grupo: " + casilla.getGrupo().getColorGrupo() + ",");
+                    }
+
+                    System.out.println("    valor: " + String.format("%,.0f", casilla.getValor()) + "€");
+                    System.out.println("}");
+                }
+            }
+        }
+
+        if (!hayPropiedadesEnVenta) {
+            System.out.println("No hay propiedades en venta en este momento.");
+        }
     }
+
 
     // Método que realiza las acciones asociadas al comando 'listar jugadores'.
     private void listarJugadores() {
