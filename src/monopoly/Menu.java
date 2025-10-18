@@ -75,6 +75,13 @@ public class Menu {
     private void analizarComando(String comando) {
         String[] comandos = comando.split(" ");
         switch (comandos[0]) {
+            case "crear":
+                if (comandos.length >= 4 && comandos[1].equals("jugador")) {
+                    crearJugador(comandos[2], comandos[3]); // nombre, tipoAvatar
+                } else {
+                    System.out.println("Comando incorrecto. Uso: crear jugador <nombre> <tipo_avatar>");
+                }
+                break;
             case "describir":
                 if (comandos.length < 2) {
                     System.out.println("Comando incompleto. Uso: describir <jugador|avatar|nombre_casilla> [ID|nombre]");
@@ -347,6 +354,41 @@ public class Menu {
 
         Jugador siguienteJugador = jugadores.get(turno);
         System.out.println("El jugador actual es " + siguienteJugador.getNombre() + ".");
+    }
+
+    private void crearJugador(String nombre, String tipoAvatar) {
+        // Verificar si el jugador ya existe
+        for (Jugador jugador : jugadores) {
+            if (jugador.getNombre().equalsIgnoreCase(nombre)) {
+                System.out.println("Error: Ya existe un jugador con el nombre '" + nombre + "'");
+                return;
+            }
+        }
+
+        // Encontrar la casilla de salida
+        Casilla salida = tablero.encontrar_casilla("Salida");
+        if (salida == null) {
+            System.out.println("Error: No se pudo encontrar la casilla de Salida");
+            return;
+        }
+
+        try {
+            // Crear el nuevo jugador
+            Jugador nuevoJugador = new Jugador(nombre, tipoAvatar, salida, avatares);
+            jugadores.add(nuevoJugador);
+
+            // Mostrar la información como en el PDF
+            System.out.println("{");
+            System.out.println("    nombre: " + nombre + ",");
+            System.out.println("    avatar: " + nuevoJugador.getAvatar().getId());
+            System.out.println("}");
+
+            // Mostrar el tablero actualizado
+            tablero.mostrarTablero();
+
+        } catch (Exception e) {
+            System.out.println("Error al crear el jugador: " + e.getMessage());
+        }
     }
 }
 
