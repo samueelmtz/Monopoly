@@ -26,16 +26,15 @@ public class Menu {
         jugadores = new ArrayList<>();
         avatares = new ArrayList<>();
 
+        // Crear la banca
+        banca = new Jugador(); // null porque no tiene avatar
+
         // Inicializar tablero
         tablero = new Tablero(banca);
 
         // Inicializar dados
         dado1 = new Dado();
         dado2 = new Dado();
-
-        // Crear la banca
-        banca = new Jugador(); // null porque no tiene avatar
-
 
         // Variables de control de turno
         turno = 0;

@@ -169,23 +169,32 @@ public class Casilla {
     public void comprarCasilla(Jugador solicitante, Jugador banca) {
         if(this.esTipoComprable()) { //Comprobar si la casilla es de un tipo que se puede comprar
             if(solicitante.getAvatar().getLugar()==this) { //Verificar que el jugador está sobre la casilla
-                if(this.duenho==banca) { //Comprobar que pertenece a la banca
+                // Verificar si pertenece a la banca (dueño es null o es la banca)
+                if(this.duenho == null || this.duenho == banca || this.duenho.getNombre().equals("Banca")) {
                     if (solicitante.getFortuna()>=this.valor) { //Verificar que se tiene el saldo suficiente para pagarla
                         solicitante.restarFortuna(this.valor);
                         solicitante.sumarGastos(this.valor);
-                        banca.eliminarPropiedad(this);
+
+                        // Si la casilla tenía dueño anterior (banca), eliminarla de sus propiedades
+                        if(this.duenho != null && this.duenho.getNombre().equals("Banca")) {
+                            this.duenho.eliminarPropiedad(this);
+                        }
+
                         solicitante.anhadirPropiedad(this);
-                        this.duenho=solicitante;
+                        this.duenho = solicitante;
 
                         System.out.printf("%s ha comprado la propiedad %s por el precio de %,.0f€\n",
                                 solicitante.getNombre(), this.nombre, this.valor);
+                        System.out.printf("Fortuna actual de %s: %,.0f€\n",
+                                solicitante.getNombre(), solicitante.getFortuna());
                     }
                     else {
-                        System.out.println("No tienes dinero para comprar esta casilla.\n");
+                        System.out.printf("No tienes dinero para comprar esta casilla. Necesitas %,.0f€ pero tienes %,.0f€\n",
+                                this.valor, solicitante.getFortuna());
                     }
                 }
                 else {
-                    System.out.println("Esta casilla no está en venta.\n");
+                    System.out.println("Esta casilla no está en venta. Pertenece a: " + this.duenho.getNombre());
                 }
             }
             else {
