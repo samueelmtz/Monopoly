@@ -2,7 +2,7 @@ package monopoly;
 
 import partida.*;
 import java.util.ArrayList;
-import java.util.Math
+import java.lang.Math;
 
 public class Casilla {
 
@@ -59,14 +59,14 @@ public class Casilla {
         this.avatares = new ArrayList<>();
     }
 
-    //Método utilizado para añadir un avatar al array de avatares en casilla.
-    public void anhadirAvatar(Avatar av) {
-        this.avatares.add(av);
+    //Método utilizado para eliminar un avatar al array de avatares en casilla.
+    public void eliminarAvatar(Avatar avatar){
+        this.avatares.remove(avatar);
     }
 
-    //Método utilizado para eliminar un avatar del array de avatares en casilla.
-    public void eliminarAvatar(Avatar av) {
-        this.avatares.remove(av);
+    //Método utilizado para añadir un avatar del array de avatares en casilla.
+    public void anhadirAvatar(Avatar avatar){
+        this.avatares.add(avatar);
     }
 
     /*Método para evaluar qué hacer en una casilla concreta. Parámetros:
@@ -116,7 +116,7 @@ public class Casilla {
                     }
                     int n = Math.max(1, this.duenho.numeroCasillasTipo("Servicio"));
                     int x; // x=4 si 1 servicio, x=10 si 2
-                    if(n = 1) x = 4;
+                    if(n == 1) x = 4;
                     else x = 10;
                     aPagar = (float) tirada * x * this.impuesto;
                     receptor = this.duenho;
@@ -200,7 +200,7 @@ public class Casilla {
 
     /*Método para mostrar información sobre una casilla.
     * Devuelve una cadena con información específica de cada tipo de casilla.*/
-    public String infoCasilla() {
+    public void infoCasilla() {
         // Cadena con la información que queremos devolver
         String info = "\n";
 
@@ -251,9 +251,9 @@ public class Casilla {
     /* Método para mostrar información de una casilla en venta.
      * Valor devuelto: texto con esa información.
      */
-    public String casEnVenta() {
+    public void casEnVenta() {
         if(this.duenho == null || this.duenho.getNombre().equals("Banca")){
-            System.out.println("La casilla " + this.nombre "está en venta por el precio de " + this.valor "€\n");
+            System.out.println("La casilla " + this.nombre + " está en venta por el precio de " + this.valor + "€\n");
         }
         else{
             System.out.println("La casilla ya está vendida o no está disponible.\n");
@@ -311,6 +311,17 @@ public class Casilla {
 
     public void setHipoteca(float hipoteca){
         this.hipoteca = hipoteca;
+    }
+
+    public Grupo getGrupo() {
+        return grupo;
+    }
+    public void setGrupo(Grupo grupo){
+        this.grupo = grupo;
+    }
+
+    public ArrayList<Avatar> getAvatares() {
+        return avatares;
     }
 }
 
