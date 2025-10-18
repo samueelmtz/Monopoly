@@ -26,16 +26,15 @@ public class Menu {
         jugadores = new ArrayList<>();
         avatares = new ArrayList<>();
 
+        // Crear la banca
+        banca = new Jugador(); // null porque no tiene avatar
+
         // Inicializar tablero
         tablero = new Tablero(banca);
 
         // Inicializar dados
         dado1 = new Dado();
         dado2 = new Dado();
-
-        // Crear la banca
-        banca = new Jugador(); // null porque no tiene avatar
-
 
         // Variables de control de turno
         turno = 0;
@@ -212,10 +211,21 @@ public class Menu {
                 System.out.println("{");
                 System.out.println("    nombre: " + jugador.getNombre() + ",");
                 System.out.println("    avatar: " + jugador.getAvatar().getId() + ",");
-                System.out.println("    fortuna: " + jugador.getFortuna() + ",");
-                System.out.println("    propiedades: " + jugador.getPropiedades() + ",");
-                //System.out.println("    hipotecas: " + jugador.getHipotecas() + ","); aun no se construyeron las hipotecas y los edificios asi que no se pueden mostrar
-                //System.out.println("    edificios: " + jugador.getEdificios());
+                System.out.println("    fortuna: " + String.format("%,.0f", jugador.getFortuna()) + ",");
+
+                // Mostrar nombres de propiedades en lugar de objetos
+                System.out.print("    propiedades: [");
+                ArrayList<Casilla> propiedades = jugador.getPropiedades();
+                for (int i = 0; i < propiedades.size(); i++) {
+                    System.out.print(propiedades.get(i).getNombre());
+                    if (i < propiedades.size() - 1) {
+                        System.out.print(", ");
+                    }
+                }
+                System.out.println("],");
+
+                //System.out.println("    hipotecas: " + jugador.getHipotecas() + ","); // aun no se construyeron las hipotecas
+                //System.out.println("    edificios: " + jugador.getEdificios()); // aun no se construyeron los edificios
                 System.out.println("}");
                 return;
             }
@@ -374,8 +384,19 @@ public class Menu {
             System.out.println("{");
             System.out.println("    nombre: " + jugador.getNombre() + ",");
             System.out.println("    avatar: " + jugador.getAvatar().getId() + ",");
-            System.out.println("    fortuna: " + jugador.getFortuna() + ",");
-            System.out.println("    propiedades: " + jugador.getPropiedades() + ",");
+            System.out.println("    fortuna: " + String.format("%,.0f", jugador.getFortuna()) + ",");
+
+            // Mostrar nombres de propiedades en lugar de objetos
+            System.out.print("    propiedades: [");
+            ArrayList<Casilla> propiedades = jugador.getPropiedades();
+            for (int i = 0; i < propiedades.size(); i++) {
+                System.out.print(propiedades.get(i).getNombre());
+                if (i < propiedades.size() - 1) {
+                    System.out.print(", ");
+                }
+            }
+            System.out.println("],");
+
             //System.out.println("    hipotecas: " + jugador.getHipotecas() + ",");
             //System.out.println("    edificios: " + jugador.getEdificios());
             System.out.println("}");
