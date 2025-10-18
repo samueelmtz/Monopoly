@@ -96,7 +96,7 @@ public class Menu {
                 }
                 break;
             case "Jugador":
-                if (comandos.length = 1 && comandos[1].equals("jugador")) {
+                if (comandos.length == 1) {
                     turnoJugador();
                 } else{
                     System.out.println("Comando incorrecto. Uso: jugador");
