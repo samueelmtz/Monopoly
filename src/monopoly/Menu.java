@@ -51,6 +51,7 @@ public class Menu {
                 System.out.println("> turno");
                 System.out.println("> listar jugadores");
                 System.out.println("> lanzar dados");
+                System.out.println("> forzar dados");
                 System.out.println("> acabar turno");
                 System.out.println("> describir casilla");
                 System.out.println("> describir jugador");
@@ -131,6 +132,14 @@ public class Menu {
                     lanzarDados();
                 } else {
                     System.out.println("Comando incorrecto. Uso: lanzar dados");
+                }
+                break;
+
+            case "forzar":
+                if (comandos.length == 3 && comandos[1].equals("dados")) {
+                    forzarDados(comandos[2]);
+                } else {
+                    System.out.println("Comando incorrecto. Uso: forzar dados <valor1,valor2>");
                 }
                 break;
 
@@ -450,7 +459,49 @@ public class Menu {
         System.out.println("avatar: " + avatarId);
         System.out.println("}");
     }
+
+    private void forzarDados(String valores) {
+        System.out.println("DEBUG: forzarDados llamado con: '" + valores + "'");
+
+        try {
+            String[] valoresArray = valores.split(",");
+            System.out.println("DEBUG: valoresArray length: " + valoresArray.length);
+
+            if (valoresArray.length != 2) {
+                System.out.println("Error: Debes especificar dos valores separados por coma (ej: 3,4)");
+                return;
+            }
+
+            int valor1 = Integer.parseInt(valoresArray[0].trim());
+            int valor2 = Integer.parseInt(valoresArray[1].trim());
+            System.out.println("DEBUG: valores parseados: " + valor1 + ", " + valor2);
+
+            // Validar que los valores estén entre 1 y 6
+            if (valor1 < 1 || valor1 > 6 || valor2 < 1 || valor2 > 6) {
+                System.out.println("Error: Los valores de los dados deben estar entre 1 y 6");
+                return;
+            }
+
+            // Verificar que los dados no sean null
+            if (dado1 == null || dado2 == null) {
+                System.out.println("ERROR: Los dados no están inicializados");
+                return;
+            }
+
+            // Forzar los dados
+            dado1.forzarDado(valor1);
+            dado2.forzarDado(valor2);
+
+            System.out.println("Dados forzados a: " + valor1 + " y " + valor2);
+            System.out.println("El próximo lanzamiento saldrá: " + valor1 + " y " + valor2);
+
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Los valores deben ser números enteros (ej: forzar dados 3,4)");
+        }
+    }
 }
+
+
 
 
 
