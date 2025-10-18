@@ -88,14 +88,14 @@ public class Menu {
     private void analizarComando(String comando) {
         String[] comandos = comando.split(" ");
         switch (comandos[0]) {
-            case "Crear jugador":
+            case "crear jugador":
                 if (comandos.length >= 4 && comandos[1].equals("jugador")) {
                     crearJugador(comandos[2], comandos[3]); // nombre, tipoAvatar
                 } else {
                     System.out.println("Comando incorrecto. Uso: crear jugador <nombre> <tipo_avatar>");
                 }
                 break;
-            case "Jugador":
+            case "jugador":
                 if (comandos.length == 1) {
                     turnoJugador();
                 } else{
