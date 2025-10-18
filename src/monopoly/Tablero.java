@@ -290,21 +290,25 @@ public class Tablero {
         // Mostrar avatares
         System.out.println(Valor.PURPLE + "\nAVATARES EN EL TABLERO:" + Valor.RESET);
         boolean hayAvatares = false;
+
+        // Recorrer todas las casillas del tablero
         for (ArrayList<Casilla> lado : posiciones) {
             for (Casilla casilla : lado) {
-                if (!casilla.getAvatares().isEmpty()) {
+                if (casilla != null && !casilla.getAvatares().isEmpty()) {
                     hayAvatares = true;
-                    System.out.print("• " + casilla.getNombre() + ": ");
+                    System.out.print("• " + casilla.getNombre() + " (Pos " + casilla.getPosicion() + "): ");
                     for (Avatar avatar : casilla.getAvatares()) {
-                        System.out.print(avatar.getId() + " ");
+                        System.out.print(avatar.getId() + "(" + avatar.getTipo() + ") ");
                     }
                     System.out.println();
                 }
             }
         }
+
         if (!hayAvatares) {
             System.out.println("No hay avatares en el tablero.");
         }
+
 
         System.out.println(Valor.CYAN + "========================================================================================================" + Valor.RESET);
     }
