@@ -46,7 +46,20 @@ public class Menu {
         while (true) {
             try {
                 // Mostrar prompt con comandos disponibles
-                System.out.print("[crear jugador|jugador|listar jugadores|lanzar dados|acabar turno|salir cárcel|describir casilla|describir jugador|comprar|listar|salir|ver tablero|ayuda] > ");
+                System.out.println("\uD83E\uDD11 ===== MENU MONOPOLY ===== \uD83E\uDD11\n");
+                System.out.println("> Crear Jugador");
+                System.out.println("> Jugador");
+                System.out.println("> Listar Jugadores");
+                System.out.println("> Lanzar dados");
+                System.out.println("> Acabar turno");
+                System.out.println("> Describir casilla");
+                System.out.println("> Describir jugador");
+                System.out.println("> Comprar");
+                System.out.println("> Listar enventa");
+                System.out.println("> Mostrar tablero");
+                System.out.println("> Salir");
+                System.out.println("> Ayuda\n");
+                System.out.println("Acción a ejecutar: ");
                 String comando = scanner.nextLine().trim();
 
                 // Salir del juego
