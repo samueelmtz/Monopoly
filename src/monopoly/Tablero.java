@@ -128,7 +128,7 @@ public class Tablero {
         ladoOeste.add(new Casilla("Carcel", "Carcel", 31, banca));
         ladoOeste.add(new Casilla("Solar20", "Solar", 32, 3200000, banca)); // 3.200.000€
         ladoOeste.add(new Casilla("Solar21", "Solar", 33, 3500000, banca)); // 3.500.000€
-        ladoOeste.add(new Casilla("Serv3", "Servicios", 34, 500000, banca)); // 500.000€
+        ladoOeste.add(new Casilla("Serv1", "Servicios", 34, 500000, banca)); // 500.000€
         ladoOeste.add(new Casilla("Solar22", "Solar", 35, 4000000, banca)); // 4.000.000€
         ladoOeste.add(new Casilla("Trans4", "Transporte", 36, 500000, banca)); // 500.000€
         ladoOeste.add(new Casilla("Caja3", "Comunidad", 37, banca));
