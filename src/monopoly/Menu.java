@@ -46,9 +46,9 @@ public class Menu {
             try {
                 // Mostrar prompt con comandos disponibles
                 System.out.println("\uD83E\uDD11 ===== MENU MONOPOLY ===== \uD83E\uDD11\n");
-                System.out.println("> crear jugadores");
-                System.out.println("> jugador");
-                System.out.println("> listar jugador");
+                System.out.println("> crear jugador");
+                System.out.println("> turno");
+                System.out.println("> listar jugadores");
                 System.out.println("> lanzar dados");
                 System.out.println("> forzar dados");
                 System.out.println("> acabar turno");
@@ -98,11 +98,11 @@ public class Menu {
                 }
                 break;
 
-            case "jugador":
+            case "turno":
                 if (comandos.length == 1) {
                     turnoJugador();
                 } else {
-                    System.out.println("Comando incorrecto. Uso: jugador");
+                    System.out.println("Comando incorrecto. Uso: turno");
                 }
                 break;
 

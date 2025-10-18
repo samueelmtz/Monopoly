@@ -108,23 +108,6 @@ public class Tablero {
         this.insertarLadoEste();
     }
 
-    //Método para insertar las casillas del lado norte.
-    private void insertarLadoNorte() {
-        ArrayList<Casilla> ladoNorte = this.posiciones.get(2);
-
-        // Posiciones 21-30
-        ladoNorte.add(new Casilla("Solar13", "Solar", 21, 2200000, banca)); // 2.200.000€
-        ladoNorte.add(new Casilla("Solar14", "Solar", 22, 2400000, banca)); // 2.400.000€
-        ladoNorte.add(new Casilla("Serv2", "Servicios", 23, 500000, banca)); // 500.000€
-        ladoNorte.add(new Casilla("Solar15", "Solar", 24, 2600000, banca)); // 2.600.000€
-        ladoNorte.add(new Casilla("Solar16", "Solar", 25, 2600000, banca)); // 2.600.000€
-        ladoNorte.add(new Casilla("Trans3", "Transporte", 26, 500000, banca)); // 500.000€
-        ladoNorte.add(new Casilla("Solar17", "Solar", 27, 2800000, banca)); // 2.800.000€
-        ladoNorte.add(new Casilla("Suerte3", "Suerte", 28, banca));
-        ladoNorte.add(new Casilla("Solar18", "Solar", 29, 3000000, banca)); // 3.000.000€
-        ladoNorte.add(new Casilla("Solar19", "Solar", 30, 3000000, banca)); // 3.000.000€
-    }
-
     //Método para insertar las casillas del lado sur.
     private void insertarLadoSur() {
 
@@ -143,39 +126,57 @@ public class Tablero {
         ladoSur.add(new Casilla("Solar5", "Solar", 10, 1200000, banca));  // 1.200.000€
     }
 
-    //Método que inserta casillas del lado oeste.
+    //Método que inserta las casillas del lado oeste.
     private void insertarLadoOeste() {
-        ArrayList<Casilla> ladoOeste = this.posiciones.get(3);
-
-        // Posiciones 31-40
-        ladoOeste.add(new Casilla("Carcel", "Carcel", 31, banca));
-        ladoOeste.add(new Casilla("Solar20", "Solar", 32, 3200000, banca)); // 3.200.000€
-        ladoOeste.add(new Casilla("Solar21", "Solar", 33, 3500000, banca)); // 3.500.000€
-        ladoOeste.add(new Casilla("Serv1", "Servicios", 34, 500000, banca)); // 500.000€
-        ladoOeste.add(new Casilla("Solar22", "Solar", 35, 4000000, banca)); // 4.000.000€
-        ladoOeste.add(new Casilla("Trans4", "Transporte", 36, 500000, banca)); // 500.000€
-        ladoOeste.add(new Casilla("Caja3", "Comunidad", 37, banca));
-        ladoOeste.add(new Casilla("Parking", "Parking", 38, banca));
-        ladoOeste.add(new Casilla("Imp2", "Impuesto", 39, 2000000, banca));
-        ladoOeste.add(new Casilla("IrCarcel", "IrCarcel", 40, banca));
-    }
-
-    //Método que inserta las casillas del lado este.
-    private void insertarLadoEste() {
-        ArrayList<Casilla> ladoEste = this.posiciones.get(1);
+        ArrayList<Casilla> ladoOeste = this.posiciones.get(1);
 
         // Posiciones 11-20
-        ladoEste.add(new Casilla("Solar6", "Solar", 11, 1400000, banca));  // 1.400.000€
-        ladoEste.add(new Casilla("Trans2", "Transporte", 12, 500000, banca)); // 500.000€
-        ladoEste.add(new Casilla("Solar7", "Solar", 13, 1400000, banca));  // 1.400.000€
-        ladoEste.add(new Casilla("Solar8", "Solar", 14, 1600000, banca));  // 1.600.000€
-        ladoEste.add(new Casilla("Solar9", "Solar", 15, 1800000, banca));  // 1.800.000€
-        ladoEste.add(new Casilla("Caja2", "Comunidad", 16, banca));
-        ladoEste.add(new Casilla("Solar10", "Solar", 17, 1800000, banca)); // 1.800.000€
-        ladoEste.add(new Casilla("Solar11", "Solar", 18, 2200000, banca)); // 2.200.000€
-        ladoEste.add(new Casilla("Suerte2", "Suerte", 19, banca));
-        ladoEste.add(new Casilla("Solar12", "Solar", 20, 2200000, banca)); // 2.200.000€
+        ladoOeste.add(new Casilla("Carcel", "Carcel", 11, banca)); //
+        ladoOeste.add(new Casilla("Solar6", "Solar", 12, 1400000, banca));
+        ladoOeste.add(new Casilla("Serv1", "Servicios", 13, 500000, banca));
+        ladoOeste.add(new Casilla("Solar7", "Solar", 14, 1400000, banca));
+        ladoOeste.add(new Casilla("Solar8", "Solar", 15, 1600000, banca));
+        ladoOeste.add(new Casilla("Trans2", "Transporte", 16, 500000 ,banca));
+        ladoOeste.add(new Casilla("Solar9", "Solar", 17, 1800000, banca));
+        ladoOeste.add(new Casilla("Caja2", "Comunidad", 18,  banca));
+        ladoOeste.add(new Casilla("Solar10", "Solar", 19, 1800000, banca));
+        ladoOeste.add(new Casilla("Solar11", "Solar", 20,2200000, banca));
     }
+
+    private void insertarLadoNorte() {
+        ArrayList<Casilla> ladoNorte = this.posiciones.get(2);
+
+        // Posiciones 21-30
+        ladoNorte.add(new Casilla("Parking", "Parking", 21, banca));
+        ladoNorte.add(new Casilla("Solar12", "Solar", 22, 2200000, banca));
+        ladoNorte.add(new Casilla("Suerte3", "Suerte", 23, banca));
+        ladoNorte.add(new Casilla("Solar13", "Solar", 24, 2200000, banca));
+        ladoNorte.add(new Casilla("Solar14", "Solar", 25, 2400000, banca));
+        ladoNorte.add(new Casilla("Trans3", "Transporte", 26, 500000, banca));
+        ladoNorte.add(new Casilla("Solar15", "Solar", 27, 2600000, banca));
+        ladoNorte.add(new Casilla("Solar16", "Solar", 28, 2600000, banca));
+        ladoNorte.add(new Casilla("Serv2", "Servicios", 29, 500000, banca));
+        ladoNorte.add(new Casilla("Solar17", "Solar", 30, 2800000, banca));
+    }
+
+
+    //Método que inserta casillas del lado este.
+    private void insertarLadoEste() {
+        ArrayList<Casilla> ladoEste = this.posiciones.get(3);
+
+        // Posiciones 31-40
+        ladoEste.add(new Casilla("IrCarcel", "IrCarcel", 31, banca));
+        ladoEste.add(new Casilla("Solar18", "Solar", 32, 3000000, banca)); // 3.200.000€
+        ladoEste.add(new Casilla("Solar19", "Solar", 33, 3000000, banca)); // 3.500.000€
+        ladoEste.add(new Casilla("Caja3", "Comunidad", 34, banca)); // 500.000€
+        ladoEste.add(new Casilla("Solar20", "Solar", 35, 3200000, banca)); // 4.000.000€
+        ladoEste.add(new Casilla("Trans4", "Transporte", 36, 500000, banca)); // 500.000€
+        ladoEste.add(new Casilla("Suerte2", "Suerte", 37, banca));
+        ladoEste.add(new Casilla("Solar21", "Solar", 38, 3500000, banca));
+        ladoEste.add(new Casilla("Imp2", "Impuesto", 39, 2000000, banca));
+        ladoEste.add(new Casilla("Solar22", "Solar", 40, 4000000, banca));
+    }
+
 
     // En Tablero.java - método para obtener un grupo por color
     public Grupo getGrupo(String color) {
