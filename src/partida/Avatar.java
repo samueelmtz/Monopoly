@@ -16,11 +16,6 @@ public class Avatar {
 
     //Constructor vacío
     public Avatar(String tipoAvatar, Casilla inicio, ArrayList<Avatar> avCreados) {
-        this.tipo = tipoAvatar;
-        this.lugar = inicio;
-        generarId(avCreados);
-        avCreados.add(this);
-        inicio.anhadirAvatar(this);
     }
 
     /*Constructor principal. Requiere éstos parámetros:
@@ -29,10 +24,13 @@ public class Avatar {
      */
     public Avatar(String tipo, Jugador jugador, Casilla lugar, ArrayList<Avatar> avCreados) {
         this.tipo = tipo;
-        this.jugador = jugador;
         this.lugar = lugar;
+        this.jugador = jugador;
         generarId(avCreados);
         avCreados.add(this);
+        if (lugar != null) {
+            lugar.anhadirAvatar(this);
+        }
     }
 
     //A continuación, tenemos otros métodos útiles para el desarrollo del juego.
