@@ -193,13 +193,53 @@ public class Tablero {
     }
     // En Tablero.java - añade este método
     // En Tablero.java - añade este método
+    // En Tablero.java - añade este método
     public void mostrarTablero() {
-        System.out.println(Valor.CYAN + "========================================== TABLERO DE MONOPOLY ==========================================" + Valor.RESET);
+        System.out.println(Valor.CYAN + "\n========================================== TABLERO DE MONOPOLY ==========================================" + Valor.RESET);
 
-        ArrayList<Casilla> ladoSur = posiciones.get(0);    // Posiciones 1-10
-        ArrayList<Casilla> ladoEste = posiciones.get(1);   // Posiciones 11-20
-        ArrayList<Casilla> ladoNorte = posiciones.get(2);  // Posiciones 21-30
-        ArrayList<Casilla> ladoOeste = posiciones.get(3);  // Posiciones 31-40
+        // Obtener todas las casillas organizadas como en la imagen
+        Casilla parking = encontrar_casilla("Parking");
+        Casilla solar12 = encontrar_casilla("Solar12");
+        Casilla suerte3 = encontrar_casilla("Suerte3");
+        Casilla solar13 = encontrar_casilla("Solar13");
+        Casilla solar14 = encontrar_casilla("Solar14");
+        Casilla trans3 = encontrar_casilla("Trans3");
+        Casilla solar15 = encontrar_casilla("Solar15");
+        Casilla solar16 = encontrar_casilla("Solar16");
+        Casilla serv2 = encontrar_casilla("Serv2");
+        Casilla solar17 = encontrar_casilla("Solar17");
+        Casilla irCarcel = encontrar_casilla("IrCarcel");
+
+        Casilla solar11 = encontrar_casilla("Solar11");
+        Casilla solar18 = encontrar_casilla("Solar18");
+        Casilla solar10 = encontrar_casilla("Solar10");
+        Casilla solar19 = encontrar_casilla("Solar19");
+        Casilla caja2 = encontrar_casilla("Caja2");
+        Casilla caja3 = encontrar_casilla("Caja3");
+        Casilla solar9 = encontrar_casilla("Solar9");
+        Casilla solar20 = encontrar_casilla("Solar20");
+        Casilla trans2 = encontrar_casilla("Trans2");
+        Casilla trans4 = encontrar_casilla("Trans4");
+        Casilla solar8 = encontrar_casilla("Solar8");
+        Casilla suerte2 = encontrar_casilla("Suerte2");
+        Casilla solar7 = encontrar_casilla("Solar7");
+        Casilla solar21 = encontrar_casilla("Solar21");
+        Casilla serv1 = encontrar_casilla("Serv1");
+        Casilla imp2 = encontrar_casilla("Imp2");
+        Casilla solar6 = encontrar_casilla("Solar6");
+        Casilla solar22 = encontrar_casilla("Solar22");
+
+        Casilla carcel = encontrar_casilla("Carcel");
+        Casilla solar5 = encontrar_casilla("Solar5");
+        Casilla solar4 = encontrar_casilla("Solar4");
+        Casilla suerte1 = encontrar_casilla("Suerte1");
+        Casilla solar3 = encontrar_casilla("Solar3");
+        Casilla trans1 = encontrar_casilla("Trans1");
+        Casilla imp1 = encontrar_casilla("Imp1");
+        Casilla solar2 = encontrar_casilla("Solar2");
+        Casilla caja1 = encontrar_casilla("Caja1");
+        Casilla solar1 = encontrar_casilla("Solar1");
+        Casilla salida = encontrar_casilla("Salida");
 
         // Mapeo de colores para los grupos
         java.util.Map<String, String> coloresGrupo = new java.util.HashMap<>();
@@ -238,69 +278,84 @@ public class Tablero {
         // Función para formatear el nombre de la casilla
         java.util.function.Function<Casilla, String> formatearNombre = (casilla) -> {
             String nombre = casilla.getNombre();
-            // Convertir nombres abreviados a nombres completos
             if (nombre.startsWith("Solar")) {
-                return nombre.replace("Solar", "Solar ");
+                return nombre.replace("Solar", "S");
             } else if (nombre.startsWith("Trans")) {
-                return nombre.replace("Trans", "Trans ");
+                return nombre.replace("Trans", "T");
             } else if (nombre.startsWith("Serv")) {
-                return nombre.replace("Serv", "Serv ");
+                return nombre.replace("Serv", "Serv");
             } else if (nombre.startsWith("Caja")) {
-                return "C.Comunidad";
+                return "C.Com";
             } else if (nombre.startsWith("Suerte")) {
                 return "Suerte";
             } else if (nombre.equals("IrCarcel")) {
-                return "Ir Cárcel";
+                return "IrCarcel";
+            } else if (nombre.equals("Parking")) {
+                return "Parking";
+            } else if (nombre.equals("Carcel")) {
+                return "Cárcel";
+            } else if (nombre.equals("Salida")) {
+                return "Salida";
+            } else if (nombre.startsWith("Imp")) {
+                return "Impuesto";
             }
             return nombre;
         };
 
-        // Mostrar lado norte (21-30) - de derecha a izquierda
+        // Mostrar fila superior (norte)
         System.out.println();
         System.out.print("     ");
-        for (int i = ladoNorte.size() - 1; i >= 0; i--) {
-            Casilla casilla = ladoNorte.get(i);
+        Casilla[] filaSuperior = {parking, solar12, suerte3, solar13, solar14, trans3, solar15, solar16, serv2, solar17, irCarcel};
+        for (Casilla casilla : filaSuperior) {
             String color = getColorCasilla.apply(casilla);
             String nombre = formatearNombre.apply(casilla);
-            System.out.print(color + String.format(" %-10s ", nombre) + Valor.RESET + " ");
+            System.out.print(color + String.format(" %-8s ", nombre) + Valor.RESET + " ");
         }
         System.out.println();
 
-        // Mostrar lados oeste y este con el centro
-        for (int i = 8; i >= 0; i--) {
-            // Lado oeste (posición 31-39)
-            Casilla casillaOeste = ladoOeste.get(i);
-            String colorOeste = getColorCasilla.apply(casillaOeste);
-            String nombreOeste = formatearNombre.apply(casillaOeste);
+        // Mostrar filas del medio (oeste y este)
+        Casilla[][] filasMedio = {
+                {solar11, solar18},
+                {solar10, solar19},
+                {caja2, caja3},
+                {solar9, solar20},
+                {trans2, trans4},
+                {solar8, suerte2},
+                {solar7, solar21},
+                {serv1, imp2},
+                {solar6, solar22}
+        };
 
-            // Lado este (posición 11-19) - en orden inverso
-            Casilla casillaEste = ladoEste.get(8 - i);
-            String colorEste = getColorCasilla.apply(casillaEste);
-            String nombreEste = formatearNombre.apply(casillaEste);
+        for (Casilla[] fila : filasMedio) {
+            System.out.print("     ");
+            String colorOeste = getColorCasilla.apply(fila[0]);
+            String nombreOeste = formatearNombre.apply(fila[0]);
+            String colorEste = getColorCasilla.apply(fila[1]);
+            String nombreEste = formatearNombre.apply(fila[1]);
 
-            System.out.print(colorOeste + String.format(" %-10s ", nombreOeste) + Valor.RESET);
-            System.out.print("     │     ");
-            System.out.println(colorEste + String.format(" %-10s ", nombreEste) + Valor.RESET);
+            System.out.print(colorOeste + String.format(" %-8s ", nombreOeste) + Valor.RESET);
+            System.out.print("     ".repeat(9)); // Espacio para el centro del tablero
+            System.out.println(colorEste + String.format(" %-8s ", nombreEste) + Valor.RESET);
         }
 
-        // Mostrar lado sur (1-10)
+        // Mostrar fila inferior (sur)
         System.out.print("     ");
-        for (int i = 0; i < ladoSur.size(); i++) {
-            Casilla casilla = ladoSur.get(i);
+        Casilla[] filaInferior = {carcel, solar5, solar4, suerte1, solar3, trans1, imp1, solar2, caja1, solar1, salida};
+        for (Casilla casilla : filaInferior) {
             String color = getColorCasilla.apply(casilla);
             String nombre = formatearNombre.apply(casilla);
-            System.out.print(color + String.format(" %-10s ", nombre) + Valor.RESET + " ");
+            System.out.print(color + String.format(" %-8s ", nombre) + Valor.RESET + " ");
         }
         System.out.println();
 
-        // Mostrar avatares en cada casilla
+        // Mostrar información de avatares
         System.out.println(Valor.PURPLE + "\nAVATARES EN EL TABLERO:" + Valor.RESET);
         boolean hayAvatares = false;
         for (ArrayList<Casilla> lado : posiciones) {
             for (Casilla casilla : lado) {
                 if (!casilla.getAvatares().isEmpty()) {
                     hayAvatares = true;
-                    System.out.print("• " + casilla.getNombre() + " (" + casilla.getPosicion() + "): ");
+                    System.out.print("• " + casilla.getNombre() + ": ");
                     for (Avatar avatar : casilla.getAvatares()) {
                         System.out.print(avatar.getId() + " ");
                     }
@@ -312,18 +367,9 @@ public class Tablero {
             System.out.println("No hay avatares en el tablero.");
         }
 
-        // Mostrar leyenda
-        System.out.println(Valor.CYAN + "\nLEYENDA DE COLORES:" + Valor.RESET);
-        System.out.println(Valor.BG_RED + Valor.BLACK + " Marrón " + Valor.RESET + " " +
-                Valor.BG_CYAN + Valor.BLACK + " Celeste " + Valor.RESET + " " +
-                Valor.BG_PURPLE + Valor.WHITE + " Púrpura " + Valor.RESET + " - Grupos de Solares");
-        System.out.println(Valor.BG_BLACK + Valor.WHITE + " Transportes " + Valor.RESET + " " +
-                Valor.BG_WHITE + Valor.BLACK + " Servicios " + Valor.RESET + " " +
-                Valor.BG_RED + Valor.WHITE + " Impuestos/Cárcel " + Valor.RESET);
-        System.out.println(Valor.BG_GREEN + Valor.WHITE + " Salida " + Valor.RESET + " " +
-                Valor.BG_GREEN + Valor.BLACK + " Parking " + Valor.RESET + " " +
-                Valor.BG_BLUE + Valor.WHITE + " Comunidad " + Valor.RESET + " " +
-                Valor.BG_YELLOW + Valor.BLACK + " Suerte " + Valor.RESET);
+        // Mostrar leyenda de colores
+        System.out.println(Valor.CYAN + "\nLEYENDA:" + Valor.RESET);
+        System.out.println("S = Solar | T = Transporte | Serv = Servicio | C.Com = Caja Comunidad");
         System.out.println(Valor.CYAN + "========================================================================================================" + Valor.RESET);
     }
 
