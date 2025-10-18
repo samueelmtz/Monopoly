@@ -104,6 +104,23 @@ public class Avatar {
     }
     //El id no necesita setter porque se le asigna un valor al crear el Avatar y no hay que modificarlo nunca
 
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo_avatar) {
+        switch(tipo_avatar) {
+            case "sombrero":
+            case "esfinge":
+            case "pelota":
+            case "coche":
+                this.tipo = tipo_avatar;
+                break;
+            default:
+                System.out.println(tipo_avatar + " no es un avatar permitido.\n");
+        }
+    }
+
     public Jugador getJugador() {
         return jugador;
     }
