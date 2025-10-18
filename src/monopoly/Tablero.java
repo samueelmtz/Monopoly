@@ -74,6 +74,11 @@ public class Tablero {
     //Método para crear todas las casillas del tablero. Formado a su vez por cuatro métodos (1/lado).
     private void generarCasillas() {
         this.posiciones = new ArrayList<ArrayList<Casilla>>();
+
+        for (int i = 0; i < 4; i++) {
+            this.posiciones.add(new ArrayList<Casilla>());
+        }
+
         this.insertarLadoSur();
         this.insertarLadoOeste();
         this.insertarLadoNorte();
