@@ -29,9 +29,9 @@ public class Jugador {
     }
 
     /*Constructor principal. Requiere parámetros:
-     * Nombre del jugador, tipo del avatar que tendrá, casilla en la que empezará y ArrayList de
-     * avatares creados (usado para dos propósitos: evitar que dos jugadores tengan el mismo nombre y
-     * que dos avatares tengan mismo ID). Desde este constructor también se crea el avatar.
+    * Nombre del jugador, tipo del avatar que tendrá, casilla en la que empezará y ArrayList de
+    * avatares creados (usado para dos propósitos: evitar que dos jugadores tengan el mismo nombre y
+    * que dos avatares tengan mismo ID). Desde este constructor también se crea el avatar.
      */
     public Jugador(String nombre, String tipoAvatar, Casilla inicio, ArrayList<Avatar> avCreados) {
         this.nombre = nombre;
@@ -45,57 +45,74 @@ public class Jugador {
     }
 
     //Otros métodos:
-    //Método para añadir una propiedad al jugador. Como parámetro, la casilla a añadir.
+    //Metodo para añadir una propiedad al jugador. Como parámetro, la casilla a añadir.
     public void anhadirPropiedad(Casilla casilla) {
-        propiedades.add(casilla);
+        if(!this.propiedades.contains(casilla)) {
+            propiedades.add(casilla);
+        }
     }
 
-    //Método para eliminar una propiedad del arraylist de propiedades de jugador.
+    //Metodo para eliminar una propiedad del arraylist de propiedades de jugador.
     public void eliminarPropiedad(Casilla casilla) {
-        propiedades.remove(casilla);
+        if(this.propiedades.contains(casilla)) {
+            propiedades.remove(casilla);
+        }
     }
 
-    //Método para añadir fortuna a un jugador
+    //Metodo para añadir fortuna a un jugador
     //Como parámetro se pide el valor a añadir.
     public void sumarFortuna(float valor) {
-
         this.fortuna += valor;
-
     }
 
-    //Método para restar fortuna a un jugador
+    //Metodo para restar fortuna a un jugador
     //Como parámetro se pide el valor a añadir.
     public void restarFortuna(float valor) {
         this.fortuna -= valor;
     }
 
-    //Método para sumar gastos a un jugador.
+    //Metodo para sumar gastos a un jugador.
     //Parámetro: valor a añadir a los gastos del jugador (será el precio de un solar, impuestos pagados...).
     public void sumarGastos(float valor) {
         this.gastos += valor;
-        this.fortuna -= valor;
     }
 
-    /*Método para establecer al jugador en la cárcel.
-     * Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).*/
+    /*Metodo para establecer al jugador en la cárcel.
+    * Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).*/
     public void encarcelar(ArrayList<ArrayList<Casilla>> pos) {
         this.enCarcel = true;
         this.tiradasCarcel = 0;
-
-        // Buscar la casilla de la cárcel y mover el avatar allí
         for(ArrayList<Casilla> lado : pos) {
             for(Casilla cas : lado) {
-                if(cas.getTipo().equals("Carcel")) { // Corregido: sin tilde
-                    this.avatar.moveravatar(cas);
-                    System.out.println(this.nombre + " ha sido enviado a la cárcel.");
+                if(cas.getTipo().equals("Cárcel")) {
+                    this.avatar.colocar(pos, cas.getPosicion());
+                    System.out.println(this.nombre + "ha sido enviado a la cárcel.\n");
                     return;
                 }
             }
         }
-        System.out.println("Error: No se pudo encontrar la casilla de la cárcel.");
     }
 
-    /*Método para contar cuántas casillas posee un jugador de un tipo determinado
+    public boolean salirCarcel() {
+        float PRECIO_SALIDA_CARCEL = 500000;
+        if (!this.enCarcel) {
+            System.out.println(this.nombre + " no está en la cárcel.");
+            return true; // ya libre
+        }
+        if (this.fortuna >= PRECIO_SALIDA_CARCEL) {
+            this.restarFortuna(PRECIO_SALIDA_CARCEL);
+            this.enCarcel = false;
+            this.tiradasCarcel = 0;
+            System.out.println(this.nombre + " ha pagado " + PRECIO_SALIDA_CARCEL + " para salir de la cárcel.");
+            return true;
+        } else {
+            System.out.println(this.nombre + " no tiene suficiente dinero para salir de la cárcel ("
+                    + this.fortuna + " < " + PRECIO_SALIDA_CARCEL + ").");
+            return false;
+        }
+    }
+
+    /*Metodo para contar cuántas casillas posee un jugador de un tipo determinado
      * Solo se usa para las propiedades de tipo Transportes de momento
      * @param tipo Tipo de propiedad
      */
@@ -107,29 +124,6 @@ public class Jugador {
             }
         }
         return contador;
-    }
-
-    /**
-     * Método para que un jugador salga de la cárcel pagando 500.000€
-     * @return true si pudo salir, false si no pudo (no está en cárcel o no tiene dinero)
-     */
-    public boolean salirDeCarcel() {
-        if (!this.enCarcel) {
-            System.out.println("El jugador no está en la cárcel.");
-            return false;
-        }
-
-        if (this.fortuna >= Valor.SALIR_CARCEL) {
-            this.restarFortuna(Valor.SALIR_CARCEL);
-            this.sumarGastos(Valor.SALIR_CARCEL);
-            this.enCarcel = false;
-            this.tiradasCarcel = 0;
-            System.out.println(this.nombre + " paga " + Valor.SALIR_CARCEL + "€ para salir de la cárcel.");
-            return true;
-        } else {
-            System.out.println(this.nombre + " no tiene suficiente dinero para salir de la cárcel.");
-            return false;
-        }
     }
 
     //Getters y setters:
@@ -166,6 +160,4 @@ public class Jugador {
     public void setVueltas(int vueltas) {
         this.vueltas = vueltas++;
     }
-
-
 }
