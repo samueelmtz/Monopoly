@@ -52,21 +52,6 @@ public class Avatar {
         this.colocar(casillas, nuevaPosicion);
     }
 
-    public void moveravatar(Casilla cas) {
-        // Remover el avatar de su casilla actual
-        if (this.lugar != null) {
-            this.lugar.eliminarAvatar(this);
-        }
-
-        // Establecer la nueva casilla
-        this.lugar = cas;
-
-        // Añadir el avatar a la nueva casilla
-        cas.anhadirAvatar(this);
-
-        System.out.println("Avatar " + this.id + " se movió directamente a " + cas.getNombre() + " (posición " + cas.getPosicion() + ")");
-    }
-
     /*Metodo que permite generar un ID para un avatar. Sólo lo usamos en esta clase (por ello es privado).
      * El ID generado será una letra mayúscula. Parámetros:
      * - Un arraylist de los avatares ya creados, con el objetivo de evitar que se generen dos ID iguales.
@@ -92,6 +77,7 @@ public class Avatar {
         }
     }
 
+    //Nueva funcion que mueve el avatar a una casilla en especifico (necesario para la carcel o para moverAvatar)
     public void colocar(ArrayList<ArrayList<Casilla>> casillas, int nuevaPosicion) {
         if (this.lugar != null) {
             this.lugar.eliminarAvatar(this);
@@ -127,18 +113,6 @@ public class Avatar {
         return tipo;
     }
 
-    public void setTipo(String tipo_avatar) {
-        switch(tipo_avatar) {
-            case "sombrero":
-            case "esfinge":
-            case "pelota":
-            case "coche":
-                this.tipo = tipo_avatar;
-                break;
-            default:
-                System.out.println(tipo_avatar + " no es un avatar permitido.\n");
-        }
-    }
 
     public Jugador getJugador() {
         return jugador;

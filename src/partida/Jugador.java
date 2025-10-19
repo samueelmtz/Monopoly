@@ -95,11 +95,6 @@ public class Jugador {
         this.vecesEnCarcel ++;
     }
 
-    //Metodo para llevar la cuenta de turnos en la cárcel
-    public int sumarVecesCarcel(){
-        return this.vecesEnCarcel ++;
-    }
-
     public boolean salirCarcel() {
         float PRECIO_SALIDA_CARCEL = 500000;
         if (!this.enCarcel) {
@@ -121,20 +116,6 @@ public class Jugador {
 
     public boolean isEnCarcel() {
         return enCarcel;
-    }
-
-    /*Metodo para contar cuántas casillas posee un jugador de un tipo determinado
-     * Solo se usa para las propiedades de tipo Transportes de momento
-     * @param tipo Tipo de propiedad
-     */
-    public int numeroCasillasTipo(String tipo){
-        int contador=0;
-        for(Casilla c: propiedades){
-            if(c.getTipo().equals(tipo)){
-                contador++;
-            }
-        }
-        return contador;
     }
 
     //Getters y setters:
