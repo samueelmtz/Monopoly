@@ -235,9 +235,6 @@ public class Menu {
     /* Método que realiza las acciones asociadas al comando 'describir nombre_casilla'.
      * Parámetros: nombre de la casilla a describir.
      */
-    /* Método que realiza las acciones asociadas al comando 'describir nombre_casilla'.
-     * Parámetros: nombre de la casilla a describir.
-     */
     private void descCasilla(String nombre) {
         Casilla casilla = tablero.encontrar_casilla(nombre);
 
@@ -349,7 +346,6 @@ public class Menu {
 
 
     //Metodo que ejecuta todas las acciones relacionadas con el comando 'salir carcel'.
-
     private void salirCarcel() {
         Jugador jugadorActual = jugadores.get(turno);
         if(jugadorActual.salirCarcel()) {
@@ -426,6 +422,8 @@ public class Menu {
         Jugador siguienteJugador = jugadores.get(turno);
         System.out.println("El jugador actual es " + siguienteJugador.getNombre() + ".");
     }
+
+    //FIN ESQUELETO
 
     private void crearJugador(String nombre, String tipoAvatar) {
         // Validar primero el tipo de avatar

@@ -10,7 +10,7 @@ public class Tablero {
     private ArrayList<ArrayList<Casilla>> posiciones; //Posiciones del tablero: se define como un arraylist de arraylists de casillas (uno por cada lado del tablero).
     private HashMap<String, Grupo> grupos; //Grupos del tablero, almacenados como un HashMap con clave String (será el color del grupo).
     private Jugador banca;//Un jugador que será la banca.
-    private float boteParking;
+    private float boteParking; //Atributo auxiliar para acumular el bote del parking
 
     //Constructor: únicamente le pasamos el jugador banca (que se creará desde el menú).
     public Tablero(Jugador banca) {
@@ -191,19 +191,6 @@ public class Tablero {
         ladoEste.add(new Casilla("Imp2",39, 2000000, banca));
         ladoEste.add(new Casilla("Solar22", "Solar", 40, 4000000, banca));
     }
-
-
-    // En Tablero.java - método para obtener un grupo por color
-    public Grupo getGrupo(String color) {
-        return grupos.get(color);
-    }
-
-    // Método para verificar si un jugador tiene todo un grupo
-    public boolean tieneTodoElGrupo(Jugador jugador, String colorGrupo) {
-        Grupo grupo = grupos.get(colorGrupo);
-        return grupo != null && grupo.esDuenhoGrupo(jugador);
-    }
-
 
     //Para imprimir el tablero, modificamos el método toString().
     @Override
@@ -395,17 +382,6 @@ public class Tablero {
         System.out.print(color + String.format("%-10s", nombre) + Valor.RESET);
     }
 
-    // Método auxiliar para encontrar casilla por posición
-    private Casilla encontrarCasillaPorPosicion(int posicion) {
-        for (ArrayList<Casilla> lado : posiciones) {
-            for (Casilla casilla : lado) {
-                if (casilla.getPosicion() == posicion) {
-                    return casilla;
-                }
-            }
-        }
-        return null;
-    }
 
     // Getters
     public ArrayList<ArrayList<Casilla>> getPosiciones() { return posiciones; }
