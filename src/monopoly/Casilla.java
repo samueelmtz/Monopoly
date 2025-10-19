@@ -120,22 +120,39 @@ public class Casilla {
                         break;
                     }
 
-                    case "Impuesto":
-                        aPagar = this.impuesto;
-                        receptor = banca;
-                        System.out.printf("Impuesto a pagar: %,.0f€\n", aPagar);
-                        break;
-
-                    // Parking, Suerte, Comunidad, Especiales
-                    case "Parking":
-                        System.out.println("Has caído en Parking. Función de bote por implementar.");
-                        return true;
-
                     default:
-                        return true;
+                        // Para otros tipos que no requieren pago aquí
+                        break;
                 }
 
-                // Comprobación de solvencia
+                // Comprobación de solvencia para pagos a otros jugadores
+                if (aPagar > 0) {
+                    if (actual.getFortuna() < aPagar) {
+                        System.out.printf("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n",
+                                aPagar, actual.getFortuna());
+                        System.out.println("Debes hipotecar propiedades o declararte en bancarrota.");
+                        return false;
+                    }
+
+                    // Aplicar pago a otro jugador
+                    actual.restarFortuna(aPagar);
+                    actual.sumarGastos(aPagar);
+                    if (receptor != null) {
+                        receptor.sumarFortuna(aPagar);
+                    }
+
+                    System.out.printf("%s ha pagado %,.0f€ a %s\n",
+                            actual.getNombre(), aPagar, receptor.getNombre());
+                    return true;
+                }
+            }
+
+            // TERCERO: Procesar casillas de impuestos (que van a la banca o al bote)
+            if (this.tipo.equals("Impuesto")) {
+                float aPagar = this.impuesto;
+                System.out.printf("Impuesto a pagar: %,.0f€\n", aPagar);
+
+                // Verificar si el jugador tiene suficiente dinero
                 if (actual.getFortuna() < aPagar) {
                     System.out.printf("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n",
                             aPagar, actual.getFortuna());
@@ -143,15 +160,19 @@ public class Casilla {
                     return false;
                 }
 
-                // Aplicar pago
+                // El jugador paga el impuesto
                 actual.restarFortuna(aPagar);
                 actual.sumarGastos(aPagar);
-                if (receptor != null) {
-                    receptor.sumarFortuna(aPagar);
-                }
 
-                System.out.printf("%s ha pagado %,.0f€ a %s\n",
-                        actual.getNombre(), aPagar, receptor.getNombre());
+                // El dinero va al bote del Parking en lugar de a la banca
+                // Buscar el tablero a través de la casilla de parking
+                Casilla parking = null;
+                // Necesitamos una referencia al tablero, pero como no la tenemos directamente,
+                // asumimos que el impuesto va a la banca por ahora
+                banca.sumarFortuna(aPagar);
+
+                System.out.printf("%s ha pagado %,.0f€ de impuestos\n",
+                        actual.getNombre(), aPagar);
                 return true;
             }
 
