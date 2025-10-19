@@ -1,5 +1,7 @@
 package monopoly;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import partida.*;
 import java.util.Scanner;
@@ -42,6 +44,8 @@ public class Menu {
         tirado = false;
         solvente = true;
 
+        lecturaFichero("comandos.txt");
+
         while (true) {
             try {
                 // Mostrar prompt con comandos disponibles
@@ -80,6 +84,23 @@ public class Menu {
         System.out.println("Juego terminado");
     }
 
+    /*Metodo que lee un fichero de texto con comandos y los ejecuta.
+     * Parámetro: cadena de caracteres (ruta del fichero).
+     */
+    public void lecturaFichero(String fichero){
+        File file=new File(fichero);
+        try{
+            Scanner sc = new Scanner(file);
+            while(sc.hasNextLine()){
+                String line=sc.nextLine();
+                System.out.println(line);
+                analizarComando(line);
+            }
+        }catch(FileNotFoundException e){
+            System.out.println("Error al abrir el fichero");
+            return;
+        }
+    }
 
     /*Metodo que interpreta el comando introducido y toma la accion correspondiente.
      * Parámetro: cadena de caracteres (el comando).
