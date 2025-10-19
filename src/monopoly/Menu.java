@@ -56,7 +56,7 @@ public class Menu {
                 System.out.println("> describir jugador");
                 System.out.println("> comprar");
                 System.out.println("> listar enventa");
-                System.out.println("> tablero");
+                System.out.println("> ver tablero");
                 System.out.println("> salir");
                 System.out.println("Acción a ejecutar: ");
                 String comando = scanner.nextLine().trim();
@@ -97,7 +97,7 @@ public class Menu {
                 }
                 break;
 
-            case "turno":
+            case "jugador":
                 if (comandos.length == 1) {
                     turnoJugador();
                 } else {
@@ -171,11 +171,11 @@ public class Menu {
                 }
                 break;
 
-            case "tablero":
-                if (comandos.length == 1) {
+            case "ver":
+                if (comandos.length == 2 && comandos[1].equals("tablero")) {
                     tablero.mostrarTablero();
                 } else {
-                    System.out.println("Comando incorrecto. Uso: tablero");
+                    System.out.println("Comando incorrecto. Uso: ver tablero");
                 }
                 break;
 
