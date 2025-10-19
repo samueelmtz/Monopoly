@@ -50,7 +50,6 @@ public class Menu {
                 System.out.println("> turno");
                 System.out.println("> listar jugadores");
                 System.out.println("> lanzar dados");
-                System.out.println("> forzar dados");
                 System.out.println("> acabar turno");
                 System.out.println("> salir carcel");
                 System.out.println("> describir casilla");
@@ -127,9 +126,11 @@ public class Menu {
 
             case "lanzar":
                 if (comandos.length == 2 && comandos[1].equals("dados")) {
-                    lanzarDados();
+                    lanzarDados(null); // Lanzamiento normal
+                } else if (comandos.length == 3 && comandos[1].equals("dados")) {
+                    lanzarDados(comandos[2]); // Lanzamiento con dados forzados
                 } else {
-                    System.out.println("Comando incorrecto. Uso: lanzar dados");
+                    System.out.println("Comando incorrecto. Uso: lanzar dados [valor1+valor2]");
                 }
                 break;
 
@@ -278,7 +279,7 @@ public class Menu {
     }
 
     //Método que ejecuta todas las acciones relacionadas con el comando 'lanzar dados'.
-    private void lanzarDados() {
+    private void lanzarDados(String valoresForzados) {
         Jugador actual = jugadores.get(turno);
         if (actual.isEnCarcel()) {
             System.out.println("No puedes lanzar los dados, estás en la cárcel.");
@@ -289,8 +290,40 @@ public class Menu {
             return;
         }
 
-        int valorDado1 = dado1.hacerTirada();
-        int valorDado2 = dado2.hacerTirada();
+        int valorDado1, valorDado2;
+
+        if (valoresForzados != null && valoresForzados.contains("+")) {
+            // Procesar dados forzados
+            try {
+                String[] valoresArray = valoresForzados.split("\\+");
+                if (valoresArray.length == 2) {
+                    valorDado1 = Integer.parseInt(valoresArray[0].trim());
+                    valorDado2 = Integer.parseInt(valoresArray[1].trim());
+
+                    // Validar que los valores estén entre 1 y 6
+                    if (valorDado1 >= 1 && valorDado1 <= 6 && valorDado2 >= 1 && valorDado2 <= 6) {
+                        System.out.println("✓ Dados forzados a: " + valorDado1 + " y " + valorDado2);
+                    } else {
+                        System.out.println("Error: Los valores deben estar entre 1 y 6. Usando valores aleatorios.");
+                        valorDado1 = dado1.hacerTirada();
+                        valorDado2 = dado2.hacerTirada();
+                    }
+                } else {
+                    System.out.println("Error en formato. Usando valores aleatorios.");
+                    valorDado1 = dado1.hacerTirada();
+                    valorDado2 = dado2.hacerTirada();
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Error en valores de dados. Usando valores aleatorios.");
+                valorDado1 = dado1.hacerTirada();
+                valorDado2 = dado2.hacerTirada();
+            }
+        } else {
+            // Lanzamiento normal
+            valorDado1 = dado1.hacerTirada();
+            valorDado2 = dado2.hacerTirada();
+        }
+
         int suma = valorDado1 + valorDado2;
 
         System.out.println("Has lanzado los dados: " + valorDado1 + " y " + valorDado2 + ". Total: " + suma);
@@ -302,35 +335,17 @@ public class Menu {
 
         // EVALUAR LA CASILLA DESPUÉS DEL MOVIMIENTO
         Casilla casillaActual = actual.getAvatar().getLugar();
+        solvente = casillaActual.evaluarCasilla(actual, banca, suma);
 
-        // Manejar caso especial "IrCarcel" antes de evaluarCasilla
-        if (casillaActual.getNombre().equals("IrCarcel")) {
-            System.out.println("¡Has caído en Ir a la Cárcel!");
-            actual.encarcelar(tablero.getPosiciones());
-            solvente = true;
-        } else if (casillaActual.getNombre().equals("Parking")) {
-            System.out.println("¡Has caído en Parking!");
-            float boteGanado = tablero.reclamarBote(actual);
-            solvente = true;
+        if (valorDado1 == valorDado2) {
+            if (lanzamientos == 3) {
+                System.out.println("Tercer doble consecutivo. El avatar va a la cárcel.");
+                actual.encarcelar(tablero.getPosiciones());
+            } else {
+                System.out.println("Dados dobles. Puedes lanzar de nuevo.");
+            }
         } else {
-            // Para impuestos, redirigir al bote del Parking
-            if (casillaActual.getTipo().equals("Impuesto")) {
-                solvente = procesarImpuesto(actual, casillaActual);
-            } else {
-                // Evaluar otros tipos de casillas normalmente
-                solvente = casillaActual.evaluarCasilla(actual, banca, suma);
-            }
-
-            if (valorDado1 == valorDado2) {
-                if (lanzamientos == 3) {
-                    System.out.println("Tercer doble consecutivo. El avatar va a la cárcel.");
-                    actual.encarcelar(tablero.getPosiciones());
-                } else {
-                    System.out.println("Dados dobles. Puedes lanzar de nuevo.");
-                }
-            } else {
-                lanzamientos = 0;
-            }
+            lanzamientos = 0;
         }
     }
 
@@ -495,45 +510,6 @@ public class Menu {
         System.out.println("}");
     }
 
-    private void forzarDados(String valores) {
-        System.out.println("DEBUG: forzarDados llamado con: '" + valores + "'");
-
-        try {
-            String[] valoresArray = valores.split(",");
-            System.out.println("DEBUG: valoresArray length: " + valoresArray.length);
-
-            if (valoresArray.length != 2) {
-                System.out.println("Error: Debes especificar dos valores separados por coma (ej: 3,4)");
-                return;
-            }
-
-            int valor1 = Integer.parseInt(valoresArray[0].trim());
-            int valor2 = Integer.parseInt(valoresArray[1].trim());
-            System.out.println("DEBUG: valores parseados: " + valor1 + ", " + valor2);
-
-            // Validar que los valores estén entre 1 y 6
-            if (valor1 < 1 || valor1 > 6 || valor2 < 1 || valor2 > 6) {
-                System.out.println("Error: Los valores de los dados deben estar entre 1 y 6");
-                return;
-            }
-
-            // Verificar que los dados no sean null
-            if (dado1 == null || dado2 == null) {
-                System.out.println("ERROR: Los dados no están inicializados");
-                return;
-            }
-
-            // Forzar los dados
-            dado1.forzarDado(valor1);
-            dado2.forzarDado(valor2);
-
-            System.out.println("Dados forzados a: " + valor1 + " y " + valor2);
-            System.out.println("El próximo lanzamiento saldrá: " + valor1 + " y " + valor2);
-
-        } catch (NumberFormatException e) {
-            System.out.println("Error: Los valores deben ser números enteros (ej: forzar dados 3,4)");
-        }
-    }
 
     // Método para procesar pagos de impuestos (van al bote del Parking)
     private boolean procesarImpuesto(Jugador jugador, Casilla casillaImpuesto) {
