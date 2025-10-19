@@ -454,6 +454,14 @@ public class Menu {
     }
 
     private void crearJugador(String nombre, String tipoAvatar) {
+        // Validar primero el tipo de avatar
+        String tipoValidado = validarTipoAvatar(tipoAvatar);
+        if (tipoValidado == null) {
+            System.out.println("Error: '" + tipoAvatar + "' no es un avatar permitido.");
+            System.out.println("Avatares válidos: sombrero, esfinge, pelota, coche");
+            return;
+        }
+
         // Verificar si el jugador ya existe
         for (Jugador jugador : jugadores) {
             if (jugador.getNombre().equalsIgnoreCase(nombre)) {
@@ -471,7 +479,7 @@ public class Menu {
 
         try {
             // Crear el nuevo jugador
-            Jugador nuevoJugador = new Jugador(nombre, tipoAvatar, salida, avatares);
+            Jugador nuevoJugador = new Jugador(nombre, tipoValidado, salida, avatares);
             jugadores.add(nuevoJugador);
 
             // Mostrar la información como en el PDF
@@ -485,6 +493,21 @@ public class Menu {
 
         } catch (Exception e) {
             System.out.println("Error al crear el jugador: " + e.getMessage());
+        }
+    }
+
+    // Método auxiliar para validar el tipo de avatar
+    private String validarTipoAvatar(String tipoAvatar) {
+        if (tipoAvatar == null) return null;
+
+        switch(tipoAvatar.toLowerCase()) {
+            case "sombrero":
+            case "esfinge":
+            case "pelota":
+            case "coche":
+                return tipoAvatar.toLowerCase();
+            default:
+                return null;
         }
     }
 
