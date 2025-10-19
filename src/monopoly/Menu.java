@@ -29,7 +29,7 @@ public class Menu {
         avatares = new ArrayList<>();
 
         // Crear la banca
-        banca = new Jugador(); // null porque no tiene avatar
+        banca = new Jugador(); //
 
         // Inicializar tablero
         tablero = new Tablero(banca);
@@ -353,10 +353,8 @@ public class Menu {
         if (casillaActual.getNombre().equals("Parking")) {
             float boteGanado = tablero.reclamarBote(actual);
             if (boteGanado > 0) {
-                System.out.printf("¡%s ha ganado el bote del Parking: %,.0f€!\n",
-                        actual.getNombre(), boteGanado);
-                System.out.printf("Fortuna actual de %s: %,.0f€\n",
-                        actual.getNombre(), actual.getFortuna());
+                System.out.printf("¡%s ha ganado el bote del Parking: %,.0f€!\n", actual.getNombre(), boteGanado);
+                System.out.printf("Fortuna actual de %s: %,.0f€\n", actual.getNombre(), actual.getFortuna());
             }
         }
 
