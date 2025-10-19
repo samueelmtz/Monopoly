@@ -342,7 +342,8 @@ public class Menu {
 
             // El dinero ya se restó en evaluarCasilla, pero fue a la banca
             // Lo quitamos de la banca y lo ponemos en el bote
-            banca.restarFortuna(impuesto);
+            actual.restarFortuna(impuesto);
+            actual.sumarGastos(impuesto);
             tablero.añadirAlBote(impuesto);
 
             System.out.printf("Se han transferido %,.0f€ del impuesto al bote del Parking\n", impuesto);
