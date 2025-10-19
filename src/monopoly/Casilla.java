@@ -370,10 +370,19 @@ public class Casilla {
      */
     public void casEnVenta() {
         if(this.duenho == null || this.duenho.getNombre().equals("Banca")){
-            System.out.println("La casilla " + this.nombre + " está en venta por el precio de " + this.valor + "€\n");
+            System.out.println("{");
+            System.out.println("    tipo: " + this.tipo + ",");
+            System.out.println("    nombre: " + this.nombre + ",");
+
+            if (this.tipo.equals("Solar") && this.grupo != null) {
+                System.out.println("    grupo: " + this.grupo.getColorGrupo() + ",");
+            }
+
+            System.out.println("    valor: " + String.format("%,.0f", this.valor) + "€");
+            System.out.println("}");
         }
         else{
-            System.out.println("La casilla ya está vendida o no está disponible.\n");
+            System.out.println("La casilla " + this.nombre + " ya está vendida a " + this.duenho.getNombre());
         }
     }
 

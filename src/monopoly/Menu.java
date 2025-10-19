@@ -359,7 +359,7 @@ public class Menu {
         }
     }
 
-    // Metodo que realiza las acciones asociadas al comando 'listar enventa'.
+    // Método que realiza las acciones asociadas al comando 'listar enventa'.
     private void listarVenta() {
         System.out.println("Propiedades en venta:");
 
@@ -370,16 +370,8 @@ public class Menu {
                 // Verificar si la casilla es comprable y pertenece a la banca
                 if (casilla.esTipoComprable() && casilla.getDuenho() == banca) {
                     hayPropiedadesEnVenta = true;
-                    System.out.println("{");
-                    System.out.println("    tipo: " + casilla.getTipo() + ",");
-                    System.out.println("    nombre: " + casilla.getNombre() + ",");
-
-                    if (casilla.getTipo().equals("Solar") && casilla.getGrupo() != null) {
-                        System.out.println("    grupo: " + casilla.getGrupo().getColorGrupo() + ",");
-                    }
-
-                    System.out.println("    valor: " + String.format("%,.0f", casilla.getValor()) + "€");
-                    System.out.println("}");
+                    // Llamar casEnVenta sin println - ya imprime internamente
+                    casilla.casEnVenta();
                 }
             }
         }
