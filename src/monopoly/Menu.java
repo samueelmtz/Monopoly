@@ -235,6 +235,9 @@ public class Menu {
     /* Método que realiza las acciones asociadas al comando 'describir nombre_casilla'.
      * Parámetros: nombre de la casilla a describir.
      */
+    /* Método que realiza las acciones asociadas al comando 'describir nombre_casilla'.
+     * Parámetros: nombre de la casilla a describir.
+     */
     private void descCasilla(String nombre) {
         Casilla casilla = tablero.encontrar_casilla(nombre);
 
@@ -243,30 +246,9 @@ public class Menu {
             return;
         }
 
-        // Verificar si es una casilla que no tiene información detallada
-        String tipo = casilla.getTipo();
-        if (tipo.equals("CajaComunidad") || tipo.equals("Suerte") || tipo.equals("Carcel") || tipo.equals("Comunidad")) {
-            System.out.println("La casilla " + nombre + " no tiene información detallada.");
-            return;
-        }
-
-        System.out.println("{");
-        System.out.println("    nombre: " + casilla.getNombre() + ",");
-        System.out.println("    tipo: " + casilla.getTipo() + ",");
-
-        // Mostrar información especial para Parking
-        if (casilla.getNombre().equals("Parking")) {
-            System.out.println("    bote: " + String.format("%,.0f", tablero.getBoteParking()) + "€,");
-        } else {
-            System.out.println("    valor: " + casilla.getValor() + ",");
-        }
-
-        System.out.println("    propietario: " + (casilla.getDuenho() != null ? casilla.getDuenho().getNombre() : "Ninguno") + ",");
-        System.out.println("    impuestos: " + (casilla.getTipo().equals("Impuesto") ? casilla.getImpuesto() : "N/A") + ",");
-        System.out.println("    hipoteca: " + (casilla.getTipo().equals("Solar") || casilla.getTipo().equals("Transporte") || casilla.getTipo().equals("Servicio") ? casilla.getHipoteca() : "N/A") + ",");
-        System.out.println("    grupo: " + (casilla.getTipo().equals("Solar") && casilla.getGrupo() != null ? casilla.getGrupo().getColorGrupo() : "N/A") + ",");
-        System.out.println("    avatares: " + casilla.getAvatares());
-        System.out.println("}");
+        // En lugar de mostrar la información manualmente, usar infoCasilla
+        System.out.println("Información de la casilla " + nombre + ":");
+        casilla.infoCasilla();
     }
 
     //Método que ejecuta todas las acciones relacionadas con el comando 'lanzar dados'.
