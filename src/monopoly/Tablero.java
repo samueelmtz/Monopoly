@@ -25,8 +25,13 @@ public class Tablero {
     // Método para añadir dinero al bote
     public void añadirAlBote(float cantidad) {
         this.boteParking += cantidad;
-        System.out.printf("Se han añadido %,.0f€ al bote del Parking. Bote actual: %,.0f€\n",
-                cantidad, this.boteParking);
+
+        // Usar sumarValor en la casilla de Parking
+        Casilla parking = encontrar_casilla("Parking");
+        if (parking != null) {
+            parking.sumarValor(cantidad);
+        }
+        System.out.printf("Se han añadido %,.0f€ al bote del Parking. Bote actual: %,.0f€\n", cantidad, this.boteParking);
     }
 
     // Método para que un jugador reclame el bote
@@ -34,8 +39,14 @@ public class Tablero {
         float boteActual = this.boteParking;
         if (boteActual > 0) {
             jugador.sumarFortuna(boteActual);
-            System.out.printf("¡%s ha ganado el bote del Parking: %,.0f€!\n",
-                    jugador.getNombre(), boteActual);
+
+            // Resetear el valor de la casilla Parking usando sumarValor
+            Casilla parking = encontrar_casilla("Parking");
+            if (parking != null) {
+                // Restar el valor actual para ponerlo a 0
+                parking.sumarValor(-parking.getValor());
+            }
+            System.out.printf("¡%s ha ganado el bote del Parking: %,.0f€!\n", jugador.getNombre(), boteActual);
             this.boteParking = 0f; // Resetear el bote
         } else {
             System.out.println("El bote del Parking está vacío.");
@@ -148,6 +159,10 @@ public class Tablero {
 
         // Posiciones 21-30
         ladoNorte.add(new Casilla("Parking", "Parking", 21, banca));
+        Casilla parking = encontrar_casilla("Parking");
+        if (parking != null) {
+            parking.setValor(0f);
+        }
         ladoNorte.add(new Casilla("Solar12", "Solar", 22, 2200000, banca));
         ladoNorte.add(new Casilla("Suerte3", "Suerte", 23, banca));
         ladoNorte.add(new Casilla("Solar13", "Solar", 24, 2200000, banca));
