@@ -484,6 +484,7 @@ public class Menu {
         }
     }
 
+    // Metodo auxiliar que permite ver de quien es turno
     public void turnoJugador(){
         if (jugadores == null || jugadores.isEmpty()) {
             System.out.println("No hay jugadores creados.");
