@@ -160,10 +160,13 @@ public class Casilla {
                 case "Parking":
                     System.out.println("Has caído en Parking. Función de bote por implementar.");
                     break;
-                //case "IrCarcel":
-                    //System.out.println("¡Has caído en Ir a la Cárcel!");
-                    //actual.encarcelar(((partida.Jugador) actual).getAvatar().getLugar().getTablero().getPosiciones());
-                    //break;
+                case "IrCarcel":
+                    System.out.println("¡Has caído en Ir a la Cárcel!");
+                    //actual.encarcelar();
+                    break;
+                case "Carcel":
+                    System.out.println("Estás de visita en la Cárcel!");
+                    break;
                 default:
                     System.out.println("No tiene nada que pagar.\n");
             }
@@ -176,7 +179,7 @@ public class Casilla {
     }
 
 
-    /*Método auxiliar para verificar si el tipo de una casilla la hace comprable*/
+    /*Metodo auxiliar para verificar si el tipo de una casilla la hace comprable*/
     public boolean esTipoComprable() {
         return (this.tipo.equals("Solar") || this.tipo.equals("Transporte") || this.tipo.equals("Servicio"));
     }
@@ -225,15 +228,15 @@ public class Casilla {
     }
 
 
-    /*Método para añadir valor a una casilla. Utilidad:
+    /*Metodo para añadir valor a una casilla. Utilidad:
      * - Sumar valor a la casilla de parking.
      * - Sumar valor a las casillas de solar al no comprarlas tras cuatro vueltas de todos los jugadores.
-     * Este método toma como argumento la cantidad a añadir del valor de la casilla.*/
+     * Este metodo toma como argumento la cantidad a añadir del valor de la casilla.*/
     public void sumarValor(float suma) {
         this.valor += suma;
     }
 
-    /*Método para mostrar información sobre una casilla.
+    /*Metodo para mostrar información sobre una casilla.
      * Devuelve una cadena con información específica de cada tipo de casilla.*/
     public void infoCasilla() {
         // Cadena con la información que queremos devolver
@@ -248,6 +251,14 @@ public class Casilla {
                 info += String.format("\tPrecio: %,.0f€\n", this.valor);
                 info += String.format("\tAlquiler: %,.0f€\n", this.impuesto);
                 info += String.format("\tHipoteca: %,.0f€\n", this.hipoteca);
+                info += String.format("\tPrecio casa: %,.0f€\n", this.valor * 0.60f);
+                info += String.format("\tPrecio hotel: %,.0f€\n", this.valor * 0.60f);
+                info += String.format("\tPrecio piscina: %,.0f€\n", this.valor * 0.40f);
+                info += String.format("\tPrecio pista de deporte: %,.0f€\n", this.valor * 1.25f);
+                info += String.format("\tAlquiler casa: %,.0f€\n", this.impuesto * 5f);
+                info += String.format("\tAlquiler hotel: %,.0f€\n", this.impuesto * 70f);
+                info += String.format("\tAlquiler piscina: %,.0f€\n", this.impuesto * 25f);
+                info += String.format("\tAlquiler pista de deporte: %,.0f€\n", this.impuesto * 25f);
                 break;
 
             case "Transporte":
@@ -276,9 +287,53 @@ public class Casilla {
                 break;
 
             case "Especial":
+                switch (this.nombre) {
+                    case "Parking":
+                        info += "\tTipo: Especial (Parking)\n";
+                        info += String.format("\tBote: %,.0f€\n", this.valor); // el bote acumulado
+                        info += "\tJugadores: [";
+                        if (this.avatares != null && !this.avatares.isEmpty()) {
+                            // imprimimos la lista de jugadores que están en Parking
+                            for (int i = 0; i < this.avatares.size(); i++) {
+                                info += this.avatares.get(i).getJugador().getNombre();
+                                if (i < this.avatares.size() - 1) info += ", ";
+                            }
+                        } else {
+                            info += "-";
+                        }
+                        info += "]\n";
+                        break;
 
-            default:
-                System.out.println("Error al identificar la casila.");
+                    case "Carcel":
+                        info += "\tTipo: Especial (Cárcel)\n";
+                        info += String.format("\tSalir pagando: %,.0f€\n", this.valor);
+                        info += "\tJugadores: [";
+                        if (this.avatares != null && !this.avatares.isEmpty()) {
+                            for (int i = 0; i < this.avatares.size(); i++) {
+                                Jugador j = this.avatares.get(i).getJugador();
+                                info += j.getNombre() + "," + j.sumarVecesCarcel(); // ejemplo: [Pedro,2]
+                                if (i < this.avatares.size() - 1) info += " ";
+                            }
+                        } else {
+                            info += "-";
+                        }
+                        info += "]\n";
+                        break;
+
+                    case "Salida":
+                        info += "\tTipo: Especial (Salida)\n";
+                        info += String.format("\tRecompensa al pasar: %,.0f€\n", this.valor);
+                        break;
+
+                    case "IrCarcel":
+                        info += "\tTipo: Especial (Ir a Cárcel)\n";
+                        info += "\tAcción: Enviar al jugador a la Cárcel\n";
+                        break;
+
+
+                    default:
+                        System.out.println("Error al identificar la casila.");
+                }
         }
     }
 
@@ -360,4 +415,3 @@ public class Casilla {
     }
 }
 
-//prueba
