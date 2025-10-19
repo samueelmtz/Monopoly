@@ -134,14 +134,6 @@ public class Menu {
                 }
                 break;
 
-            case "forzar":
-                if (comandos.length == 3 && comandos[1].equals("dados")) {
-                    forzarDados(comandos[2]);
-                } else {
-                    System.out.println("Comando incorrecto. Uso: forzar dados <valor1,valor2>");
-                }
-                break;
-
             case "comprar":
                 if (comandos.length < 2) {
                     System.out.println("Falta el nombre de la casilla. Uso: comprar <nombre_casilla>");
