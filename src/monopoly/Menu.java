@@ -19,7 +19,7 @@ public class Menu {
     private boolean solvente; //Booleano para comprobar si el jugador que tiene el turno es solvente, es decir, si ha pagado sus deudas.
 
 
-    // Método para inciar una partida: crea los jugadores y avatares.
+    // Metodo para inciar una partida: crea los jugadores y avatares.
     public void iniciarPartida() {
         Scanner scanner = new Scanner(System.in);
         // Crear lista de jugadores y avatares
