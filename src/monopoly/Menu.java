@@ -276,7 +276,9 @@ public class Menu {
             System.out.println("No puedes lanzar los dados, estás en la cárcel.");
             return;
         }
-        if (tirado) {
+
+        // Permitir lanzar si no ha tirado O si tiene dados dobles y menos de 3 lanzamientos
+        if (tirado && lanzamientos < 3) {
             System.out.println("Ya has lanzado los dados en este turno.");
             return;
         }
@@ -321,7 +323,12 @@ public class Menu {
 
         System.out.println("El avatar " + actual.getAvatar().getId() + " avanza " + (valorDado1 + valorDado2) + " posiciones");
         actual.getAvatar().moverAvatar(tablero.getPosiciones(), valorDado1 + valorDado2);
-        tirado = true;
+
+        // NO establecer tirado = true aquí cuando hay dados dobles
+        if (valorDado1 != valorDado2) {
+            tirado = true;
+        }
+
         lanzamientos++;
 
         // EVALUAR LA CASILLA DESPUÉS DEL MOVIMIENTO
@@ -332,11 +339,14 @@ public class Menu {
             if (lanzamientos == 3) {
                 System.out.println("Tercer doble consecutivo. El avatar va a la cárcel.");
                 actual.encarcelar(tablero.getPosiciones());
+                tirado = true; // Terminar turno después de ir a la cárcel
             } else {
                 System.out.println("Dados dobles. Puedes lanzar de nuevo.");
+                // NO establecer tirado = true para permitir otro lanzamiento
             }
         } else {
             lanzamientos = 0;
+            // tirado ya se estableció arriba para casos no dobles
         }
     }
 
@@ -430,9 +440,9 @@ public class Menu {
 
     // Método que realiza las acciones asociadas al comando 'acabar turno'.
     private void acabarTurno() {
-
         Jugador jugadorActual = jugadores.get(turno);
 
+        // Resetear todas las variables de control del turno
         tirado = false;
         lanzamientos = 0;
 
