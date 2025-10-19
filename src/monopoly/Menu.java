@@ -52,6 +52,7 @@ public class Menu {
                 System.out.println("> lanzar dados");
                 System.out.println("> forzar dados");
                 System.out.println("> acabar turno");
+                System.out.println("> salir carcel");
                 System.out.println("> describir casilla");
                 System.out.println("> describir jugador");
                 System.out.println("> comprar");
