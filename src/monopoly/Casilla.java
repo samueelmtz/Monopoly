@@ -262,7 +262,6 @@ public class Casilla {
                 info.append("\tDueño: ").append(this.duenho.getNombre()).append("\n");
                 info.append(String.format("\tPrecio: %,.0f€\n", this.valor));
                 info.append(String.format("\tAlquiler: %,.0f€\n", this.impuesto));
-                info.append(String.format("\tHipoteca: %,.0f€\n", this.hipoteca));
 
                 // Usar valores específicos según el nombre del solar
                 float precioCasa = getPrecioCasa();
@@ -288,9 +287,7 @@ public class Casilla {
                 info.append("\tTipo: ").append(this.tipo).append("\n");
                 info.append("\tDueño: ").append(this.duenho.getNombre()).append("\n");
                 info.append(String.format("\tPrecio: %,.0f€\n", this.valor));
-                info.append(String.format("\tPago por caer: %,.0f€\n",
-                        Valor.ALQUILER_TRANSPORTE)); // Usar constante en lugar de cálculo
-                info.append(String.format("\tHipoteca: %,.0f€\n", this.hipoteca));
+                info.append(String.format("\tPago por caer: %,.0f€\n", Valor.ALQUILER_TRANSPORTE)); // Usar constante en lugar de cálculo
                 break;
 
             case "Servicio":
@@ -299,7 +296,6 @@ public class Casilla {
                 info.append(String.format("\tPrecio: %,.0f€\n", this.valor));
                 info.append(String.format("\tPago por caer: dados * x * %,.0f€\n", Valor.FACTOR_SERVICIO));
                 info.append("\t\t(x=4 si se posee una casilla de este tipo, x=10 si se poseen 2)\n");
-                info.append(String.format("\tHipoteca: %,.0f€\n", this.hipoteca));
                 break;
 
             case "Impuesto":

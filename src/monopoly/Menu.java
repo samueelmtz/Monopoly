@@ -87,16 +87,16 @@ public class Menu {
     /*Metodo que lee un fichero de texto con comandos y los ejecuta.
      * Parámetro: cadena de caracteres (ruta del fichero).
      */
-    public void lecturaFichero(String fichero){
-        File file=new File(fichero);
-        try{
+    public void lecturaFichero(String fichero) {
+        File file = new File(fichero);
+        try {
             Scanner sc = new Scanner(file);
-            while(sc.hasNextLine()){
-                String line=sc.nextLine();
+            while (sc.hasNextLine()) {
+                String line = sc.nextLine();
                 System.out.println(line);
                 analizarComando(line);
             }
-        }catch(FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             System.out.println("Error al abrir el fichero");
             return;
         }
@@ -400,7 +400,7 @@ public class Menu {
     //Metodo que ejecuta todas las acciones relacionadas con el comando 'salir carcel'.
     private void salirCarcel() {
         Jugador jugadorActual = jugadores.get(turno);
-        if(jugadorActual.salirCarcel()) {
+        if (jugadorActual.salirCarcel()) {
             System.out.println(jugadorActual.getNombre() + " paga 500.000€ y sale de la cárcel. Puede lanzar los datos.");
         } else {
             System.out.println("No se pudo salir de la cárcel. Asegúrate de que estás en la cárcel y tienes suficiente dinero.");
@@ -524,7 +524,7 @@ public class Menu {
     private String validarTipoAvatar(String tipoAvatar) {
         if (tipoAvatar == null) return null;
 
-        switch(tipoAvatar.toLowerCase()) {
+        switch (tipoAvatar.toLowerCase()) {
             case "sombrero":
             case "esfinge":
             case "pelota":
@@ -536,7 +536,7 @@ public class Menu {
     }
 
     // Metodo auxiliar que permite ver de quien es turno
-    public void turnoJugador(){
+    public void turnoJugador() {
         if (jugadores == null || jugadores.isEmpty()) {
             System.out.println("No hay jugadores creados.");
             return;
@@ -557,32 +557,6 @@ public class Menu {
         System.out.println("nombre: " + actual.getNombre() + ",");
         System.out.println("avatar: " + avatarId);
         System.out.println("}");
-    }
-
-
-    // Método para procesar pagos de impuestos (van al bote del Parking)
-    private boolean procesarImpuesto(Jugador jugador, Casilla casillaImpuesto) {
-        float impuesto = casillaImpuesto.getImpuesto();
-
-        System.out.printf("Impuesto a pagar: %,.0f€\n", impuesto);
-
-        // Verificar si el jugador tiene suficiente dinero
-        if (jugador.getFortuna() < impuesto) {
-            System.out.printf("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n", impuesto, jugador.getFortuna());
-            System.out.println("Debes hipotecar propiedades o declararte en bancarrota.");
-            return false;
-        }
-
-        // El jugador paga el impuesto
-        jugador.restarFortuna(impuesto);
-        jugador.sumarGastos(impuesto);
-
-        // El dinero va al bote del Parking en lugar de a la banca
-        tablero.añadirAlBote(impuesto);
-
-        System.out.printf("%s ha pagado %,.0f€ de impuestos al bote del Parking\n",
-                jugador.getNombre(), impuesto);
-        return true;
     }
 }
 

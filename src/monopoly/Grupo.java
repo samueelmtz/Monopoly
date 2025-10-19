@@ -53,14 +53,7 @@ class Grupo {
      * Parámetro: jugador que se quiere evaluar.
      * Valor devuelto: true si es dueño de todas las casillas del grupo, false en otro caso.
      */
-    public boolean esDuenhoGrupo(Jugador jugador) { //No se usa en esta entrega
-        for (Casilla casilla : miembros) {
-            if (casilla.getDuenho() != jugador) {
-                return false; // Si alguna casilla no pertenece al jugador, retorna false
-            }
-        }
-        return true; // Si todas las casillas pertenecen al jugador, retorna true
-    }
+    //public boolean esDuenhoGrupo(Jugador jugador) {}//No se usa en esta entrega
 
     //Getters y setters.
     public ArrayList<Casilla> getMiembros() {
