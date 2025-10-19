@@ -103,32 +103,25 @@ public class Casilla {
                         System.out.printf("Alquiler de solar: %,.0f€\n", aPagar);
                         break;
 
-                    case "Transporte": {
-                        // CORRECCIÓN: Siempre 250.000€ según especificación
+                    case "Transporte":
                         aPagar = Valor.ALQUILER_TRANSPORTE;
                         System.out.printf("Alquiler de transporte: %,.0f€\n", aPagar);
                         break;
-                    }
 
-                    case "Servicio": {
-                        // CORRECCIÓN: Siempre multiplicador 4 según especificación
+                    case "Servicios":
                         int x = 4;
                         aPagar = (float) tirada * x * Valor.FACTOR_SERVICIO;
-                        System.out.printf("Alquiler de servicio: dados(%d) * %d * %,.0f€ = %,.0f€\n",
-                                tirada, x, Valor.FACTOR_SERVICIO, aPagar);
+                        System.out.printf("Alquiler de servicio: dados(%d) * %d * %,.0f€ = %,.0f€\n", tirada, x, Valor.FACTOR_SERVICIO, aPagar);
                         break;
-                    }
 
                     default:
-                        // Para otros tipos que no requieren pago aquí
                         break;
                 }
 
                 // Comprobación de solvencia para pagos a otros jugadores
                 if (aPagar > 0) {
                     if (actual.getFortuna() < aPagar) {
-                        System.out.printf("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n",
-                                aPagar, actual.getFortuna());
+                        System.out.printf("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n", aPagar, actual.getFortuna());
                         System.out.println("Debes hipotecar propiedades o declararte en bancarrota.");
                         return false;
                     }
@@ -146,12 +139,12 @@ public class Casilla {
                 }
             }
 
-            // TERCERO: Procesar casillas de impuestos (que van a la banca o al bote)
+            // TERCERO: Procesar casillas de impuestos (solo mostrar mensaje, el pago se hace en Menu)
             if (this.tipo.equals("Impuesto")) {
                 float aPagar = this.impuesto;
                 System.out.printf("Impuesto a pagar: %,.0f€\n", aPagar);
 
-                // Verificar si el jugador tiene suficiente dinero
+                // Solo verificar solvencia, el pago real se hace en Menu.java
                 if (actual.getFortuna() < aPagar) {
                     System.out.printf("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n",
                             aPagar, actual.getFortuna());
@@ -159,30 +152,18 @@ public class Casilla {
                     return false;
                 }
 
-                // El jugador paga el impuesto
-                actual.restarFortuna(aPagar);
-                actual.sumarGastos(aPagar);
-
-                // El dinero va al bote del Parking en lugar de a la banca
-                // Buscar el tablero a través de la casilla de parking
-                Casilla parking = null;
-                // Necesitamos una referencia al tablero, pero como no la tenemos directamente,
-                // asumimos que el impuesto va a la banca por ahora
-                banca.sumarFortuna(aPagar);
-
-                System.out.printf("%s ha pagado %,.0f€ de impuestos\n",
-                        actual.getNombre(), aPagar);
+                // Devolver true para indicar que es solvente, el pago se procesa en Menu
                 return true;
             }
 
             // Casillas especiales
             switch (this.tipo) {
                 case "Parking":
-                    System.out.println("Has caído en Parking. Función de bote por implementar.");
+                    System.out.println("Has caído en Parking.");
                     break;
                 case "IrCarcel":
                     System.out.println("¡Has caído en Ir a la Cárcel!");
-                    //actual.encarcelar(); //Se encarcela en menu.java
+                    //actual.encarcelar();
                     break;
                 case "Carcel":
                     System.out.println("Estás de visita en la Cárcel!");
@@ -201,7 +182,7 @@ public class Casilla {
 
     /*Metodo auxiliar para verificar si el tipo de una casilla la hace comprable*/
     public boolean esTipoComprable() {
-        return (this.tipo.equals("Solar") || this.tipo.equals("Transporte") || this.tipo.equals("Servicio"));
+        return (this.tipo.equals("Solar") || this.tipo.equals("Transporte") || this.tipo.equals("Servicios"));
     }
 
     /*Método usado para comprar una casilla determinada. Parámetros:

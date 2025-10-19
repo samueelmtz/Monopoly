@@ -315,7 +315,30 @@ public class Menu {
         Casilla casillaActual = actual.getAvatar().getLugar();
         solvente = casillaActual.evaluarCasilla(actual, banca, suma);
 
-        //Si la posición actual es "Ir a la cárcel", mandar ese jugador a la casilla carcel.
+        // MANEJO ESPECIAL PARA CASILLAS DE IMPUESTOS
+        if (casillaActual.getTipo().equals("Impuesto") && solvente) {
+            float impuesto = casillaActual.getImpuesto();
+
+            // El dinero ya se restó en evaluarCasilla, pero fue a la banca
+            // Lo quitamos de la banca y lo ponemos en el bote
+            banca.restarFortuna(impuesto);
+            tablero.añadirAlBote(impuesto);
+
+            System.out.printf("Se han transferido %,.0f€ del impuesto al bote del Parking\n", impuesto);
+        }
+
+        // MANEJO ESPECIAL PARA PARKING DESPUÉS DE EVALUAR
+        if (casillaActual.getNombre().equals("Parking")) {
+            float boteGanado = tablero.reclamarBote(actual);
+            if (boteGanado > 0) {
+                System.out.printf("¡%s ha ganado el bote del Parking: %,.0f€!\n",
+                        actual.getNombre(), boteGanado);
+                System.out.printf("Fortuna actual de %s: %,.0f€\n",
+                        actual.getNombre(), actual.getFortuna());
+            }
+        }
+
+        // MANEJO ESPECIAL PARA IRCARCEL DESPUÉS DE EVALUAR
         if (casillaActual.getNombre().equals("IrCarcel")) {
             System.out.println("¡Has caído en Ir a la Cárcel! Moviendo a la cárcel...");
             actual.encarcelar(tablero.getPosiciones());
