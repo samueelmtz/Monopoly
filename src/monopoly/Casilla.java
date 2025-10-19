@@ -182,7 +182,7 @@ public class Casilla {
                     break;
                 case "IrCarcel":
                     System.out.println("¡Has caído en Ir a la Cárcel!");
-                    //actual.encarcelar();
+                    //actual.encarcelar(); //Se encarcela en menu.java
                     break;
                 case "Carcel":
                     System.out.println("Estás de visita en la Cárcel!");

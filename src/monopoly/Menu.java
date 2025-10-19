@@ -315,6 +315,12 @@ public class Menu {
         Casilla casillaActual = actual.getAvatar().getLugar();
         solvente = casillaActual.evaluarCasilla(actual, banca, suma);
 
+        //Si la posición actual es "Ir a la cárcel", mandar ese jugador a la casilla carcel.
+        if (casillaActual.getNombre().equals("IrCarcel")) {
+            System.out.println("¡Has caído en Ir a la Cárcel! Moviendo a la cárcel...");
+            actual.encarcelar(tablero.getPosiciones());
+        }
+
         if (valorDado1 == valorDado2) {
             if (lanzamientos == 3) {
                 System.out.println("Tercer doble consecutivo. El avatar va a la cárcel.");

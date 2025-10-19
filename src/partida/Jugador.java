@@ -83,16 +83,19 @@ public class Jugador {
     public void encarcelar(ArrayList<ArrayList<Casilla>> pos) {
         this.enCarcel = true;
         this.tiradasCarcel = 0;
+
+        // Buscar la casilla de la cárcel por nombre
         for(ArrayList<Casilla> lado : pos) {
             for(Casilla cas : lado) {
-                if(cas.getTipo().equals("Cárcel")) {
+                if(cas.getNombre().equals("Carcel")) {
                     this.avatar.colocar(pos, cas.getPosicion());
-                    System.out.println(this.nombre + "ha sido enviado a la cárcel.\n");
+                    System.out.println(this.nombre + " ha sido enviado a la cárcel.");
+                    this.vecesEnCarcel++;
                     return;
                 }
             }
         }
-        this.vecesEnCarcel ++;
+        System.out.println("Error: No se encontró la casilla Carcel");
     }
 
     public boolean salirCarcel() {
