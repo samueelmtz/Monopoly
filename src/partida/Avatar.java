@@ -15,7 +15,11 @@ public class Avatar {
     private Casilla lugar; //Los avatares se sitúan en casillas del tablero.
 
     //Constructor vacío
-    public Avatar(String tipoAvatar, Casilla inicio, ArrayList<Avatar> avCreados) {
+    public Avatar(String tipoAvatar, Casilla inicio, ArrayList<Avatar> avCreados){
+        this.id = null;
+        this.tipo = null;
+        this.jugador = null;
+        this.lugar = null;
     }
 
     /*Constructor principal. Requiere éstos parámetros:
@@ -62,7 +66,7 @@ public class Avatar {
         boolean repetido = true;
         while (repetido) {
             repetido = false;
-            id = String.valueOf((char) (num.nextInt(26) + 'A')); ///Obtiene como ID una letra entre la a
+            id = String.valueOf((char) (num.nextInt(26) + 'A')); //Obtiene como ID una letra entre la a
 
             for (Avatar a : avCreados) {
                 if (a != null && a.getId().equals(id)) {

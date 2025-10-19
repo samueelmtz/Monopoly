@@ -1,8 +1,10 @@
 package monopoly;
 
+import java.io.File;
 import java.util.ArrayList;
 import partida.*;
 import java.util.Scanner;
+import java.io.FileNotFoundException;
 
 public class Menu {
 
@@ -18,10 +20,10 @@ public class Menu {
     private boolean tirado; //Booleano para comprobar si el jugador que tiene el turno ha tirado o no.
     private boolean solvente; //Booleano para comprobar si el jugador que tiene el turno es solvente, es decir, si ha pagado sus deudas.
 
-
     // Metodo para inciar una partida: crea los jugadores y avatares.
     public void iniciarPartida() {
         Scanner scanner = new Scanner(System.in);
+
         // Crear lista de jugadores y avatares
         jugadores = new ArrayList<>();
         avatares = new ArrayList<>();
@@ -41,6 +43,8 @@ public class Menu {
         lanzamientos = 0;
         tirado = false;
         solvente = true;
+
+        lecturaFichero("comandos.txt");
 
         while (true) {
             try {
@@ -80,6 +84,23 @@ public class Menu {
         System.out.println("Juego terminado");
     }
 
+    /*Metodo que lee un fichero de texto con comandos y los ejecuta.
+     * Parámetro: cadena de caracteres (ruta del fichero).
+     */
+    public void lecturaFichero(String fichero){
+        File file=new File(fichero);
+        try{
+            Scanner sc = new Scanner(file);
+            while(sc.hasNextLine()){
+                String line=sc.nextLine();
+                System.out.println(line);
+                analizarComando(line);
+            }
+        }catch(FileNotFoundException e){
+            System.out.println("Error al abrir el fichero");
+            return;
+        }
+    }
 
     /*Metodo que interpreta el comando introducido y toma la accion correspondiente.
      * Parámetro: cadena de caracteres (el comando).
@@ -193,6 +214,7 @@ public class Menu {
                 break;
         }
     }
+
 
     /*Metodo que realiza las acciones asociadas al comando 'describir jugador'.
      * Parámetro: comando introducido*/
@@ -428,6 +450,10 @@ public class Menu {
 
         Jugador siguienteJugador = jugadores.get(turno);
         System.out.println("El jugador actual es " + siguienteJugador.getNombre() + ".");
+
+        if(jugadorActual.isEnCarcel()) {
+            //jugadorActual.sumarVecesCarcel();
+        }
     }
 
     //FIN ESQUELETO

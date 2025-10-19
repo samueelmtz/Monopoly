@@ -2,6 +2,7 @@ package monopoly;
 
 import partida.*;
 import java.util.ArrayList;
+import java.lang.Math;
 
 public class Casilla {
 
@@ -182,7 +183,7 @@ public class Casilla {
                     break;
                 case "IrCarcel":
                     System.out.println("¡Has caído en Ir a la Cárcel!");
-                    //actual.encarcelar(); //Se encarcela en menu.java
+                    //actual.encarcelar(); Se encarcela en menu.java
                     break;
                 case "Carcel":
                     System.out.println("Estás de visita en la Cárcel!");
@@ -259,109 +260,100 @@ public class Casilla {
     /*Metodo para mostrar información sobre una casilla.
      * Devuelve una cadena con información específica de cada tipo de casilla.*/
     public void infoCasilla() {
-        StringBuilder info = new StringBuilder();
-        info.append("{\n");
+        // Cadena con la información que queremos devolver
+        String info = "\n";
 
         // La completamos con la información correspondiente en función del tipo de casilla
         switch (this.tipo) {
             case "Solar":
-                info.append("\tTipo: ").append(this.tipo).append("\n");
-                info.append("\tColor del grupo: ").append(this.grupo.getColorGrupo()).append("\n");
-                info.append("\tDueño: ").append(this.duenho.getNombre()).append("\n");
-                info.append(String.format("\tPrecio: %,.0f€\n", this.valor));
-                info.append(String.format("\tAlquiler: %,.0f€\n", this.impuesto));
-                info.append(String.format("\tHipoteca: %,.0f€\n", this.hipoteca));
-                info.append(String.format("\tPrecio casa: %,.0f€\n", this.valor * 0.60f));
-                info.append(String.format("\tPrecio hotel: %,.0f€\n", this.valor * 0.60f));
-                info.append(String.format("\tPrecio piscina: %,.0f€\n", this.valor * 0.40f));
-                info.append(String.format("\tPrecio pista de deporte: %,.0f€\n", this.valor * 1.25f));
-                info.append(String.format("\tAlquiler casa: %,.0f€\n", this.impuesto * 5f));
-                info.append(String.format("\tAlquiler hotel: %,.0f€\n", this.impuesto * 70f));
-                info.append(String.format("\tAlquiler piscina: %,.0f€\n", this.impuesto * 25f));
-                info.append(String.format("\tAlquiler pista de deporte: %,.0f€\n", this.impuesto * 25f));
+                info += "\tTipo: " + this.tipo + "\n";
+                info += "\tColor del grupo: " + this.grupo.getColorGrupo() + "\n";
+                info += "\tDueño: " + this.duenho.getNombre() + "\n";
+                info += String.format("\tPrecio: %,.0f€\n", this.valor);
+                info += String.format("\tAlquiler: %,.0f€\n", this.impuesto);
+                info += String.format("\tHipoteca: %,.0f€\n", this.hipoteca);
+                info += String.format("\tPrecio casa: %,.0f€\n", this.valor * 0.60f);
+                info += String.format("\tPrecio hotel: %,.0f€\n", this.valor * 0.60f);
+                info += String.format("\tPrecio piscina: %,.0f€\n", this.valor * 0.40f);
+                info += String.format("\tPrecio pista de deporte: %,.0f€\n", this.valor * 1.25f);
+                info += String.format("\tAlquiler casa: %,.0f€\n", this.impuesto * 5f);
+                info += String.format("\tAlquiler hotel: %,.0f€\n", this.impuesto * 70f);
+                info += String.format("\tAlquiler piscina: %,.0f€\n", this.impuesto * 25f);
+                info += String.format("\tAlquiler pista de deporte: %,.0f€\n", this.impuesto * 25f);
                 break;
 
             case "Transporte":
-                info.append("\tTipo: ").append(this.tipo).append("\n");
-                info.append("\tDueño: ").append(this.duenho.getNombre()).append("\n");
-                info.append(String.format("\tPrecio: %,.0f€\n", this.valor));
-                info.append(String.format("\tPago por caer: %,.0f€\n",
-                        Valor.ALQUILER_TRANSPORTE)); // Usar constante en lugar de cálculo
-                info.append(String.format("\tHipoteca: %,.0f€\n", this.hipoteca));
+                info += "\tTipo: " + this.tipo + "\n";
+                info += "\tDueño: " + this.duenho.getNombre() + "\n";
+                info += String.format("\tPrecio: %,.0f€\n", this.valor);
+                //info += String.format("\tPago por caer: %,.0f€\n", this.impuesto * 0.25f * this.duenho.numeroCasillasTipo("Transporte"));
+                info += String.format("\t\t(cada casilla de este tipo que tengas suma 1/4 de %,.0f€ al alquiler)\n", this.impuesto);
+                info += String.format("\tHipoteca: %,.0f€\n", this.hipoteca);
                 break;
 
             case "Servicio":
-                info.append("\tTipo: ").append(this.tipo).append("\n");
-                info.append("\tDueño: ").append(this.duenho.getNombre()).append("\n");
-                info.append(String.format("\tPrecio: %,.0f€\n", this.valor));
-                info.append(String.format("\tPago por caer: dados * x * %,.0f€\n", Valor.FACTOR_SERVICIO));
-                info.append("\t\t(x=4 si se posee una casilla de este tipo, x=10 si se poseen 2)\n");
-                info.append(String.format("\tHipoteca: %,.0f€\n", this.hipoteca));
+                info += "\tTipo: " + this.tipo + "\n";
+                info += "\tDueño: " + this.duenho.getNombre() + "\n";
+                info += String.format("\tPrecio: %,.0f€\n", this.valor);
+                info += String.format("\tPago por caer: dados * x * %,.0f€\n", this.impuesto);
+                info += "\t\t(x=4 si se posee una casilla de este tipo, x=10 si se poseen 2)\n";
+                info += String.format("\tHipoteca: %,.0f€\n", this.hipoteca);
                 break;
 
             case "Impuesto":
-                info.append("\tTipo: Impuesto\n");
-                info.append(String.format("\tA pagar: %,.0f€\n", this.impuesto));
+                info += "\tTipo: Impuesto\n";
+                info += String.format("\tA pagar: %,.0f€\n", this.impuesto);
                 break;
 
             case "Especial":
                 switch (this.nombre) {
                     case "Parking":
-                        info.append("\tTipo: Especial (Parking)\n");
-                        // Aquí necesitarías acceso al tablero para obtener el bote actual
-                        info.append("\tBote: Información no disponible\n");
-                        info.append("\tJugadores: [");
+                        info += "\tTipo: Especial (Parking)\n";
+                        info += String.format("\tBote: %,.0f€\n", this.valor); // el bote acumulado
+                        info += "\tJugadores: [";
                         if (this.avatares != null && !this.avatares.isEmpty()) {
+                            // imprimimos la lista de jugadores que están en Parking
                             for (int i = 0; i < this.avatares.size(); i++) {
-                                info.append(this.avatares.get(i).getJugador().getNombre());
-                                if (i < this.avatares.size() - 1) info.append(", ");
+                                info += this.avatares.get(i).getJugador().getNombre();
+                                if (i < this.avatares.size() - 1) info += ", ";
                             }
                         } else {
-                            info.append("-");
+                            info += "-";
                         }
-                        info.append("]\n");
+                        info += "]\n";
                         break;
 
                     case "Carcel":
-                        info.append("\tTipo: Especial (Cárcel)\n");
-                        info.append(String.format("\tSalir pagando: %,.0f€\n", Valor.SALIR_CARCEL));
-                        info.append("\tJugadores: [");
+                        info += "\tTipo: Especial (Cárcel)\n";
+                        info += String.format("\tSalir pagando: %,.0f€\n", this.valor);
+                        info += "\tJugadores: [";
                         if (this.avatares != null && !this.avatares.isEmpty()) {
                             for (int i = 0; i < this.avatares.size(); i++) {
                                 Jugador j = this.avatares.get(i).getJugador();
-                                info.append(j.getNombre()).append(",").append(j.getTiradasCarcel());
-                                if (i < this.avatares.size() - 1) info.append(" ");
+                                //info += j.getNombre() + "," + j.sumarVecesCarcel(); // ejemplo: [Pedro,2]
+                                if (i < this.avatares.size() - 1) info += " ";
                             }
                         } else {
-                            info.append("-");
+                            info += "-";
                         }
-                        info.append("]\n");
+                        info += "]\n";
                         break;
 
                     case "Salida":
-                        info.append("\tTipo: Especial (Salida)\n");
-                        info.append(String.format("\tRecompensa al pasar: %,.0f€\n", Valor.SUMA_VUELTA));
+                        info += "\tTipo: Especial (Salida)\n";
+                        info += String.format("\tRecompensa al pasar: %,.0f€\n", this.valor);
                         break;
 
                     case "IrCarcel":
-                        info.append("\tTipo: Especial (Ir a Cárcel)\n");
-                        info.append("\tAcción: Enviar al jugador a la Cárcel\n");
+                        info += "\tTipo: Especial (Ir a Cárcel)\n";
+                        info += "\tAcción: Enviar al jugador a la Cárcel\n";
                         break;
 
+
                     default:
-                        info.append("\tTipo: Especial\n");
-                        info.append("\tNombre: ").append(this.nombre).append("\n");
+                        System.out.println("Error al identificar la casila.");
                 }
-                break;
-
-            default:
-                info.append("\tTipo no reconocido: ").append(this.tipo).append("\n");
         }
-
-        info.append("}");
-
-        // IMPRIMIR EL RESULTADO
-        System.out.println(info.toString());
     }
 
 
@@ -370,19 +362,10 @@ public class Casilla {
      */
     public void casEnVenta() {
         if(this.duenho == null || this.duenho.getNombre().equals("Banca")){
-            System.out.println("{");
-            System.out.println("    tipo: " + this.tipo + ",");
-            System.out.println("    nombre: " + this.nombre + ",");
-
-            if (this.tipo.equals("Solar") && this.grupo != null) {
-                System.out.println("    grupo: " + this.grupo.getColorGrupo() + ",");
-            }
-
-            System.out.println("    valor: " + String.format("%,.0f", this.valor) + "€");
-            System.out.println("}");
+            System.out.println("La casilla " + this.nombre + " está en venta por el precio de " + this.valor + "€\n");
         }
         else{
-            System.out.println("La casilla " + this.nombre + " ya está vendida a " + this.duenho.getNombre());
+            System.out.println("La casilla ya está vendida o no está disponible.\n");
         }
     }
 

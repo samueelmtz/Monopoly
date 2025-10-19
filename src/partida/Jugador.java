@@ -16,7 +16,7 @@ public class Jugador {
     private int tiradasCarcel; //Cuando está en la carcel, contará las tiradas sin éxito que ha hecho allí para intentar salir (se usa para limitar el numero de intentos).
     private int vueltas; //Cuenta las vueltas dadas al tablero.
     private ArrayList<Casilla> propiedades; //Propiedades que posee el jugador.
-    private int vecesEnCarcel;
+    private int turnosEnCarcel; //Cuenta los turnos que el jugador lleva en la carcel.
 
     //Constructor vacío. Se usará para crear la banca.
     public Jugador() {
@@ -90,7 +90,7 @@ public class Jugador {
                 if(cas.getNombre().equals("Carcel")) {
                     this.avatar.colocar(pos, cas.getPosicion());
                     System.out.println(this.nombre + " ha sido enviado a la cárcel.");
-                    this.vecesEnCarcel++;
+                    this.turnosEnCarcel++;
                     return;
                 }
             }
@@ -141,8 +141,8 @@ public class Jugador {
     public int getVueltas() {
         return vueltas;
     }
-    public int getVecesEnCarcel() {
-        return vecesEnCarcel;
+    public int getTurnosEnCarcel() {
+        return turnosEnCarcel;
     }
     public ArrayList<Casilla> getPropiedades() {
         return propiedades;
@@ -157,6 +157,6 @@ public class Jugador {
         this.vueltas = vueltas++;
     }
     public void setVecesCarcel(int vecesEnCarcel) {
-        this.vecesEnCarcel = vecesEnCarcel;
+        this.turnosEnCarcel = vecesEnCarcel;
     }
 }

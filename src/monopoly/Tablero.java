@@ -18,8 +18,8 @@ public class Tablero {
         this.posiciones = new ArrayList<>();
         this.grupos = new HashMap<>();
         this.boteParking = 0f;
-        this.generarCasillas(); //Llamamos al método que genera todas las casillas del tablero.
-        this.crearGrupos(); //Llamamos al método que genera todos los grupos del tablero.
+        this.generarCasillas(); //Llamamos al metodo que genera todas las casillas del tablero.
+        this.crearGrupos(); //Llamamos al metodo que genera todos los grupos del tablero.
     }
 
     // Método para añadir dinero al bote
