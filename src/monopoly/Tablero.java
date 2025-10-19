@@ -45,10 +45,10 @@ public class Tablero {
 
     private void crearGrupos() {
         // Crear los grupos y añadirlos al HashMap
-        grupos.put("Marrón", new Grupo(
+        grupos.put("Naranja", new Grupo(
                 encontrar_casilla("Solar1"),
                 encontrar_casilla("Solar2"),
-                "Marrón"
+                "Naranja"
         ));
         grupos.put("Celeste", new Grupo(
                 encontrar_casilla("Solar3"),
@@ -56,17 +56,17 @@ public class Tablero {
                 encontrar_casilla("Solar5"),
                 "Celeste"
         ));
-        grupos.put("Rosa", new Grupo(
+        grupos.put("Purpura", new Grupo(
                 encontrar_casilla("Solar6"),
                 encontrar_casilla("Solar7"),
                 encontrar_casilla("Solar8"),
-                "Rosa"
+                "Purpura"
         ));
-        grupos.put("Naranja", new Grupo(
+        grupos.put("Negro", new Grupo(
                 encontrar_casilla("Solar9"),
                 encontrar_casilla("Solar10"),
                 encontrar_casilla("Solar11"),
-                "Naranja"
+                "Negro"
         ));
         grupos.put("Rojo", new Grupo(
                 encontrar_casilla("Solar12"),
@@ -353,27 +353,27 @@ public class Tablero {
                 if (casilla.getGrupo() != null) {
                     String colorGrupo = casilla.getGrupo().getColorGrupo();
                     switch (colorGrupo) {
-                        case "Marrón": color = Valor.BG_RED + Valor.BLACK; break;
+                        case "Naranja": color = Valor.BG_ORANGE+ Valor.BLACK; break;
                         case "Celeste": color = Valor.BG_CYAN + Valor.BLACK; break;
-                        case "Rosa": color = Valor.BG_PURPLE + Valor.WHITE; break;
-                        case "Naranja": color = Valor.BG_YELLOW + Valor.BLACK; break;
-                        case "Rojo": color = Valor.BG_RED + Valor.WHITE; break;
+                        case "Purpura": color = Valor.BG_PURPLE + Valor.BLACK; break;
+                        case "Negro": color = Valor.BG_BLACK + Valor.WHITE; break;
+                        case "Rojo": color = Valor.BG_RED + Valor.BLACK; break;
                         case "Amarillo": color = Valor.BG_YELLOW + Valor.BLACK; break;
                         case "Verde": color = Valor.BG_GREEN + Valor.BLACK; break;
-                        case "Azul": color = Valor.BG_BLUE + Valor.WHITE; break;
+                        case "Azul": color = Valor.BG_BLUE + Valor.BLACK; break;
                         default: color = Valor.RESET;
                     }
                 }
                 break;
-            case "Transporte": color = Valor.BG_BLACK + Valor.WHITE; break;
-            case "Servicio": color = Valor.BG_WHITE + Valor.BLACK; break;
-            case "Impuesto": color = Valor.BG_RED + Valor.WHITE; break;
-            case "Suerte": color = Valor.BG_YELLOW + Valor.BLACK; break;
-            case "Comunidad": color = Valor.BG_BLUE + Valor.WHITE; break;
-            case "Carcel": color = Valor.BG_BLACK + Valor.WHITE; break;
-            case "Parking": color = Valor.BG_GREEN + Valor.BLACK; break;
-            case "Salida": color = Valor.BG_GREEN + Valor.WHITE; break;
-            case "IrCarcel": color = Valor.BG_RED + Valor.WHITE; break;
+            case "Transporte": color = Valor.BG_GRAY + Valor.BLACK; break;
+            case "Servicios": color = Valor.BG_GRAY + Valor.BLACK; break;
+            case "Impuesto": color = Valor.BG_GRAY + Valor.BLACK; break;
+            case "Suerte": color = Valor.BG_GRAY + Valor.BLACK; break;
+            case "Comunidad": color = Valor.BG_GRAY + Valor.BLACK; break;
+            case "Carcel": color = Valor.BG_GRAY + Valor.BLACK; break;
+            case "Parking": color = Valor.BG_GRAY + Valor.BLACK; break;
+            case "Salida": color = Valor.BG_GRAY + Valor.BLACK; break;
+            case "IrCarcel": color = Valor.BG_GRAY + Valor.BLACK; break;
         }
 
         // Mostrar nombre completo (sin abreviar)
@@ -400,4 +400,7 @@ public class Tablero {
         return boteParking;
     }
 }
+
+
+
 

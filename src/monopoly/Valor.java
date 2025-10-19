@@ -22,6 +22,7 @@ public class Valor {
     public static final String PURPLE = "\u001B[35m";
     public static final String CYAN = "\u001B[36m";
     public static final String WHITE = "\u001B[37m";
+    public static final String GRAY = "\u001B[90m";
 
     //Colores de fondo para los grupos de solares:
     public static final String BG_BLACK = "\u001B[40m";
@@ -32,4 +33,10 @@ public class Valor {
     public static final String BG_PURPLE = "\u001B[45m";
     public static final String BG_CYAN = "\u001B[46m";
     public static final String BG_WHITE = "\u001B[47m";
+    public static final String BG_GRAY = "\u001B[100m";
+    public static final String BG_ORANGE = "\u001B[48;5;208m";
 }
+
+
+
+
