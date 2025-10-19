@@ -196,33 +196,9 @@ public class Tablero {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Tablero de Monopoly:\n");
-        for (int i = 0; i < posiciones.size(); i++) {
-            sb.append("Lado ").append(i + 1).append(":\n");
-            for (Casilla casilla : posiciones.get(i)) {
-                sb.append(casilla.toString()).append("\n");
-            }
-        }
-        return sb.toString();
-    }
+        sb.append(Valor.CYAN).append("\n========================================== TABLERO DE MONOPOLY ==========================================").append(Valor.RESET).append("\n");
 
-    //Método usado para buscar la casilla con el nombre pasado como argumento:
-    public Casilla encontrar_casilla(String nombre){
-        for (ArrayList<Casilla> lado : posiciones) {
-            for (Casilla casilla : lado) {
-                if (casilla.getNombre().equalsIgnoreCase(nombre)) {
-                    return casilla;
-                }
-            }
-        }
-        return null; // Si no se encuentra la casilla, retorna null
-    }
-
-    // En Tablero.java - añade este método
-    public void mostrarTablero() {
-        System.out.println(Valor.CYAN + "\n========================================== TABLERO DE MONOPOLY ==========================================" + Valor.RESET);
-
-        // Obtener casillas para la fila SUPERIOR (Norte)
+        //Obtener casillas para la fila SUPERIOR (Norte)
         Casilla parking = encontrar_casilla("Parking");
         Casilla solar12 = encontrar_casilla("Solar12");
         Casilla suerte3 = encontrar_casilla("Suerte3");
@@ -271,50 +247,50 @@ public class Tablero {
         Casilla salida = encontrar_casilla("Salida");
 
         // Mostrar fila SUPERIOR (Norte)
-        System.out.println();
-        System.out.print("| ");
-        mostrarCasilla(parking); System.out.print(" | ");
-        mostrarCasilla(solar12); System.out.print(" | ");
-        mostrarCasilla(suerte3); System.out.print(" | ");
-        mostrarCasilla(solar13); System.out.print(" | ");
-        mostrarCasilla(solar14); System.out.print(" | ");
-        mostrarCasilla(trans3); System.out.print(" | ");
-        mostrarCasilla(solar15); System.out.print(" | ");
-        mostrarCasilla(solar16); System.out.print(" | ");
-        mostrarCasilla(serv2); System.out.print(" | ");
-        mostrarCasilla(solar17); System.out.print(" | ");
-        mostrarCasilla(irCarcel); System.out.println(" |");
+        sb.append("\n");
+        sb.append("| ");
+        sb.append(obtenerCasillaFormateada(parking)).append(" | ");
+        sb.append(obtenerCasillaFormateada(solar12)).append(" | ");
+        sb.append(obtenerCasillaFormateada(suerte3)).append(" | ");
+        sb.append(obtenerCasillaFormateada(solar13)).append(" | ");
+        sb.append(obtenerCasillaFormateada(solar14)).append(" | ");
+        sb.append(obtenerCasillaFormateada(trans3)).append(" | ");
+        sb.append(obtenerCasillaFormateada(solar15)).append(" | ");
+        sb.append(obtenerCasillaFormateada(solar16)).append(" | ");
+        sb.append(obtenerCasillaFormateada(serv2)).append(" | ");
+        sb.append(obtenerCasillaFormateada(solar17)).append(" | ");
+        sb.append(obtenerCasillaFormateada(irCarcel)).append(" |\n");
 
         // Mostrar lados IZQUIERDO y DERECHO
         Casilla[] izquierda = {solar11, solar10, caja2, solar9, trans2, solar8, solar7, serv1, solar6};
         Casilla[] derecha = {solar18, solar19, caja3, solar20, trans4, suerte2, solar21, imp2, solar22};
 
         for (int i = 0; i < izquierda.length; i++) {
-            System.out.print("| ");
-            mostrarCasilla(izquierda[i]);
-            System.out.print(" |");
-            System.out.print(" ".repeat(116)); // Espacio central
-            System.out.print("| ");
-            mostrarCasilla(derecha[i]);
-            System.out.println(" |");
+            sb.append("| ");
+            sb.append(obtenerCasillaFormateada(izquierda[i]));
+            sb.append(" |");
+            sb.append(" ".repeat(116)); // Espacio central
+            sb.append("| ");
+            sb.append(obtenerCasillaFormateada(derecha[i]));
+            sb.append(" |\n");
         }
 
         // Mostrar fila INFERIOR (Sur)
-        System.out.print("| ");
-        mostrarCasilla(carcel); System.out.print(" | ");
-        mostrarCasilla(solar5); System.out.print(" | ");
-        mostrarCasilla(solar4); System.out.print(" | ");
-        mostrarCasilla(suerte1); System.out.print(" | ");
-        mostrarCasilla(solar3); System.out.print(" | ");
-        mostrarCasilla(trans1); System.out.print(" | ");
-        mostrarCasilla(imp1); System.out.print(" | ");
-        mostrarCasilla(solar2); System.out.print(" | ");
-        mostrarCasilla(caja1); System.out.print(" | ");
-        mostrarCasilla(solar1); System.out.print(" | ");
-        mostrarCasilla(salida); System.out.println(" |");
+        sb.append("| ");
+        sb.append(obtenerCasillaFormateada(carcel)).append(" | ");
+        sb.append(obtenerCasillaFormateada(solar5)).append(" | ");
+        sb.append(obtenerCasillaFormateada(solar4)).append(" | ");
+        sb.append(obtenerCasillaFormateada(suerte1)).append(" | ");
+        sb.append(obtenerCasillaFormateada(solar3)).append(" | ");
+        sb.append(obtenerCasillaFormateada(trans1)).append(" | ");
+        sb.append(obtenerCasillaFormateada(imp1)).append(" | ");
+        sb.append(obtenerCasillaFormateada(solar2)).append(" | ");
+        sb.append(obtenerCasillaFormateada(caja1)).append(" | ");
+        sb.append(obtenerCasillaFormateada(solar1)).append(" | ");
+        sb.append(obtenerCasillaFormateada(salida)).append(" |\n");
 
         // Mostrar avatares
-        System.out.println(Valor.PURPLE + "\nAVATARES EN EL TABLERO:" + Valor.RESET);
+        sb.append(Valor.PURPLE).append("\nAVATARES EN EL TABLERO:").append(Valor.RESET).append("\n");
         boolean hayAvatares = false;
 
         // Recorrer todas las casillas del tablero
@@ -322,28 +298,44 @@ public class Tablero {
             for (Casilla casilla : lado) {
                 if (casilla != null && !casilla.getAvatares().isEmpty()) {
                     hayAvatares = true;
-                    System.out.print("• " + casilla.getNombre() + " (Pos " + casilla.getPosicion() + "): ");
+                    sb.append("• ").append(casilla.getNombre()).append(" (Pos ").append(casilla.getPosicion()).append("): ");
                     for (Avatar avatar : casilla.getAvatares()) {
-                        System.out.print(avatar.getId() + "(" + avatar.getTipo() + ") ");
+                        sb.append(avatar.getId()).append("(").append(avatar.getTipo()).append(") ");
                     }
-                    System.out.println();
+                    sb.append("\n");
                 }
             }
         }
 
         if (!hayAvatares) {
-            System.out.println("No hay avatares en el tablero.");
+            sb.append("No hay avatares en el tablero.\n");
         }
 
+        sb.append(Valor.CYAN).append("========================================================================================================").append(Valor.RESET).append("\n");
 
-        System.out.println(Valor.CYAN + "========================================================================================================" + Valor.RESET);
+        return sb.toString();
+
     }
 
+    //Método usado para buscar la casilla con el nombre pasado como argumento:
+    public Casilla encontrar_casilla(String nombre){
+        for (ArrayList<Casilla> lado : posiciones) {
+            for (Casilla casilla : lado) {
+                if (casilla.getNombre().equalsIgnoreCase(nombre)) {
+                    return casilla;
+                }
+            }
+        }
+        return null; // Si no se encuentra la casilla, retorna null
+    }
+
+
+
     // Método auxiliar para mostrar una casilla con color
-    private void mostrarCasilla(Casilla casilla) {
+    private String obtenerCasillaFormateada(Casilla casilla) {
         if (casilla == null) {
             System.out.print("NULL     ");
-            return;
+            return "NULL";
         }
 
         String color = Valor.RESET;
@@ -355,33 +347,67 @@ public class Tablero {
                 if (casilla.getGrupo() != null) {
                     String colorGrupo = casilla.getGrupo().getColorGrupo();
                     switch (colorGrupo) {
-                        case "Naranja": color = Valor.BG_ORANGE+ Valor.BLACK; break;
-                        case "Celeste": color = Valor.BG_CYAN + Valor.BLACK; break;
-                        case "Purpura": color = Valor.BG_PURPLE + Valor.BLACK; break;
-                        case "Negro": color = Valor.BG_BLACK + Valor.WHITE; break;
-                        case "Rojo": color = Valor.BG_RED + Valor.BLACK; break;
-                        case "Amarillo": color = Valor.BG_YELLOW + Valor.BLACK; break;
-                        case "Verde": color = Valor.BG_GREEN + Valor.BLACK; break;
-                        case "Azul": color = Valor.BG_BLUE + Valor.BLACK; break;
-                        default: color = Valor.RESET;
+                        case "Naranja":
+                            color = Valor.BG_ORANGE + Valor.BLACK;
+                            break;
+                        case "Celeste":
+                            color = Valor.BG_CYAN + Valor.BLACK;
+                            break;
+                        case "Purpura":
+                            color = Valor.BG_PURPLE + Valor.BLACK;
+                            break;
+                        case "Negro":
+                            color = Valor.BG_BLACK + Valor.WHITE;
+                            break;
+                        case "Rojo":
+                            color = Valor.BG_RED + Valor.BLACK;
+                            break;
+                        case "Amarillo":
+                            color = Valor.BG_YELLOW + Valor.BLACK;
+                            break;
+                        case "Verde":
+                            color = Valor.BG_GREEN + Valor.BLACK;
+                            break;
+                        case "Azul":
+                            color = Valor.BG_BLUE + Valor.BLACK;
+                            break;
+                        default:
+                            color = Valor.RESET;
                     }
                 }
                 break;
-            case "Transporte": color = Valor.BG_GRAY + Valor.BLACK; break;
-            case "Servicios": color = Valor.BG_GRAY + Valor.BLACK; break;
-            case "Impuesto": color = Valor.BG_GRAY + Valor.BLACK; break;
-            case "Suerte": color = Valor.BG_GRAY + Valor.BLACK; break;
-            case "Comunidad": color = Valor.BG_GRAY + Valor.BLACK; break;
-            case "Carcel": color = Valor.BG_GRAY + Valor.BLACK; break;
-            case "Parking": color = Valor.BG_GRAY + Valor.BLACK; break;
-            case "Salida": color = Valor.BG_GRAY + Valor.BLACK; break;
-            case "IrCarcel": color = Valor.BG_GRAY + Valor.BLACK; break;
+            case "Transporte":
+                color = Valor.BG_GRAY + Valor.BLACK;
+                break;
+            case "Servicios":
+                color = Valor.BG_GRAY + Valor.BLACK;
+                break;
+            case "Impuesto":
+                color = Valor.BG_GRAY + Valor.BLACK;
+                break;
+            case "Suerte":
+                color = Valor.BG_GRAY + Valor.BLACK;
+                break;
+            case "Comunidad":
+                color = Valor.BG_GRAY + Valor.BLACK;
+                break;
+            case "Carcel":
+                color = Valor.BG_GRAY + Valor.BLACK;
+                break;
+            case "Parking":
+                color = Valor.BG_GRAY + Valor.BLACK;
+                break;
+            case "Salida":
+                color = Valor.BG_GRAY + Valor.BLACK;
+                break;
+            case "IrCarcel":
+                color = Valor.BG_GRAY + Valor.BLACK;
+                break;
         }
 
         // Mostrar nombre completo (sin abreviar)
-        System.out.print(color + String.format("%-10s", nombre) + Valor.RESET);
+        return color + String.format("%-10s", nombre) + Valor.RESET;
     }
-
 
     // Getters
     public ArrayList<ArrayList<Casilla>> getPosiciones() { return posiciones; }

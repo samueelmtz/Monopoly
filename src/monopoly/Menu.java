@@ -173,7 +173,8 @@ public class Menu {
 
             case "ver":
                 if (comandos.length == 2 && comandos[1].equals("tablero")) {
-                    tablero.mostrarTablero();
+                    // Usar toString() directamente
+                    System.out.println(tablero.toString());
                 } else {
                     System.out.println("Comando incorrecto. Uso: ver tablero");
                 }
@@ -461,7 +462,7 @@ public class Menu {
             System.out.println("}");
 
             // Mostrar el tablero actualizado
-            tablero.mostrarTablero();
+            tablero.toString();
 
         } catch (Exception e) {
             System.out.println("Error al crear el jugador: " + e.getMessage());
