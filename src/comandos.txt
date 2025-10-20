@@ -7,6 +7,6 @@ acabar turno
 lanzar dados 2+4
 comprar
 acabar turno
-describir casilla Solar3
-describir jugador manolo
+describir Solar3
+describir jugador Daniel
 ver tablero

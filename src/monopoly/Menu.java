@@ -127,20 +127,18 @@ public class Menu {
                 break;
 
             case "describir":
-                if (comandos.length != 3) {
-                    System.out.println("Comando incompleto. Uso: describir <jugador|casilla> [nombre]");
-                } else {
+                if (comandos.length == 2  || comandos.length == 3) {
                     switch (comandos[1]) {
                         case "jugador":
                             descJugador(comandos);
                             break;
-                        case "casilla":
-                            descCasilla(comandos[2]);
-                            break;
                         default:
-                            System.out.println("Error. Uso: describir <jugador|casilla> [nombre] o nombre de casilla/jugador erróneo");
+                            descCasilla(comandos[1]);
                             break;
                     }
+                } else {
+                    System.out.println("Comando erróneo. Uso: describir <jugador> [nombre] o describir [nombre_casilla]");
+
                 }
                 break;
 
