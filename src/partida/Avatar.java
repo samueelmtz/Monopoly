@@ -41,14 +41,14 @@ public class Avatar {
      */
     public void moverAvatar(ArrayList<ArrayList<Casilla>> casillas, int valorTirada) {
 
-        // PASO 1: calcular la nueva posición
+        //calcular la nueva posición
         int posicionActual = this.lugar.getPosicion();
 
         // Calcular la nueva posición en el tablero después de la tirada
         int nuevaPosicion;
         nuevaPosicion = (posicionActual + valorTirada) % 40;
 
-        // PASO 2: colocar el avatar en la nueva posicion
+        // colocar el avatar en la nueva posicion
         this.colocar(casillas, nuevaPosicion);
     }
 

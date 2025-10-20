@@ -1,0 +1,12 @@
+crear jugador Daniel esfinge
+crear jugador Adrián pelota
+crear jugador Samuel coche
+jugador
+lanzar dados
+acabar turno
+lanzar dados 2+4
+comprar
+acabar turno
+describir casilla Solar3
+describir jugador manolo
+ver tablero
