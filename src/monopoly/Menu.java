@@ -44,7 +44,10 @@ public class Menu {
         tirado = false;
         solvente = true;
 
-        lecturaFichero("/home/samuel/Escritorio/POO/Monopoly/src/comandos.txt");
+        System.out.print("Introduce la ruta del fichero de comandos (.txt): ");
+        String rutaFichero = scanner.nextLine().trim();
+
+        lecturaFichero(rutaFichero);
 
         while (true) {
             try {
@@ -91,7 +94,7 @@ public class Menu {
         File file = new File(fichero);
         try {
             Scanner sc = new Scanner(file);
-            while (sc.hasNextLine()) {
+            while(sc.hasNextLine()) {
                 String line = sc.nextLine();
                 System.out.println(line);
                 analizarComando(line);
@@ -305,7 +308,7 @@ public class Menu {
                     valorDado1 = dado1.hacerTirada();
                     valorDado2 = dado2.hacerTirada();
                 }
-            } catch (NumberFormatException e) {
+            } catch(NumberFormatException e) {
                 System.out.println("Error en valores de dados. Usando valores aleatorios.");
                 valorDado1 = dado1.hacerTirada();
                 valorDado2 = dado2.hacerTirada();
