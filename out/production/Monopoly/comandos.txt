@@ -7,12 +7,12 @@ comprar Solar1
 lanzar dados 2+2
 comprar Solar3
 listar enventa
-describir jugador Pedro
+describir Pedro
 lanzar dados 1+1
 acabar turno
 jugador
 lanzar dados 5+1
-describir jugador Maria
+describir Maria
 comprar Solar3
 lanzar dados 1+1
 salir cárcel
