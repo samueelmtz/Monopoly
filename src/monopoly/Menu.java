@@ -55,7 +55,7 @@ public class Menu {
                 System.out.println("> listar jugadores");
                 System.out.println("> lanzar dados (x+y para forzar)");
                 System.out.println("> acabar turno");
-                System.out.println("> salir carcel");
+                System.out.println("> salir cárcel");
                 System.out.println("> describir casilla");
                 System.out.println("> describir jugador");
                 System.out.println("> comprar");
@@ -162,10 +162,10 @@ public class Menu {
                 break;
 
             case "salir":
-                if (comandos.length == 2 && comandos[1].equals("carcel")) {
+                if (comandos.length == 2 && comandos[1].equals("cárcel")) {
                     salirCarcel();
                 } else {
-                    System.out.println("Comando incorrecto. Uso: salir carcel");
+                    System.out.println("Comando incorrecto. Uso: salir cárcel");
                 }
                 break;
 

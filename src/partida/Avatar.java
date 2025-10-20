@@ -16,6 +16,10 @@ public class Avatar {
 
     //Constructor vacío
     public Avatar(String tipoAvatar, Casilla inicio, ArrayList<Avatar> avCreados) {
+        this.tipo = null;
+        this.lugar = null;
+        this.lugar = null;
+        this.jugador = null;
     }
 
     /*Constructor principal. Requiere éstos parámetros:

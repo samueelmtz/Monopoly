@@ -18,7 +18,7 @@ public class Dado {
     public int hacerTirada() {
         if (this.forzado) {
             this.valor = this.valorForzado;
-            System.out.println("DEBUG: Dado forzado a " + this.valor);
+            System.out.println("Dado forzado a " + this.valor);
         } else {
             this.valor = rand.nextInt(6) + 1;
         }
