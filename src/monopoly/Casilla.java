@@ -139,13 +139,11 @@ public class Casilla {
 
                     // Aplicar pago a otro jugador
                     actual.restarFortuna(aPagar);
-                    actual.sumarGastos(aPagar);
                     if (receptor != null) {
                         receptor.sumarFortuna(aPagar);
                     }
 
-                    System.out.printf("%s ha pagado %,.0f€ a %s\n",
-                            actual.getNombre(), aPagar, receptor.getNombre());
+                    System.out.printf("%s ha pagado %,.0f€ a %s\n", actual.getNombre(), aPagar, receptor.getNombre());
                     return true;
                 }
             }
@@ -155,7 +153,7 @@ public class Casilla {
                 float aPagar = this.impuesto;
                 System.out.printf("Impuesto a pagar: %,.0f€\n", aPagar);
 
-                // Solo verificar solvencia, el pago real se hace en Menu.java
+
                 if (actual.getFortuna() < aPagar) {
                     System.out.printf("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n", aPagar, actual.getFortuna());
                     System.out.println("Debes hipotecar propiedades o declararte en bancarrota.");
@@ -204,7 +202,6 @@ public class Casilla {
                 if(this.duenho == null || this.duenho == banca || this.duenho.getNombre().equals("Banca")) {
                     if (solicitante.getFortuna()>=this.valor) { //Verificar que se tiene el saldo suficiente para pagarla
                         solicitante.restarFortuna(this.valor);
-                        solicitante.sumarGastos(this.valor);
 
                         // Si la casilla tenía dueño anterior (banca), eliminarla de sus propiedades
                         if(this.duenho != null && this.duenho.getNombre().equals("Banca")) {
@@ -243,6 +240,7 @@ public class Casilla {
      * - Sumar valor a las casillas de solar al no comprarlas tras cuatro vueltas de todos los jugadores.
      * Este metodo toma como argumento la cantidad a añadir del valor de la casilla.*/
     public void sumarValor(float suma) {
+
         this.valor += suma;
     }
 

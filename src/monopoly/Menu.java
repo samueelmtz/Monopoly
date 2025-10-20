@@ -343,7 +343,6 @@ public class Menu {
             // El dinero ya se restó en evaluarCasilla, pero fue a la banca
             // Lo quitamos de la banca y lo ponemos en el bote
             actual.restarFortuna(impuesto);
-            actual.sumarGastos(impuesto);
             tablero.añadirAlBote(impuesto);
 
             System.out.printf("Se han transferido %,.0f€ del impuesto al bote del Parking\n", impuesto);
@@ -398,7 +397,7 @@ public class Menu {
     //Metodo que ejecuta todas las acciones relacionadas con el comando 'salir carcel'.
     private void salirCarcel() {
         Jugador jugadorActual = jugadores.get(turno);
-        if (jugadorActual.salirCarcel()) {
+        if (jugadorActual.salirDeCarcel()) {
             System.out.println(jugadorActual.getNombre() + " paga 500.000€ y sale de la cárcel. Puede lanzar los datos.");
         } else {
             System.out.println("No se pudo salir de la cárcel. Asegúrate de que estás en la cárcel y tienes suficiente dinero.");

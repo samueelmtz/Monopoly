@@ -73,7 +73,7 @@ public class Jugador {
     }
 
     //Metodo para sumar gastos a un jugador.
-    //Parámetro: valor a añadir a los gastos del jugador (será el precio de un solar, impuestos pagados...).
+    //Parámetro: valor a añadir a los gastos del jugador (será el precio de un solar, impuestos pagados...). NO SE USA EN ESTA ENTREGA
     public void sumarGastos(float valor) {
         this.gastos += valor;
     }
@@ -98,7 +98,7 @@ public class Jugador {
         System.out.println("Error: No se encontró la casilla Carcel");
     }
 
-    public boolean salirCarcel() {
+    public boolean salirDeCarcel() {
         float PRECIO_SALIDA_CARCEL = 500000;
         if (!this.enCarcel) {
             System.out.println(this.nombre + " no está en la cárcel.");
