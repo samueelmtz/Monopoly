@@ -44,7 +44,10 @@ public class Menu {
         tirado = false;
         solvente = true;
 
-        lecturaFichero("comandos.txt");
+        System.out.print("Introduce la ruta del fichero de comandos (.txt): ");
+        String rutaFichero = scanner.nextLine().trim();
+
+        lecturaFichero(rutaFichero);
 
         while (true) {
             try {
@@ -55,7 +58,7 @@ public class Menu {
                 System.out.println("> listar jugadores");
                 System.out.println("> lanzar dados (x+y para forzar)");
                 System.out.println("> acabar turno");
-                System.out.println("> salir carcel");
+                System.out.println("> salir cárcel");
                 System.out.println("> describir casilla");
                 System.out.println("> describir jugador");
                 System.out.println("> comprar");
@@ -91,7 +94,7 @@ public class Menu {
         File file = new File(fichero);
         try {
             Scanner sc = new Scanner(file);
-            while (sc.hasNextLine()) {
+            while(sc.hasNextLine()) {
                 String line = sc.nextLine();
                 System.out.println(line);
                 analizarComando(line);
@@ -127,20 +130,18 @@ public class Menu {
                 break;
 
             case "describir":
-                if (comandos.length != 3) {
-                    System.out.println("Comando incompleto. Uso: describir <jugador|casilla> [nombre]");
-                } else {
+                if (comandos.length == 2  || comandos.length == 3) {
                     switch (comandos[1]) {
                         case "jugador":
                             descJugador(comandos);
                             break;
-                        case "casilla":
-                            descCasilla(comandos[2]);
-                            break;
                         default:
-                            System.out.println("Error. Uso: describir <jugador|casilla> [nombre] o nombre de casilla/jugador erróneo");
+                            descCasilla(comandos[1]);
                             break;
                     }
+                } else {
+                    System.out.println("Comando erróneo. Uso: describir <jugador> [nombre] o describir [nombre_casilla]");
+
                 }
                 break;
 
@@ -164,10 +165,10 @@ public class Menu {
                 break;
 
             case "salir":
-                if (comandos.length == 2 && comandos[1].equals("carcel")) {
+                if (comandos.length == 2 && comandos[1].equals("cárcel")) {
                     salirCarcel();
                 } else {
-                    System.out.println("Comando incorrecto. Uso: salir carcel");
+                    System.out.println("Comando incorrecto. Uso: salir cárcel");
                 }
                 break;
 
@@ -307,7 +308,7 @@ public class Menu {
                     valorDado1 = dado1.hacerTirada();
                     valorDado2 = dado2.hacerTirada();
                 }
-            } catch (NumberFormatException e) {
+            } catch(NumberFormatException e) {
                 System.out.println("Error en valores de dados. Usando valores aleatorios.");
                 valorDado1 = dado1.hacerTirada();
                 valorDado2 = dado2.hacerTirada();

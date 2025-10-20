@@ -16,6 +16,10 @@ public class Avatar {
 
     //Constructor vacío
     public Avatar(String tipoAvatar, Casilla inicio, ArrayList<Avatar> avCreados) {
+        this.tipo = null;
+        this.lugar = null;
+        this.lugar = null;
+        this.jugador = null;
     }
 
     /*Constructor principal. Requiere éstos parámetros:
@@ -62,7 +66,7 @@ public class Avatar {
         boolean repetido = true;
         while (repetido) {
             repetido = false;
-            id = String.valueOf((char) (num.nextInt(26) + 'A')); ///Obtiene como ID una letra entre la a
+            id = String.valueOf((char) (num.nextInt(26) + 'A')); ///Obtiene como ID una letra
 
             for (Avatar a : avCreados) {
                 if (a != null && a.getId().equals(id)) {
