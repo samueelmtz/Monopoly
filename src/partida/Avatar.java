@@ -66,7 +66,7 @@ public class Avatar {
         boolean repetido = true;
         while (repetido) {
             repetido = false;
-            id = String.valueOf((char) (num.nextInt(26) + 'A')); ///Obtiene como ID una letra entre la a
+            id = String.valueOf((char) (num.nextInt(26) + 'A')); ///Obtiene como ID una letra
 
             for (Avatar a : avCreados) {
                 if (a != null && a.getId().equals(id)) {
