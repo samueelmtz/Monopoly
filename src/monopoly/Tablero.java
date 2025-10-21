@@ -269,7 +269,7 @@ public class Tablero {
             sb.append("| ");
             sb.append(obtenerCasillaFormateada(izquierda[i]));
             sb.append(" |");
-            sb.append(" ".repeat(116)); // Espacio central
+            sb.append(" ".repeat(125)); // Espacio central
             sb.append("| ");
             sb.append(obtenerCasillaFormateada(derecha[i]));
             sb.append(" |\n");
@@ -341,6 +341,19 @@ public class Tablero {
         String color = Valor.RESET;
         String nombre = casilla.getNombre();
 
+        // Obtener avatares en esta casilla
+        StringBuilder avataresStr = new StringBuilder();
+        if (!casilla.getAvatares().isEmpty()) {
+            avataresStr.append(" (");
+            for (int i = 0; i < casilla.getAvatares().size(); i++) {
+                avataresStr.append(casilla.getAvatares().get(i).getId());
+                if (i < casilla.getAvatares().size() - 1) {
+                    avataresStr.append(",");
+                }
+            }
+            avataresStr.append(")");
+        }
+
         // Asignar colores según tipo
         switch (casilla.getTipo()) {
             case "Solar":
@@ -405,8 +418,9 @@ public class Tablero {
                 break;
         }
 
-        // Mostrar nombre completo (sin abreviar)
-        return color + String.format("%-10s", nombre) + Valor.RESET;
+        // Mostrar nombre completo con avatares
+        String nombreConAvatares = nombre + avataresStr.toString();
+        return color + String.format("%-11s", nombreConAvatares) + Valor.RESET;
     }
 
     // Getters
