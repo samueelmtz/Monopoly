@@ -1,5 +1,7 @@
 package monopoly;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import partida.*;
 import java.util.Scanner;
@@ -27,7 +29,7 @@ public class Menu {
         avatares = new ArrayList<>();
 
         // Crear la banca
-        banca = new Jugador(); // null porque no tiene avatar
+        banca = new Jugador(); //
 
         // Inicializar tablero
         tablero = new Tablero(banca);
@@ -42,6 +44,11 @@ public class Menu {
         tirado = false;
         solvente = true;
 
+        System.out.print("Introduce la ruta del fichero de comandos (.txt): ");
+        String rutaFichero = scanner.nextLine().trim();
+
+        lecturaFichero(rutaFichero);
+
         while (true) {
             try {
                 // Mostrar prompt con comandos disponibles
@@ -51,7 +58,7 @@ public class Menu {
                 System.out.println("> listar jugadores");
                 System.out.println("> lanzar dados (x+y para forzar)");
                 System.out.println("> acabar turno");
-                System.out.println("> salir carcel");
+                System.out.println("> salir cárcel");
                 System.out.println("> describir casilla");
                 System.out.println("> describir jugador");
                 System.out.println("> comprar");
@@ -80,6 +87,23 @@ public class Menu {
         System.out.println("Juego terminado");
     }
 
+    /*Metodo que lee un fichero de texto con comandos y los ejecuta.
+     * Parámetro: cadena de caracteres (ruta del fichero).
+     */
+    public void lecturaFichero(String fichero) {
+        File file = new File(fichero);
+        try {
+            Scanner sc = new Scanner(file);
+            while(sc.hasNextLine()) {
+                String line = sc.nextLine();
+                System.out.println(line);
+                analizarComando(line);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Error al abrir el fichero");
+            return;
+        }
+    }
 
     /*Metodo que interpreta el comando introducido y toma la accion correspondiente.
      * Parámetro: cadena de caracteres (el comando).
@@ -106,20 +130,18 @@ public class Menu {
                 break;
 
             case "describir":
-                if (comandos.length != 3) {
-                    System.out.println("Comando incompleto. Uso: describir <jugador|casilla> [nombre]");
-                } else {
+                if (comandos.length == 2  || comandos.length == 3) {
                     switch (comandos[1]) {
                         case "jugador":
                             descJugador(comandos);
                             break;
-                        case "casilla":
-                            descCasilla(comandos[2]);
-                            break;
                         default:
-                            System.out.println("Error. Uso: describir <jugador|casilla> [nombre] o nombre de casilla/jugador erróneo");
+                            descCasilla(comandos[1]);
                             break;
                     }
+                } else {
+                    System.out.println("Comando erróneo. Uso: describir <jugador> [nombre] o describir [nombre_casilla]");
+
                 }
                 break;
 
@@ -143,10 +165,10 @@ public class Menu {
                 break;
 
             case "salir":
-                if (comandos.length == 2 && comandos[1].equals("carcel")) {
+                if (comandos.length == 2 && comandos[1].equals("cárcel")) {
                     salirCarcel();
                 } else {
-                    System.out.println("Comando incorrecto. Uso: salir carcel");
+                    System.out.println("Comando incorrecto. Uso: salir cárcel");
                 }
                 break;
 
@@ -173,7 +195,8 @@ public class Menu {
 
             case "ver":
                 if (comandos.length == 2 && comandos[1].equals("tablero")) {
-                    tablero.mostrarTablero();
+                    // Usar toString() directamente
+                    System.out.println(tablero.toString());
                 } else {
                     System.out.println("Comando incorrecto. Uso: ver tablero");
                 }
@@ -235,9 +258,6 @@ public class Menu {
     /* Método que realiza las acciones asociadas al comando 'describir nombre_casilla'.
      * Parámetros: nombre de la casilla a describir.
      */
-    /* Método que realiza las acciones asociadas al comando 'describir nombre_casilla'.
-     * Parámetros: nombre de la casilla a describir.
-     */
     private void descCasilla(String nombre) {
         Casilla casilla = tablero.encontrar_casilla(nombre);
 
@@ -288,7 +308,7 @@ public class Menu {
                     valorDado1 = dado1.hacerTirada();
                     valorDado2 = dado2.hacerTirada();
                 }
-            } catch (NumberFormatException e) {
+            } catch(NumberFormatException e) {
                 System.out.println("Error en valores de dados. Usando valores aleatorios.");
                 valorDado1 = dado1.hacerTirada();
                 valorDado2 = dado2.hacerTirada();
@@ -316,6 +336,33 @@ public class Menu {
         // EVALUAR LA CASILLA DESPUÉS DEL MOVIMIENTO
         Casilla casillaActual = actual.getAvatar().getLugar();
         solvente = casillaActual.evaluarCasilla(actual, banca, suma);
+
+        // MANEJO ESPECIAL PARA CASILLAS DE IMPUESTOS
+        if (casillaActual.getTipo().equals("Impuesto") && solvente) {
+            float impuesto = casillaActual.getImpuesto();
+
+            // El dinero ya se restó en evaluarCasilla, pero fue a la banca
+            // Lo quitamos de la banca y lo ponemos en el bote
+            actual.restarFortuna(impuesto);
+            tablero.añadirAlBote(impuesto);
+
+            System.out.printf("Se han transferido %,.0f€ del impuesto al bote del Parking\n", impuesto);
+        }
+
+        // MANEJO ESPECIAL PARA PARKING DESPUÉS DE EVALUAR
+        if (casillaActual.getNombre().equals("Parking")) {
+            float boteGanado = tablero.reclamarBote(actual);
+            if (boteGanado > 0) {
+                System.out.printf("¡%s ha ganado el bote del Parking: %,.0f€!\n", actual.getNombre(), boteGanado);
+                System.out.printf("Fortuna actual de %s: %,.0f€\n", actual.getNombre(), actual.getFortuna());
+            }
+        }
+
+        // MANEJO ESPECIAL PARA IRCARCEL DESPUÉS DE EVALUAR
+        if (casillaActual.getNombre().equals("IrCarcel")) {
+            System.out.println("¡Has caído en Ir a la Cárcel! Moviendo a la cárcel...");
+            actual.encarcelar(tablero.getPosiciones());
+        }
 
         if (valorDado1 == valorDado2) {
             if (lanzamientos == 3) {
@@ -349,10 +396,9 @@ public class Menu {
 
 
     //Metodo que ejecuta todas las acciones relacionadas con el comando 'salir carcel'.
-
     private void salirCarcel() {
         Jugador jugadorActual = jugadores.get(turno);
-        if(jugadorActual.salirCarcel()) {
+        if (jugadorActual.salirDeCarcel()) {
             System.out.println(jugadorActual.getNombre() + " paga 500.000€ y sale de la cárcel. Puede lanzar los datos.");
         } else {
             System.out.println("No se pudo salir de la cárcel. Asegúrate de que estás en la cárcel y tienes suficiente dinero.");
@@ -427,6 +473,8 @@ public class Menu {
         System.out.println("El jugador actual es " + siguienteJugador.getNombre() + ".");
     }
 
+    //FIN ESQUELETO
+
     private void crearJugador(String nombre, String tipoAvatar) {
         // Validar primero el tipo de avatar
         String tipoValidado = validarTipoAvatar(tipoAvatar);
@@ -463,7 +511,7 @@ public class Menu {
             System.out.println("}");
 
             // Mostrar el tablero actualizado
-            tablero.mostrarTablero();
+            tablero.toString();
 
         } catch (Exception e) {
             System.out.println("Error al crear el jugador: " + e.getMessage());
@@ -474,7 +522,7 @@ public class Menu {
     private String validarTipoAvatar(String tipoAvatar) {
         if (tipoAvatar == null) return null;
 
-        switch(tipoAvatar.toLowerCase()) {
+        switch (tipoAvatar.toLowerCase()) {
             case "sombrero":
             case "esfinge":
             case "pelota":
@@ -485,7 +533,8 @@ public class Menu {
         }
     }
 
-    public void turnoJugador(){
+    // Metodo auxiliar que permite ver de quien es turno
+    public void turnoJugador() {
         if (jugadores == null || jugadores.isEmpty()) {
             System.out.println("No hay jugadores creados.");
             return;
@@ -506,32 +555,6 @@ public class Menu {
         System.out.println("nombre: " + actual.getNombre() + ",");
         System.out.println("avatar: " + avatarId);
         System.out.println("}");
-    }
-
-
-    // Método para procesar pagos de impuestos (van al bote del Parking)
-    private boolean procesarImpuesto(Jugador jugador, Casilla casillaImpuesto) {
-        float impuesto = casillaImpuesto.getImpuesto();
-
-        System.out.printf("Impuesto a pagar: %,.0f€\n", impuesto);
-
-        // Verificar si el jugador tiene suficiente dinero
-        if (jugador.getFortuna() < impuesto) {
-            System.out.printf("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n", impuesto, jugador.getFortuna());
-            System.out.println("Debes hipotecar propiedades o declararte en bancarrota.");
-            return false;
-        }
-
-        // El jugador paga el impuesto
-        jugador.restarFortuna(impuesto);
-        jugador.sumarGastos(impuesto);
-
-        // El dinero va al bote del Parking en lugar de a la banca
-        tablero.añadirAlBote(impuesto);
-
-        System.out.printf("%s ha pagado %,.0f€ de impuestos al bote del Parking\n",
-                jugador.getNombre(), impuesto);
-        return true;
     }
 }
 

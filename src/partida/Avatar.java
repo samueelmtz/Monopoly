@@ -16,6 +16,10 @@ public class Avatar {
 
     //Constructor vacío
     public Avatar(String tipoAvatar, Casilla inicio, ArrayList<Avatar> avCreados) {
+        this.tipo = null;
+        this.lugar = null;
+        this.lugar = null;
+        this.jugador = null;
     }
 
     /*Constructor principal. Requiere éstos parámetros:
@@ -41,30 +45,15 @@ public class Avatar {
      */
     public void moverAvatar(ArrayList<ArrayList<Casilla>> casillas, int valorTirada) {
 
-        // PASO 1: calcular la nueva posición
+        //calcular la nueva posición
         int posicionActual = this.lugar.getPosicion();
 
         // Calcular la nueva posición en el tablero después de la tirada
         int nuevaPosicion;
         nuevaPosicion = (posicionActual + valorTirada) % 40;
 
-        // PASO 2: colocar el avatar en la nueva posicion
+        // colocar el avatar en la nueva posicion
         this.colocar(casillas, nuevaPosicion);
-    }
-
-    public void moveravatar(Casilla cas) {
-        // Remover el avatar de su casilla actual
-        if (this.lugar != null) {
-            this.lugar.eliminarAvatar(this);
-        }
-
-        // Establecer la nueva casilla
-        this.lugar = cas;
-
-        // Añadir el avatar a la nueva casilla
-        cas.anhadirAvatar(this);
-
-        System.out.println("Avatar " + this.id + " se movió directamente a " + cas.getNombre() + " (posición " + cas.getPosicion() + ")");
     }
 
     /*Metodo que permite generar un ID para un avatar. Sólo lo usamos en esta clase (por ello es privado).
@@ -77,7 +66,7 @@ public class Avatar {
         boolean repetido = true;
         while (repetido) {
             repetido = false;
-            id = String.valueOf((char) (num.nextInt(26) + 'A')); ///Obtiene como ID una letra entre la a
+            id = String.valueOf((char) (num.nextInt(26) + 'A')); ///Obtiene como ID una letra
 
             for (Avatar a : avCreados) {
                 if (a != null && a.getId().equals(id)) {
@@ -92,6 +81,7 @@ public class Avatar {
         }
     }
 
+    //Nueva funcion que mueve el avatar a una casilla en especifico (necesario para la carcel o para moverAvatar)
     public void colocar(ArrayList<ArrayList<Casilla>> casillas, int nuevaPosicion) {
         if (this.lugar != null) {
             this.lugar.eliminarAvatar(this);
@@ -127,18 +117,6 @@ public class Avatar {
         return tipo;
     }
 
-    public void setTipo(String tipo_avatar) {
-        switch(tipo_avatar) {
-            case "sombrero":
-            case "esfinge":
-            case "pelota":
-            case "coche":
-                this.tipo = tipo_avatar;
-                break;
-            default:
-                System.out.println(tipo_avatar + " no es un avatar permitido.\n");
-        }
-    }
 
     public Jugador getJugador() {
         return jugador;

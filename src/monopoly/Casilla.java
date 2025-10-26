@@ -15,6 +15,7 @@ public class Casilla {
     private float impuesto; //Cantidad a pagar por caer en la casilla: el alquiler en solares/servicios/transportes o impuestos.
     private float hipoteca; //Valor otorgado por hipotecar una casilla
     private ArrayList<Avatar> avatares; //Avatares que están situados en la casilla.
+    private float alquiler; //Alquiler base de la casilla (solo para solares).
 
      //Constructores:
     public Casilla() {
@@ -24,16 +25,26 @@ public class Casilla {
         this.hipoteca = 0;
     }//Parametros vacios
 
-    /*Constructor para casillas tipo Solar, Servicios o Transporte:
-     * Parámetros: nombre casilla, tipo (debe ser solar, serv. o transporte), posición en el tablero, valor y dueño.
+    /*Constructor para casillas tipo Solar (añade el valor alquiler)
+     * Parámetros: nombre casilla, tipo, posición, valor, alquiler y dueño.
+     */
+    public Casilla(String nombre, String tipo, int posicion, float valor, float alquiler, Jugador duenho) {
+        this.nombre = nombre;
+        this.tipo = tipo;
+        this.posicion = posicion;
+        this.valor = valor;
+        this.impuesto = alquiler;
+        this.duenho = duenho;
+        this.avatares = new ArrayList<Avatar>();
+    }
+    /*Constructor para casillas tipo Servicios o Transporte:
+     * Parámetros: nombre casilla, tipo (debe ser serv. o transporte), posición en el tablero, valor y dueño.
      */
     public Casilla(String nombre, String tipo, int posicion, float valor, Jugador duenho) {
         this.nombre = nombre;
         this.tipo = tipo;
         this.posicion = posicion;
         this.valor = valor;
-        this.impuesto = valor * 0.10f;
-        this.hipoteca = valor/2f;
         this.duenho = duenho;
         this.avatares = new ArrayList<Avatar>();
     }
@@ -103,86 +114,63 @@ public class Casilla {
                         System.out.printf("Alquiler de solar: %,.0f€\n", aPagar);
                         break;
 
-                    case "Transporte": {
-                        // CORRECCIÓN: Siempre 250.000€ según especificación
+                    case "Transporte":
                         aPagar = Valor.ALQUILER_TRANSPORTE;
                         System.out.printf("Alquiler de transporte: %,.0f€\n", aPagar);
                         break;
-                    }
 
-                    case "Servicio": {
-                        // CORRECCIÓN: Siempre multiplicador 4 según especificación
+                    case "Servicios":
                         int x = 4;
                         aPagar = (float) tirada * x * Valor.FACTOR_SERVICIO;
-                        System.out.printf("Alquiler de servicio: dados(%d) * %d * %,.0f€ = %,.0f€\n",
-                                tirada, x, Valor.FACTOR_SERVICIO, aPagar);
+                        System.out.printf("Alquiler de servicio: dados(%d) * %d * %,.0f€ = %,.0f€\n", tirada, x, Valor.FACTOR_SERVICIO, aPagar);
                         break;
-                    }
 
                     default:
-                        // Para otros tipos que no requieren pago aquí
                         break;
                 }
 
                 // Comprobación de solvencia para pagos a otros jugadores
                 if (aPagar > 0) {
                     if (actual.getFortuna() < aPagar) {
-                        System.out.printf("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n",
-                                aPagar, actual.getFortuna());
+                        System.out.printf("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n", aPagar, actual.getFortuna());
                         System.out.println("Debes hipotecar propiedades o declararte en bancarrota.");
                         return false;
                     }
 
                     // Aplicar pago a otro jugador
                     actual.restarFortuna(aPagar);
-                    actual.sumarGastos(aPagar);
                     if (receptor != null) {
                         receptor.sumarFortuna(aPagar);
                     }
 
-                    System.out.printf("%s ha pagado %,.0f€ a %s\n",
-                            actual.getNombre(), aPagar, receptor.getNombre());
+                    System.out.printf("%s ha pagado %,.0f€ a %s\n", actual.getNombre(), aPagar, receptor.getNombre());
                     return true;
                 }
             }
 
-            // TERCERO: Procesar casillas de impuestos (que van a la banca o al bote)
+            // TERCERO: Procesar casillas de impuestos (solo mostrar mensaje, el pago se hace en Menu)
             if (this.tipo.equals("Impuesto")) {
                 float aPagar = this.impuesto;
                 System.out.printf("Impuesto a pagar: %,.0f€\n", aPagar);
 
-                // Verificar si el jugador tiene suficiente dinero
+
                 if (actual.getFortuna() < aPagar) {
-                    System.out.printf("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n",
-                            aPagar, actual.getFortuna());
+                    System.out.printf("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n", aPagar, actual.getFortuna());
                     System.out.println("Debes hipotecar propiedades o declararte en bancarrota.");
                     return false;
                 }
 
-                // El jugador paga el impuesto
-                actual.restarFortuna(aPagar);
-                actual.sumarGastos(aPagar);
-
-                // El dinero va al bote del Parking en lugar de a la banca
-                // Buscar el tablero a través de la casilla de parking
-                Casilla parking = null;
-                // Necesitamos una referencia al tablero, pero como no la tenemos directamente,
-                // asumimos que el impuesto va a la banca por ahora
-                banca.sumarFortuna(aPagar);
-
-                System.out.printf("%s ha pagado %,.0f€ de impuestos\n",
-                        actual.getNombre(), aPagar);
+                // Devolver true para indicar que es solvente, el pago se procesa en Menu
                 return true;
             }
 
             // Casillas especiales
             switch (this.tipo) {
                 case "Parking":
-                    System.out.println("Has caído en Parking. Función de bote por implementar.");
+                    System.out.println("Has caído en Parking.");
                     break;
                 case "IrCarcel":
                     System.out.println("¡Has caído en Ir a la Cárcel!");
-                    //actual.encarcelar();
                     break;
                 case "Carcel":
                     System.out.println("Estás de visita en la Cárcel!");
@@ -201,7 +189,7 @@ public class Casilla {
 
     /*Metodo auxiliar para verificar si el tipo de una casilla la hace comprable*/
     public boolean esTipoComprable() {
-        return (this.tipo.equals("Solar") || this.tipo.equals("Transporte") || this.tipo.equals("Servicio"));
+        return (this.tipo.equals("Solar") || this.tipo.equals("Transporte") || this.tipo.equals("Servicios"));
     }
 
     /*Método usado para comprar una casilla determinada. Parámetros:
@@ -214,7 +202,6 @@ public class Casilla {
                 if(this.duenho == null || this.duenho == banca || this.duenho.getNombre().equals("Banca")) {
                     if (solicitante.getFortuna()>=this.valor) { //Verificar que se tiene el saldo suficiente para pagarla
                         solicitante.restarFortuna(this.valor);
-                        solicitante.sumarGastos(this.valor);
 
                         // Si la casilla tenía dueño anterior (banca), eliminarla de sus propiedades
                         if(this.duenho != null && this.duenho.getNombre().equals("Banca")) {
@@ -266,28 +253,38 @@ public class Casilla {
         switch (this.tipo) {
             case "Solar":
                 info.append("\tTipo: ").append(this.tipo).append("\n");
-                info.append("\tColor del grupo: ").append(this.grupo.getColorGrupo()).append("\n");
+                if (this.grupo != null) {
+                    info.append("\tColor del grupo: ").append(this.grupo.getColorGrupo()).append("\n");
+                }
                 info.append("\tDueño: ").append(this.duenho.getNombre()).append("\n");
                 info.append(String.format("\tPrecio: %,.0f€\n", this.valor));
                 info.append(String.format("\tAlquiler: %,.0f€\n", this.impuesto));
-                info.append(String.format("\tHipoteca: %,.0f€\n", this.hipoteca));
-                info.append(String.format("\tPrecio casa: %,.0f€\n", this.valor * 0.60f));
-                info.append(String.format("\tPrecio hotel: %,.0f€\n", this.valor * 0.60f));
-                info.append(String.format("\tPrecio piscina: %,.0f€\n", this.valor * 0.40f));
-                info.append(String.format("\tPrecio pista de deporte: %,.0f€\n", this.valor * 1.25f));
-                info.append(String.format("\tAlquiler casa: %,.0f€\n", this.impuesto * 5f));
-                info.append(String.format("\tAlquiler hotel: %,.0f€\n", this.impuesto * 70f));
-                info.append(String.format("\tAlquiler piscina: %,.0f€\n", this.impuesto * 25f));
-                info.append(String.format("\tAlquiler pista de deporte: %,.0f€\n", this.impuesto * 25f));
+
+                // Usar valores específicos según el nombre del solar
+                float precioCasa = getPrecioCasa();
+                float precioHotel = getPrecioHotel();
+                float precioPiscina = getPrecioPiscina();
+                float precioPista = getPrecioPistaDeporte();
+                float alquilerCasa = getAlquilerCasa();
+                float alquilerHotel = getAlquilerHotel();
+                float alquilerPiscina = getAlquilerPiscina();
+                float alquilerPista = getAlquilerPistaDeporte();
+
+                info.append(String.format("\tPrecio casa: %,.0f€\n", precioCasa));
+                info.append(String.format("\tPrecio hotel: %,.0f€\n", precioHotel));
+                info.append(String.format("\tPrecio piscina: %,.0f€\n", precioPiscina));
+                info.append(String.format("\tPrecio pista de deporte: %,.0f€\n", precioPista));
+                info.append(String.format("\tAlquiler casa: %,.0f€\n", alquilerCasa));
+                info.append(String.format("\tAlquiler hotel: %,.0f€\n", alquilerHotel));
+                info.append(String.format("\tAlquiler piscina: %,.0f€\n", alquilerPiscina));
+                info.append(String.format("\tAlquiler pista de deporte: %,.0f€\n", alquilerPista));
                 break;
 
             case "Transporte":
                 info.append("\tTipo: ").append(this.tipo).append("\n");
                 info.append("\tDueño: ").append(this.duenho.getNombre()).append("\n");
                 info.append(String.format("\tPrecio: %,.0f€\n", this.valor));
-                info.append(String.format("\tPago por caer: %,.0f€\n",
-                        Valor.ALQUILER_TRANSPORTE)); // Usar constante en lugar de cálculo
-                info.append(String.format("\tHipoteca: %,.0f€\n", this.hipoteca));
+                info.append(String.format("\tPago por caer: %,.0f€\n", Valor.ALQUILER_TRANSPORTE)); // Usar constante en lugar de cálculo
                 break;
 
             case "Servicio":
@@ -296,7 +293,6 @@ public class Casilla {
                 info.append(String.format("\tPrecio: %,.0f€\n", this.valor));
                 info.append(String.format("\tPago por caer: dados * x * %,.0f€\n", Valor.FACTOR_SERVICIO));
                 info.append("\t\t(x=4 si se posee una casilla de este tipo, x=10 si se poseen 2)\n");
-                info.append(String.format("\tHipoteca: %,.0f€\n", this.hipoteca));
                 break;
 
             case "Impuesto":
@@ -444,6 +440,123 @@ public class Casilla {
     }
     public void setGrupo(Grupo grupo){
         this.grupo = grupo;
+    }
+
+    // Métodos auxiliares para obtener los valores específicos de valores de casas, hoteles, piscinas y pistas de deporte
+    private float getPrecioCasa() {
+        switch(this.nombre) {
+            case "Solar1": case "Solar2": return 500000;
+            case "Solar3": case "Solar4": case "Solar5": return 500000;
+            case "Solar6": case "Solar7": case "Solar8":
+            case "Solar9": case "Solar10": case "Solar11": return 1000000;
+            case "Solar12": case "Solar13": case "Solar14":
+            case "Solar15": case "Solar16": case "Solar17": return 1500000;
+            case "Solar18": case "Solar19": case "Solar20":
+            case "Solar21": case "Solar22": return 2000000;
+            default: return this.valor * 0.60f;
+        }
+    }
+
+    private float getPrecioHotel() {
+        return getPrecioCasa(); // Según PDF, mismo precio que casa
+    }
+
+    private float getPrecioPiscina() {
+        switch(this.nombre) {
+            case "Solar1": case "Solar2": return 100000;
+            case "Solar3": case "Solar4": case "Solar5": return 100000;
+            case "Solar6": case "Solar7": case "Solar8":
+            case "Solar9": case "Solar10": case "Solar11": return 200000;
+            case "Solar12": case "Solar13": case "Solar14":
+            case "Solar15": case "Solar16": case "Solar17": return 300000;
+            case "Solar18": case "Solar19": case "Solar20":
+            case "Solar21": case "Solar22": return 400000;
+            default: return this.valor * 0.40f;
+        }
+    }
+
+    private float getPrecioPistaDeporte() {
+        switch(this.nombre) {
+            case "Solar1": case "Solar2": return 200000;
+            case "Solar3": case "Solar4": case "Solar5": return 200000;
+            case "Solar6": case "Solar7": case "Solar8":
+            case "Solar9": case "Solar10": case "Solar11": return 400000;
+            case "Solar12": case "Solar13": case "Solar14":
+            case "Solar15": case "Solar16": case "Solar17": return 600000;
+            case "Solar18": case "Solar19": case "Solar20":
+            case "Solar21": case "Solar22": return 800000;
+            default: return this.valor * 1.25f;
+        }
+    }
+
+    private float getAlquilerCasa() {
+        switch(this.nombre) {
+            case "Solar1": return 400000;
+            case "Solar2": return 800000;
+            case "Solar3": case "Solar4": return 1000000;
+            case "Solar5": return 1250000;
+            case "Solar6": case "Solar7": return 1500000;
+            case "Solar8": return 1750000;
+            case "Solar9": case "Solar10": return 1850000;
+            case "Solar11": return 2000000;
+            case "Solar12": case "Solar13": return 2200000;
+            case "Solar14": return 2325000;
+            case "Solar15": case "Solar16": return 2450000;
+            case "Solar17": return 2600000;
+            case "Solar18": case "Solar19": return 2750000;
+            case "Solar20": return 3000000;
+            case "Solar21": return 3250000;
+            case "Solar22": return 4250000;
+            default: return this.impuesto * 5f;
+        }
+    }
+
+    private float getAlquilerHotel() {
+        switch(this.nombre) {
+            case "Solar1": return 2500000;
+            case "Solar2": return 4500000;
+            case "Solar3": case "Solar4": return 5500000;
+            case "Solar5": return 6000000;
+            case "Solar6": case "Solar7": return 7500000;
+            case "Solar8": return 9000000;
+            case "Solar9": case "Solar10": return 9500000;
+            case "Solar11": return 10000000;
+            case "Solar12": case "Solar13": return 10500000;
+            case "Solar14": return 11000000;
+            case "Solar15": case "Solar16": return 11500000;
+            case "Solar17": return 12000000;
+            case "Solar18": case "Solar19": return 12750000;
+            case "Solar20": return 14000000;
+            case "Solar21": return 17000000;
+            case "Solar22": return 20000000;
+            default: return this.impuesto * 70f;
+        }
+    }
+
+    private float getAlquilerPiscina() {
+        switch(this.nombre) {
+            case "Solar1": return 500000;
+            case "Solar2": return 900000;
+            case "Solar3": case "Solar4": return 1100000;
+            case "Solar5": return 1200000;
+            case "Solar6": case "Solar7": return 1500000;
+            case "Solar8": return 1800000;
+            case "Solar9": case "Solar10": return 1900000;
+            case "Solar11": return 2000000;
+            case "Solar12": case "Solar13": return 2100000;
+            case "Solar14": return 2200000;
+            case "Solar15": case "Solar16": return 2300000;
+            case "Solar17": return 2400000;
+            case "Solar18": case "Solar19": return 2550000;
+            case "Solar20": return 2800000;
+            case "Solar21": return 3400000;
+            case "Solar22": return 4000000;
+            default: return this.impuesto * 25f;
+        }
+    }
+
+    private float getAlquilerPistaDeporte() {
+        return getAlquilerPiscina(); // Según PDF, mismo alquiler que piscina
     }
 
     public ArrayList<Avatar> getAvatares() {

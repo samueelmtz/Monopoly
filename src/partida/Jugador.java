@@ -73,7 +73,7 @@ public class Jugador {
     }
 
     //Metodo para sumar gastos a un jugador.
-    //Parámetro: valor a añadir a los gastos del jugador (será el precio de un solar, impuestos pagados...).
+    //Parámetro: valor a añadir a los gastos del jugador (será el precio de un solar, impuestos pagados...). NO SE USA EN ESTA ENTREGA
     public void sumarGastos(float valor) {
         this.gastos += valor;
     }
@@ -83,24 +83,22 @@ public class Jugador {
     public void encarcelar(ArrayList<ArrayList<Casilla>> pos) {
         this.enCarcel = true;
         this.tiradasCarcel = 0;
+
+        // Buscar la casilla de la cárcel por nombre
         for(ArrayList<Casilla> lado : pos) {
             for(Casilla cas : lado) {
-                if(cas.getTipo().equals("Cárcel")) {
+                if(cas.getNombre().equals("Carcel")) {
                     this.avatar.colocar(pos, cas.getPosicion());
-                    System.out.println(this.nombre + "ha sido enviado a la cárcel.\n");
+                    System.out.println(this.nombre + " ha sido enviado a la cárcel.");
+                    this.vecesEnCarcel++;
                     return;
                 }
             }
         }
-        this.vecesEnCarcel ++;
+        System.out.println("Error: No se encontró la casilla Carcel");
     }
 
-    //Metodo para llevar la cuenta de turnos en la cárcel
-    public int sumarVecesCarcel(){
-        return this.vecesEnCarcel ++;
-    }
-
-    public boolean salirCarcel() {
+    public boolean salirDeCarcel() {
         float PRECIO_SALIDA_CARCEL = 500000;
         if (!this.enCarcel) {
             System.out.println(this.nombre + " no está en la cárcel.");
@@ -121,20 +119,6 @@ public class Jugador {
 
     public boolean isEnCarcel() {
         return enCarcel;
-    }
-
-    /*Metodo para contar cuántas casillas posee un jugador de un tipo determinado
-     * Solo se usa para las propiedades de tipo Transportes de momento
-     * @param tipo Tipo de propiedad
-     */
-    public int numeroCasillasTipo(String tipo){
-        int contador=0;
-        for(Casilla c: propiedades){
-            if(c.getTipo().equals(tipo)){
-                contador++;
-            }
-        }
-        return contador;
     }
 
     //Getters y setters:
