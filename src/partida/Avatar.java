@@ -52,6 +52,14 @@ public class Avatar {
         int nuevaPosicion;
         nuevaPosicion = (posicionActual + valorTirada) % 40;
 
+        // DETECTAR SI PASA POR LA SALIDA
+        if (posicionActual + valorTirada > 40) { // Si la suma supera 40, pasa por salida
+            this.jugador.sumarFortuna(Valor.SUMA_VUELTA);
+            this.jugador.sumarPasarPorCasillaDeSalida(Valor.SUMA_VUELTA);
+            System.out.println("¡" + this.jugador.getNombre() + " ha pasado por la Salida y recibe " +
+                    String.format("%,.0f", Valor.SUMA_VUELTA) + "€!");
+        }
+
         // colocar el avatar en la nueva posicion
         this.colocar(casillas, nuevaPosicion);
     }

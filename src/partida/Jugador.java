@@ -125,6 +125,7 @@ public class Jugador {
         }
         if (this.fortuna >= PRECIO_SALIDA_CARCEL) {
             this.restarFortuna(PRECIO_SALIDA_CARCEL);
+            this.sumarPagoTasasEImpuestos(PRECIO_SALIDA_CARCEL);
             this.enCarcel = false;
             this.tiradasCarcel = 0;
             System.out.println(this.nombre + " ha pagado " + PRECIO_SALIDA_CARCEL + " para salir de la cárcel.");

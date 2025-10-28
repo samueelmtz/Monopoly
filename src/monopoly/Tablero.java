@@ -39,6 +39,7 @@ public class Tablero {
         float boteActual = this.boteParking;
         if (boteActual > 0) {
             jugador.sumarFortuna(boteActual);
+            jugador.sumarPremiosInversionesOBote(boteActual);
 
             // Resetear el valor de la casilla Parking usando sumarValor
             Casilla parking = encontrar_casilla("Parking");
