@@ -226,4 +226,5 @@ public class Jugador {
     public float getPremiosInversionesBote() {
         return premiosInversionesBote;
     }
+
 }
