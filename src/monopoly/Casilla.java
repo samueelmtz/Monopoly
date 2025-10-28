@@ -164,6 +164,12 @@ public class Casilla {
                 return true;
             }
 
+            // CUARTO: Procesar casillas de Suerte y Comunidad
+            if (this.tipo.equals("Suerte") || this.tipo.equals("Comunidad")) {
+                System.out.println("Has caído en " + this.tipo + ". Eligiendo carta...");
+                return true;
+            }
+
             // Casillas especiales
             switch (this.tipo) {
                 case "Parking":

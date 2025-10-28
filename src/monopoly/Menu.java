@@ -353,6 +353,13 @@ public class Menu {
         Casilla casillaActual = actual.getAvatar().getLugar();
         solvente = casillaActual.evaluarCasilla(actual, banca, suma);
 
+        // MANEJAR CARTAS DE SUERTE Y COMUNIDAD DESPUÉS DE EVALUAR
+        if (casillaActual.getTipo().equals("Suerte") || casillaActual.getTipo().equals("Comunidad")) {
+            System.out.println("Ejecutando acción de carta...");
+            ejecutarCarta(actual, casillaActual.getTipo());
+        }
+
+
         // MANEJO ESPECIAL PARA CASILLAS DE IMPUESTOS
         if (casillaActual.getTipo().equals("Impuesto") && solvente) {
             float impuesto = casillaActual.getImpuesto();
@@ -677,6 +684,26 @@ public class Menu {
             }
             System.out.printf("Fortuna actual de %s: %,.0f€\n", jugador.getNombre(), jugador.getFortuna());
         }
+    }
+
+    public void ejecutarCarta(Jugador jugador, String tipoCarta) {
+        Carta carta = obtenerSiguienteCarta(tipoCarta);
+        ejecutarAccionCarta(jugador, carta);
+    }
+
+
+    private Carta obtenerSiguienteCarta(String tipo) {
+        Carta carta;
+
+        if (tipo.equals("Suerte")) {
+            carta = cartasSuerte.get(contadorSuerte);
+            contadorSuerte = (contadorSuerte + 1) % cartasSuerte.size();
+        } else {
+            carta = cartasComunidad.get(contadorComunidad);
+            contadorComunidad = (contadorComunidad + 1) % cartasComunidad.size();
+        }
+
+        return carta;
     }
 
     private void mostrarEstadisticas(String nombreJugador) {
