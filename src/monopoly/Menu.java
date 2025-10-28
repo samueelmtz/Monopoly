@@ -68,6 +68,7 @@ public class Menu {
                 System.out.println("> salir cárcel");
                 System.out.println("> describir casilla");
                 System.out.println("> describir jugador");
+                System.out.println("> estadisticas jugador");
                 System.out.println("> comprar");
                 System.out.println("> listar enventa");
                 System.out.println("> ver tablero");
@@ -214,6 +215,14 @@ public class Menu {
                     acabarTurno();
                 } else {
                     System.out.println("Comando incorrecto. Uso: acabar turno");
+                }
+                break;
+
+            case "estadisticas":
+                if (comandos.length == 2) {
+                    mostrarEstadisticas(comandos[1]);
+                } else {
+                    System.out.println("Comando incorrecto. Uso: estadisticas <nombre_jugador>");
                 }
                 break;
 
@@ -586,7 +595,24 @@ public class Menu {
         cartasComunidad.add(new Carta(6, "Comunidad", "Ve a Solar20 para disfrutar del San Fermín.", "avanzar:20"));
     }
 
-
+    private void mostrarEstadisticas(String nombreJugador) {
+        for (Jugador jugador : jugadores) {
+            if (jugador.getNombre().equalsIgnoreCase(nombreJugador)) {
+                System.out.println("$> estadisticas " + nombreJugador);
+                System.out.println("{");
+                System.out.println("  dineroInvertido: " + String.format("%,.0f", jugador.getDineroInvertido()) + ",");
+                System.out.println("  pagoTasasEImpuestos: " + String.format("%,.0f", jugador.getPagoTasasEImpuestos()) + ",");
+                System.out.println("  pagoDeAlquileres: " + String.format("%,.0f", jugador.getPagoDeAlquileres()) + ",");
+                System.out.println("  cobroDeAlquileres: " + String.format("%,.0f", jugador.getCobroDeAlquileres()) + ",");
+                System.out.println("  pasarPorCasillaDeSalida: " + String.format("%,.0f", jugador.getPasarPorCasillaDeSalida()) + ",");
+                System.out.println("  premiosInversionesOBote: " + String.format("%,.0f", jugador.getPremiosInversionesBote()) + ",");
+                System.out.println("  vecesEnLaCarcel: " + jugador.getVecesEnCarcel());
+                System.out.println("}");
+                return;
+            }
+        }
+        System.out.println("Jugador no encontrado: " + nombreJugador);
+    }
 }
 
 
