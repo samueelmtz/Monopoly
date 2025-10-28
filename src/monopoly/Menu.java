@@ -19,6 +19,11 @@ public class Menu {
     private Jugador banca; //El jugador banca.
     private boolean tirado; //Booleano para comprobar si el jugador que tiene el turno ha tirado o no.
     private boolean solvente; //Booleano para comprobar si el jugador que tiene el turno es solvente, es decir, si ha pagado sus deudas.
+    //Gestion de cartas
+    private ArrayList<Carta> cartasSuerte;
+    private ArrayList<Carta> cartasComunidad;
+    private int contadorSuerte;
+    private int contadorComunidad;
 
 
     // Metodo para inciar una partida: crea los jugadores y avatares.
@@ -33,6 +38,8 @@ public class Menu {
 
         // Inicializar tablero
         tablero = new Tablero(banca);
+
+        inicializarCartas();
 
         // Inicializar dados
         dado1 = new Dado();
@@ -556,7 +563,33 @@ public class Menu {
         System.out.println("avatar: " + avatarId);
         System.out.println("}");
     }
+
+    private void inicializarCartas(){
+        cartasSuerte = new ArrayList<>();
+        cartasComunidad = new ArrayList<>();
+
+        // Cartas de Suerte
+        cartasSuerte.add(new Carta(1, "Suerte", "Decides hacer un viaje de placer. Avanza hasta Soalr19. Si pasas por la casilla de Salida, cobra 2.000.000€.", "avanzar:19"));
+        cartasSuerte.add(new Carta(2, "Suerte", "Los acreedores te persiguen por impago. Ve a la Cárcel.", "irCarcel"));
+        cartasSuerte.add(new Carta(3,"Suerte", "¡Has ganado el bote de la loteria! Recibe 1.000.000€.","recibir:1000000"));
+        cartasSuerte.add(new Carta(4, "Suerte", "Has sido elegido presidente. Paga a cada jugador 250.000€.", "pagarTodos:250000"));
+        cartasSuerte.add(new Carta(5, "Suerte", "¡Hora punta de trafico! Retrocede tres casillas." , "retroceder:3"));
+        cartasSuerte.add(new Carta(6, "Suerte", "Te multan por usar el móvil mientras conduces. Paga 150.000€.", "pagar:150000"));
+        cartasSuerte.add(new Carta(7, "Suerte", "Avanza hasta la casilla de transporte más cercana.", "transporteCercano"));
+
+        // Cartas de Comunidad
+        cartasComunidad.add(new Carta(1, "Comunidad", "Paga 500.000€ por un fin de semana en balneario.", "pagar:500000"));
+        cartasComunidad.add(new Carta(2, "Comunidad", "Te investigan por fraude. Ve a la Cárcel.", "irCarcel"));
+        cartasComunidad.add(new Carta(3, "Comunidad", "Colócate en la casilla de Salida.", "irSalida"));
+        cartasComunidad.add(new Carta(4, "Comunidad", "Devolución de Hacienda. Cobra 500.000€.", "recibir:500000"));
+        cartasComunidad.add(new Carta(5, "Comunidad", "Retrocede hasta Solar1 para comprar antigüedades exóticas.", "avanzar:1"));
+        cartasComunidad.add(new Carta(6, "Comunidad", "Ve a Solar20 para disfrutar del San Fermín.", "avanzar:20"));
+    }
+
+
 }
+
+
 
 
 
