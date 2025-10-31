@@ -112,17 +112,23 @@ public class Casilla {
                     case "Solar":
                         aPagar = this.impuesto;
                         System.out.printf("Alquiler de solar: %,.0f€\n", aPagar);
+                        actual.sumarPagoDeAlquileres(aPagar);
+                        receptor.sumarCobroDeAlquileres(aPagar);
                         break;
 
                     case "Transporte":
                         aPagar = Valor.ALQUILER_TRANSPORTE;
                         System.out.printf("Alquiler de transporte: %,.0f€\n", aPagar);
+                        actual.sumarPagoDeAlquileres(aPagar);
+                        receptor.sumarCobroDeAlquileres(aPagar);
                         break;
 
                     case "Servicios":
                         int x = 4;
                         aPagar = (float) tirada * x * Valor.FACTOR_SERVICIO;
                         System.out.printf("Alquiler de servicio: dados(%d) * %d * %,.0f€ = %,.0f€\n", tirada, x, Valor.FACTOR_SERVICIO, aPagar);
+                        actual.sumarPagoDeAlquileres(aPagar);
+                        receptor.sumarCobroDeAlquileres(aPagar);
                         break;
 
                     default:
@@ -139,6 +145,7 @@ public class Casilla {
 
                     // Aplicar pago a otro jugador
                     actual.restarFortuna(aPagar);
+                    actual.sumarPagoDeAlquileres(aPagar);
                     if (receptor != null) {
                         receptor.sumarFortuna(aPagar);
                     }
