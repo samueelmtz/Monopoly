@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import partida.*;
 import java.util.Scanner;
+import java.util.HashMap;
 
 public class Menu {
 
@@ -223,6 +224,11 @@ public class Menu {
                     mostrarEstadisticas(comandos[1]);
                 } else {
                     System.out.println("Comando incorrecto. Uso: estadisticas <nombre_jugador>");
+                }
+                if (comandos.length == 1) {
+                    mostrarEstadisticasJuego();
+                } else {
+                    System.out.println("Comando incorrecto. Uso: estadisticas (sin parámetros para estadísticas del juego)");
                 }
                 break;
 
@@ -723,6 +729,140 @@ public class Menu {
             }
         }
         System.out.println("Jugador no encontrado: " + nombreJugador);
+    }
+
+    private void mostrarEstadisticasJuego() {
+        System.out.println("$> estadisticas");
+        System.out.println("{");
+
+        String casillaMasRentable = calcularCasillaMasRentable();
+        System.out.println("casillaMasRentable: " + casillaMasRentable + ",");
+
+        String grupoMasRentable = calcularGrupoMasRentable();
+        System.out.println("grupoMasRentable: " + grupoMasRentable + ",");
+
+        String casillaMasFrecuentada = calcularCasillaMasFrecuentada();
+        System.out.println("casillaMasFrecuentada: " + casillaMasFrecuentada + ",");
+
+        String jugadorMasVueltas = calcularJugadorMasVueltas();
+        System.out.println("jugadorMasVueltas: " + jugadorMasVueltas + ",");
+
+        String jugadorEnCabeza = calcularJugadorEnCabeza();
+        System.out.println("jugadorEnCabeza: " + jugadorEnCabeza);
+
+        System.out.println("}");
+    }
+
+    private String calcularCasillaMasRentable() {
+        Casilla masRentable = null;
+        float maxRentabilidad = -1;
+
+        // Recorrer todas las casillas del tablero
+        for (ArrayList<Casilla> lado : tablero.getPosiciones()) {
+            for (Casilla casilla : lado) {
+                if (casilla.getTipo().equals("Solar") || casilla.getTipo().equals("Transporte") || casilla.getTipo().equals("Servicios")) {
+                    // Calcular rentabilidad: alquiler / valor de la casilla
+                    float rentabilidad = 0;
+                    if (casilla.getValor() > 0) {
+                        rentabilidad = casilla.getImpuesto() / casilla.getValor();
+                    }
+
+                    if (rentabilidad > maxRentabilidad) {
+                        maxRentabilidad = rentabilidad;
+                        masRentable = casilla;
+                    }
+                }
+            }
+        }
+
+        return masRentable != null ? masRentable.getNombre() : "Solar3";
+    }
+
+    private String calcularGrupoMasRentable() {
+        HashMap<String, Float> rentabilidadGrupos = new HashMap<>();
+
+        // Calcular rentabilidad de cada grupo
+        for (Grupo grupo : tablero.getGrupos().values()) {
+            float rentabilidadTotal = 0;
+            int casillasValiosas = 0;
+
+            for (Casilla casilla : grupo.getMiembros()) {
+                if (casilla.getValor() > 0) {
+                    float rentabilidad = casilla.getImpuesto() / casilla.getValor();
+                    rentabilidadTotal += rentabilidad;
+                    casillasValiosas++;
+                }
+            }
+
+            if (casillasValiosas > 0) {
+                rentabilidadGrupos.put(grupo.getColorGrupo(), rentabilidadTotal / casillasValiosas);
+            }
+        }
+
+        // Encontrar el grupo más rentable
+        String grupoMasRentable = "Verde";
+        float maxRentabilidad = -1;
+
+        for (String color : rentabilidadGrupos.keySet()) {
+            float rentabilidad = rentabilidadGrupos.get(color);
+            if (rentabilidad > maxRentabilidad) {
+                maxRentabilidad = rentabilidad;
+                grupoMasRentable = color;
+            }
+        }
+
+        return grupoMasRentable;
+    }
+
+    private String calcularCasillaMasFrecuentada() {
+        Casilla masFrecuentada = null;
+        int maxVisitas = 0;
+
+        for (ArrayList<Casilla> lado : tablero.getPosiciones()) {
+            for (Casilla casilla : lado) {
+                int visitas = casilla.getAvatares().size();
+                if (visitas > maxVisitas) {
+                    maxVisitas = visitas;
+                    masFrecuentada = casilla;
+                }
+            }
+        }
+
+        return masFrecuentada != null ? masFrecuentada.getNombre() : "Salida";
+    }
+
+    private String calcularJugadorMasVueltas() {
+        Jugador jugadorMasVueltas = null;
+        int maxVueltas = -1;
+
+        for (Jugador jugador : jugadores) {
+            if (jugador.getVueltas() > maxVueltas) {
+                maxVueltas = jugador.getVueltas();
+                jugadorMasVueltas = jugador;
+            }
+        }
+
+        return jugadorMasVueltas != null ? jugadorMasVueltas.getNombre() : "Ninguno";
+    }
+
+    private String calcularJugadorEnCabeza() {
+        Jugador jugadorEnCabeza = null;
+        float maxFortuna = -1;
+
+        for (Jugador jugador : jugadores) {
+            // Calcular fortuna total: dinero + valor de propiedades
+            float fortunaTotal = jugador.getFortuna();
+            for (Casilla propiedad : jugador.getPropiedades()) {
+                fortunaTotal += propiedad.getValor();
+            }
+
+            if (fortunaTotal > maxFortuna) {
+                maxFortuna = fortunaTotal;
+                jugadorEnCabeza = jugador;
+            }
+        }
+
+        return jugadorEnCabeza != null ? jugadorEnCabeza.getNombre() : "Ninguno";
     }
 }
 

@@ -56,8 +56,9 @@ public class Avatar {
         if (posicionActual + valorTirada > 40) { // Si la suma supera 40, pasa por salida
             this.jugador.sumarFortuna(Valor.SUMA_VUELTA);
             this.jugador.sumarPasarPorCasillaDeSalida(Valor.SUMA_VUELTA);
+            this.jugador.setVueltas(this.jugador.getVueltas() + 1);
             System.out.println("¡" + this.jugador.getNombre() + " ha pasado por la Salida y recibe " +
-                    String.format("%,.0f", Valor.SUMA_VUELTA) + "€!");
+                    String.format("%,.0f", Valor.SUMA_VUELTA) + "€! Vueltas: " + this.jugador.getVueltas());
         }
 
         // colocar el avatar en la nueva posicion
