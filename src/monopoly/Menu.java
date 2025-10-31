@@ -69,8 +69,7 @@ public class Menu {
                 System.out.println("> salir cárcel");
                 System.out.println("> describir casilla");
                 System.out.println("> describir jugador");
-                System.out.println("> estadisticas jugador");
-                System.out.println("> estadisticas juego");
+                System.out.println("> estadisticas");
                 System.out.println("> comprar");
                 System.out.println("> listar enventa");
                 System.out.println("> ver tablero");
@@ -223,13 +222,10 @@ public class Menu {
             case "estadisticas":
                 if (comandos.length == 2) {
                     mostrarEstadisticas(comandos[1]);
-                } else {
-                    System.out.println("Comando incorrecto. Uso: estadisticas <nombre_jugador>");
-                }
-                if (comandos.length == 1) {
+                } else if (comandos.length == 1) {
                     mostrarEstadisticasJuego();
                 } else {
-                    System.out.println("Comando incorrecto. Uso: estadisticas (sin parámetros para estadísticas del juego)");
+                    System.out.println("Comando incorrecto. Uso: estadisticas <nombre_jugador> o estadisticas");
                 }
                 break;
 
