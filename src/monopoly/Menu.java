@@ -70,6 +70,7 @@ public class Menu {
                 System.out.println("> describir casilla");
                 System.out.println("> describir jugador");
                 System.out.println("> estadisticas jugador");
+                System.out.println("> estadisticas juego");
                 System.out.println("> comprar");
                 System.out.println("> listar enventa");
                 System.out.println("> ver tablero");
