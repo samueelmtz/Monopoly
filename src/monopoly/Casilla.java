@@ -159,8 +159,14 @@ public class Casilla {
                     System.out.println("Debes hipotecar propiedades o declararte en bancarrota.");
                     return false;
                 }
-
+                actual.sumarPagoTasasEImpuestos(aPagar);
                 // Devolver true para indicar que es solvente, el pago se procesa en Menu
+                return true;
+            }
+
+            // CUARTO: Procesar casillas de Suerte y Comunidad
+            if (this.tipo.equals("Suerte") || this.tipo.equals("Comunidad")) {
+                System.out.println("Has caído en " + this.tipo + ". Eligiendo carta...");
                 return true;
             }
 
@@ -202,6 +208,7 @@ public class Casilla {
                 if(this.duenho == null || this.duenho == banca || this.duenho.getNombre().equals("Banca")) {
                     if (solicitante.getFortuna()>=this.valor) { //Verificar que se tiene el saldo suficiente para pagarla
                         solicitante.restarFortuna(this.valor);
+                        solicitante.sumarDineroInvertido(this.valor);
 
                         // Si la casilla tenía dueño anterior (banca), eliminarla de sus propiedades
                         if(this.duenho != null && this.duenho.getNombre().equals("Banca")) {
