@@ -16,7 +16,7 @@ public class Jugador {
     private int tiradasCarcel; //Cuando está en la carcel, contará las tiradas sin éxito que ha hecho allí para intentar salir (se usa para limitar el numero de intentos).
     private int vueltas; //Cuenta las vueltas dadas al tablero.
     private ArrayList<Casilla> propiedades; //Propiedades que posee el jugador.
-    private int vecesEnCarcel;
+    private int vecesEnCarcel; //Contador del número de turnos en la cárcel
     private float dineroInvertido;
     private float pagoTasasEImpuestos;
     private float pagoDeAlquileres;

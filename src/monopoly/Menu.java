@@ -72,6 +72,8 @@ public class Menu {
                 System.out.println("> estadisticas");
                 System.out.println("> comprar");
                 System.out.println("> listar enventa");
+                System.out.println("> edificar");
+                System.out.println("> listar edificios");
                 System.out.println("> ver tablero");
                 System.out.println("> salir");
                 System.out.println("Acción a ejecutar: ");
@@ -194,6 +196,9 @@ public class Menu {
                             break;
                         case "avatares":
                             listarAvatares();
+                            break;
+                        case "edificios":
+                            listarEdificios();
                             break;
                         default:
                             System.out.println("Comando incorrecto. Uso: listar <enventa|jugadores|avatares>");
@@ -483,6 +488,9 @@ public class Menu {
     private void listarAvatares() {
 
     }
+
+    //Método que realiza las acciones asociadas al comando 'listar edificios'
+    private void listarEdificios() {}
 
     // Método que realiza las acciones asociadas al comando 'acabar turno'.
     private void acabarTurno() {

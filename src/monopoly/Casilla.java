@@ -16,8 +16,11 @@ public class Casilla {
     private float hipoteca; //Valor otorgado por hipotecar una casilla
     private ArrayList<Avatar> avatares; //Avatares que están situados en la casilla.
     private float alquiler; //Alquiler base de la casilla (solo para solares).
+    private float precioCasa; //Precio que cuesta construír una casa o un hotel
+    private float precioPiscina; //Precio que cuesta construír una piscina
+    private float precioPista; //Precio que cuesta construír una pista de deporte
 
-     //Constructores:
+    //Constructores:
     public Casilla() {
         this.avatares = new ArrayList<>();
         this.valor = 0;
@@ -452,12 +455,13 @@ public class Casilla {
     public Grupo getGrupo() {
         return grupo;
     }
+
     public void setGrupo(Grupo grupo){
         this.grupo = grupo;
     }
 
     // Métodos auxiliares para obtener los valores específicos de valores de casas, hoteles, piscinas y pistas de deporte
-    private float getPrecioCasa() {
+    public float getPrecioCasa() {
         switch(this.nombre) {
             case "Solar1": case "Solar2": return 500000;
             case "Solar3": case "Solar4": case "Solar5": return 500000;
@@ -471,11 +475,11 @@ public class Casilla {
         }
     }
 
-    private float getPrecioHotel() {
+    public float getPrecioHotel() {
         return getPrecioCasa(); // Según PDF, mismo precio que casa
     }
 
-    private float getPrecioPiscina() {
+    public float getPrecioPiscina() {
         switch(this.nombre) {
             case "Solar1": case "Solar2": return 100000;
             case "Solar3": case "Solar4": case "Solar5": return 100000;
@@ -489,7 +493,7 @@ public class Casilla {
         }
     }
 
-    private float getPrecioPistaDeporte() {
+    public float getPrecioPistaDeporte() {
         switch(this.nombre) {
             case "Solar1": case "Solar2": return 200000;
             case "Solar3": case "Solar4": case "Solar5": return 200000;
