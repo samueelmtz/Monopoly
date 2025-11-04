@@ -19,6 +19,10 @@ public class Casilla {
     private float precioCasa; //Precio que cuesta construír una casa o un hotel
     private float precioPiscina; //Precio que cuesta construír una piscina
     private float precioPista; //Precio que cuesta construír una pista de deporte
+    private int numCasas; //Número de casas construidas en la casilla
+    private int numHoteles; //Número de hoteles construidos en la casilla
+    private int numPiscinas; //Número de piscinas construidas en la casilla
+    private int numPistas; //Número de pistas de deporte construidas en la casilla
 
     //Constructores:
     public Casilla() {
@@ -39,6 +43,10 @@ public class Casilla {
         this.impuesto = alquiler;
         this.duenho = duenho;
         this.avatares = new ArrayList<Avatar>();
+        this.numCasas = 0;
+        this.numHoteles = 0;
+        this.numPiscinas = 0;
+        this.numPistas = 0;
     }
     /*Constructor para casillas tipo Servicios o Transporte:
      * Parámetros: nombre casilla, tipo (debe ser serv. o transporte), posición en el tablero, valor y dueño.
@@ -573,12 +581,89 @@ public class Casilla {
         }
     }
 
+    /**
+     * Añade una pista de deporte a la casilla (requiere hotel)
+     */
+    public boolean anhadirCasa() {
+        if (numCasas < 4 && numHoteles == 0) {
+            numCasas++;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Añade un hotel a la casilla (requiere 4 casas)
+     */
+    public boolean anhadirHotel() {
+        if (numHoteles == 0 && numCasas == 4) {
+            numHoteles++;
+            numCasas = 0; // Las casas se reemplazan por el hotel
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Añade una piscina a la casilla (requiere hotel)
+     */
+    public boolean anhadirPiscina() {
+        if (numPiscinas == 0 && numHoteles == 1) {
+            numPiscinas++;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Añade una pista de deporte a la casilla (requiere hotel)
+     */
+    public boolean anhadirPistaDeporte() {
+        if (numPistas == 0 && numHoteles == 1) {
+            numPistas++;
+            return true;
+        }
+        return false;
+    }
+
+    //GETTERS Y SETTERS
     private float getAlquilerPistaDeporte() {
         return getAlquilerPiscina(); // Según PDF, mismo alquiler que piscina
     }
 
     public ArrayList<Avatar> getAvatares() {
         return avatares;
+    }
+    public int getNumCasas() {
+        return numCasas;
+    }
+
+    public int getNumHoteles() {
+        return numHoteles;
+    }
+
+    public int getNumPiscinas() {
+        return numPiscinas;
+    }
+
+    public int getNumPistasDeporte() {
+        return numPistas;
+    }
+
+    public void setNumCasas(int numCasas) {
+        this.numCasas = numCasas;
+    }
+
+    public void setNumHoteles(int numHoteles) {
+        this.numHoteles = numHoteles;
+    }
+
+    public void setNumPiscinas(int numPiscinas) {
+        this.numPiscinas = numPiscinas;
+    }
+
+    public void setNumPistasDeporte(int numPistasDeporte) {
+        this.numPistas = numPistasDeporte;
     }
 }
 

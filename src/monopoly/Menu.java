@@ -869,6 +869,233 @@ public class Menu {
 
         return jugadorEnCabeza != null ? jugadorEnCabeza.getNombre() : "Ninguno";
     }
+
+    private void edificar(String tipoEdificio) {
+        Jugador jugadorActual = jugadores.get(turno);
+        Casilla casillaActual = jugadorActual.getAvatar().getLugar();
+
+        // Verificar que la casilla es un solar
+        if (!casillaActual.getTipo().equals("Solar")) {
+            System.out.println("Solo se pueden construir edificios en solares.");
+            return;
+        }
+
+        // Verificar que el jugador es dueño de la casilla
+        if (casillaActual.getDuenho() != jugadorActual) {
+            System.out.println("No eres el dueño de esta casilla.");
+            return;
+        }
+
+        // Verificar que el jugador tiene todas las casillas del grupo
+        Grupo grupo = casillaActual.getGrupo();
+        boolean tieneTodoElGrupo = true;
+        for (Casilla casillaGrupo : grupo.getMiembros()) {
+            if (casillaGrupo.getDuenho() != jugadorActual) {
+                tieneTodoElGrupo = false;
+                break;
+            }
+        }
+
+        if (!tieneTodoElGrupo) {
+            System.out.println("No puedes edificar hasta que no seas dueño de todas las casillas del grupo " + grupo.getColorGrupo() + ".");
+            return;
+        }
+
+        // Verificar distribución uniforme (no más de 1 edificio de diferencia entre casillas del grupo)
+        if (!verificarDistribucionUniforme(grupo, tipoEdificio, casillaActual)) {
+            System.out.println("No se puede edificar por distribución no uniforme en el grupo.");
+            return;
+        }
+
+        // Obtener contadores de edificios actuales
+        int casasEnCasilla = getCasasEnCasilla(casillaActual);
+        int hotelesEnCasilla = getHotelesEnCasilla(casillaActual);
+        int piscinasEnCasilla = getPiscinasEnCasilla(casillaActual);
+        int pistasEnCasilla = getPistasEnCasilla(casillaActual);
+
+        // Verificar límites de construcción
+        if (!puedeConstruir(tipoEdificio, casasEnCasilla, hotelesEnCasilla, piscinasEnCasilla, pistasEnCasilla, grupo)) {
+            return;
+        }
+
+        // Calcular coste
+        float coste = calcularCosteEdificio(casillaActual, tipoEdificio);
+
+        // Verificar si tiene suficiente dinero
+        if (jugadorActual.getFortuna() < coste) {
+            System.out.printf("La fortuna de %s no es suficiente para edificar un %s en la casilla %s.\n",
+                    jugadorActual.getNombre(), tipoEdificio, casillaActual.getNombre());
+            return;
+        }
+
+        // Construir el edificio
+        construirEdificio(jugadorActual, casillaActual, tipoEdificio, coste);
+    }
+
+    /**
+     * Verifica la distribución uniforme de edificios en el grupo
+     */
+    private boolean verificarDistribucionUniforme(Grupo grupo, String tipoEdificio, Casilla casillaActual) {
+        int minEdificios = Integer.MAX_VALUE;
+        int maxEdificios = Integer.MIN_VALUE;
+
+        for (Casilla casilla : grupo.getMiembros()) {
+            int totalEdificios = casilla.getNumCasas() + casilla.getNumHoteles();
+
+            if (totalEdificios < minEdificios) {
+                minEdificios = totalEdificios;
+            }
+            if (totalEdificios > maxEdificios) {
+                maxEdificios = totalEdificios;
+            }
+        }
+
+        // Verificar que la diferencia no sea mayor a 1
+        return (maxEdificios - minEdificios) <= 1;
+    }
+
+    private int getCasasEnCasilla(Casilla casilla) {
+        return casilla.getNumCasas();
+    }
+    private int getHotelesEnCasilla(Casilla casilla) {
+        return casilla.getNumHoteles();
+    }
+    private int getPiscinasEnCasilla(Casilla casilla) {
+        return casilla.getNumPiscinas();
+    }
+    private int getPistasEnCasilla(Casilla casilla) {
+        return casilla.getNumPistasDeporte();
+    }
+
+    /**
+     * Construye el edificio y actualiza la fortuna del jugador
+     */
+    private void construirEdificio(Jugador jugador, Casilla casilla, String tipoEdificio, float coste) {
+        boolean construido = false;
+
+        switch (tipoEdificio) {
+            case "casa":
+                construido = casilla.anhadirCasa();
+                break;
+            case "hotel":
+                construido = casilla.anhadirHotel();
+                break;
+            case "piscina":
+                construido = casilla.anhadirPiscina();
+                break;
+            case "pista_deporte":
+                construido = casilla.anhadirPistaDeporte();
+                break;
+        }
+
+        if (construido) {
+            // Restar el coste de la fortuna del jugador
+            jugador.restarFortuna(coste);
+            jugador.sumarDineroInvertido(coste);
+
+            // Generar ID del edificio
+            String idEdificio = generarIdEdificio(tipoEdificio);
+
+            System.out.printf("Se ha edificado un %s en %s.\n", tipoEdificio, casilla.getNombre());
+            System.out.printf("La fortuna de %s se reduce en %,.0f€.\n", jugador.getNombre(), coste);
+            System.out.printf("Fortuna actual: %,.0f€\n", jugador.getFortuna());
+
+            // Mostrar estado actual de edificios en la casilla
+            mostrarEstadoEdificios(casilla);
+        } else {
+            System.out.println("Error: No se pudo construir el " + tipoEdificio + " en " + casilla.getNombre());
+        }
+    }
+
+    /**
+     * Muestra el estado actual de los edificios en una casilla
+     */
+    private void mostrarEstadoEdificios(Casilla casilla) {
+        System.out.printf("Edificios en %s: %d casas, %d hoteles, %d piscinas, %d pistas de deporte\n",
+                casilla.getNombre(),
+                casilla.getNumCasas(),
+                casilla.getNumHoteles(),
+                casilla.getNumPiscinas(),
+                casilla.getNumPistasDeporte());
+    }
+
+    /**
+     * Genera un ID único para el edificio
+     */
+    private String generarIdEdificio(String tipoEdificio) {
+        // En una implementación real, esto vendría de una secuencia o base de datos
+        return tipoEdificio + "-" + System.currentTimeMillis();
+    }
+
+    private float calcularCosteEdificio(Casilla casilla, String tipoEdificio) {
+        switch (tipoEdificio) {
+            case "casa":
+            case "hotel":
+                return casilla.getPrecioCasa();
+            case "piscina":
+                return casilla.getPrecioPiscina();
+            case "pista_deporte":
+                return casilla.getPrecioPistaDeporte();
+            default:
+                return 0;
+        }
+    }
+
+    /**
+     * Verifica si se puede construir un tipo específico de edificio
+     */
+    private boolean puedeConstruir(String tipoEdificio, int casas, int hoteles, int piscinas, int pistas, Grupo grupo) {
+        switch (tipoEdificio) {
+            case "casa":
+                if (casas >= 4) {
+                    System.out.println("No se pueden construir más de 4 casas por casilla.");
+                    return false;
+                }
+                if (hoteles > 0) {
+                    System.out.println("No se pueden construir casas cuando hay un hotel.");
+                    return false;
+                }
+                break;
+
+            case "hotel":
+                if (hoteles >= 1) {
+                    System.out.println("No se pueden construir más de 1 hotel por casilla.");
+                    return false;
+                }
+                if (casas < 4) {
+                    System.out.println("Se necesitan 4 casas para construir un hotel.");
+                    return false;
+                }
+                break;
+
+            case "piscina":
+                if (piscinas >= 1) {
+                    System.out.println("No se pueden construir más de 1 piscina por casilla.");
+                    return false;
+                }
+                if (hoteles < 1) {
+                    System.out.println("No se puede edificar una piscina, ya que no se dispone de un hotel.");
+                    return false;
+                }
+                break;
+
+            case "pista_deporte":
+                if (pistas >= 1) {
+                    System.out.println("No se pueden construir más de 1 pista de deporte por casilla.");
+                    return false;
+                }
+                if (hoteles < 1) {
+                    System.out.println("No se puede edificar una pista de deporte, ya que no se dispone de un hotel.");
+                    return false;
+                }
+                break;
+
+            default:
+                System.out.println("Tipo de edificio no reconocido: " + tipoEdificio);
+                return false;
+        }
+        return true;
+    }
 }
 
 
