@@ -37,6 +37,7 @@ public class Edificio {
         this.id = generarID(tipo);
         this.tipoEdificio = tipo;
         this.casilla = lugar;
+        this.coste = calcularCoste(lugar, tipo);
         this.duenho = casilla.getDuenho();
         this.grupo = casilla.getGrupo();
     }
@@ -53,7 +54,7 @@ public class Edificio {
                 return "hotel-" + (++contadorHoteles);
             case "piscina":
                 return "piscina-" + (++contadorPiscinas);
-            case "pista":
+            case "pista de deporte":
                 return "pista-" + (++contadorPistas);
             default:
                 System.out.println("Tipo de edificio desconocido");
@@ -82,23 +83,21 @@ public class Edificio {
         };
     }
 
-    public void asignarValores() {
+/*    public void asignarValores() {
         // Color del grupo y número de casillas del grupo
         String color = this.casilla.getGrupo().getColorGrupo();
         int n = this.casilla.getGrupo().getNumCasillas();
 
         Map<String, Float> grupoValores = Map.of(
-                "WHITE",  Valor.GRUPO1 / (float) n,
-                "CYAN",   Valor.GRUPO2 / (float) n,
-                "BLUE",   Valor.GRUPO3 / (float) n,
-                "YELLOW", Valor.GRUPO4 / (float) n,
-                "BLACK",  Valor.GRUPO5 / (float) n,
-                "GREEN",  Valor.GRUPO6 / (float) n,
-                "RED",    Valor.GRUPO7 / (float) n,
-                "PURPLE", Valor.GRUPO8 / (float) n
+                "Naranja", Valor.GRUPO1 / n,
+                "Celeste", Valor.GRUPO2 / n,
+                "Purpura", Valor.GRUPO3 / n,
+                "Negro", Valor.GRUPO4 / n,
+                "Rojo", Valor.GRUPO5 / n,
+                "Amarillo", Valor.GRUPO6 / n,
+                "Verde", Valor.GRUPO7 / n,
+                "Azul", Valor.GRUPO8 / n
         );
-
-        // Si tu color viene en otro formato, puedes normalizar:
 
         Float valorInicialSolar = grupoValores.get(color);
 
@@ -109,6 +108,7 @@ public class Edificio {
             this.coste = 0f;
         }
     }
+*/
 
     //GETTERS
     public String getId() {
