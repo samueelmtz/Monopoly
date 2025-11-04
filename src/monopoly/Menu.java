@@ -12,6 +12,8 @@ public class Menu {
     //Atributos
     private ArrayList<Jugador> jugadores; //Jugadores de la partida.
     private ArrayList<Avatar> avatares; //Avatares en la partida.
+    private ArrayList<Edificio> edificios; //Edificios en la partida
+    private String colorGrupo;
     private int turno = 0; //Índice correspondiente a la posición en el arrayList del jugador (y el avatar) que tienen el turno
     private int lanzamientos; //Variable para contar el número de lanzamientos de un jugador en un turno.
     private Tablero tablero; //Tablero en el que se juega.
@@ -199,10 +201,15 @@ public class Menu {
                             listarAvatares();
                             break;
                         case "edificios":
-                            listarEdificios();
+                            if(comandos.length == 2) {
+                                listarEdificios(null);
+                            }
+                            else if(comandos.length == 3){
+                                listarEdificios(comandos[2]);
+                            }
                             break;
                         default:
-                            System.out.println("Comando incorrecto. Uso: listar <enventa|jugadores|avatares>");
+                            System.out.println("Comando incorrecto. Uso: listar <enventa|jugadores|avatares|edificios>");
                             break;
                     }
                 }
@@ -271,8 +278,18 @@ public class Menu {
                 }
                 System.out.println("],");
 
+                // Mostrar edificios
+                System.out.println("    edificios: [");
+                ArrayList<Edificio> edificios = jugador.getEdificios();
+                for (int i = 0; i < edificios.size(); i++) {
+                    System.out.print(edificios.get(i).getId() + ",");
+                    if (i < edificios.size() - 1) {
+                        System.out.print(", ");
+                    }
+                }
+                System.out.println("],");
+
                 //System.out.println("    hipotecas: " + jugador.getHipotecas() + ","); // aun no se construyeron las hipotecas
-                //System.out.println("    edificios: " + jugador.getEdificios()); // aun no se construyeron los edificios
                 System.out.println("}");
                 return;
             }
@@ -487,8 +504,19 @@ public class Menu {
             }
             System.out.println("],");
 
+            // Mostrar edificios
+            System.out.println("    edificios: [");
+            ArrayList<Edificio> edificios = jugador.getEdificios();
+            for (int i = 0; i < edificios.size(); i++) {
+                System.out.print(edificios.get(i).getId() + ",");
+                if (i < edificios.size() - 1) {
+                    System.out.print(", ");
+                }
+            }
+            System.out.println("],");
+
             //System.out.println("    hipotecas: " + jugador.getHipotecas() + ",");
-            //System.out.println("    edificios: " + jugador.getEdificios());
+
             System.out.println("}");
         }
     }
@@ -499,7 +527,21 @@ public class Menu {
     }
 
     //Método que realiza las acciones asociadas al comando 'listar edificios'
-    private void listarEdificios() {}
+    private void listarEdificios(String colorGrupo) {
+        if(colorGrupo != null) {
+
+        }
+
+        for (Edificio edificio : edificios){
+            System.out.println("{");
+            System.out.println("    id: " + edificio.getId() + ",");
+            System.out.println("    propietario: " + edificio.getDuenho().getNombre() + ",");
+            System.out.println("    casilla: " + edificio.getCasilla().getNombre() + ",");
+            System.out.println("    grupo: " + edificio.getGrupo().getColorGrupo() + ",");
+            System.out.println("    coste: " + String.format("%,.0f", edificio.getCoste()) + ",");
+            System.out.println("}");
+        }
+    }
 
     // Método que realiza las acciones asociadas al comando 'acabar turno'.
     private void acabarTurno() {

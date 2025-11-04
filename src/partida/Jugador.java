@@ -16,6 +16,7 @@ public class Jugador {
     private int tiradasCarcel; //Cuando está en la carcel, contará las tiradas sin éxito que ha hecho allí para intentar salir (se usa para limitar el numero de intentos).
     private int vueltas; //Cuenta las vueltas dadas al tablero.
     private ArrayList<Casilla> propiedades; //Propiedades que posee el jugador.
+    private ArrayList<Edificio> edificios; //Edificios que posee el jugador
     private int vecesEnCarcel; //Contador del número de turnos en la cárcel
     private float dineroInvertido;
     private float pagoTasasEImpuestos;
@@ -33,6 +34,7 @@ public class Jugador {
         this.tiradasCarcel = 0;
         this.vueltas = 0;
         this.propiedades = new ArrayList<>();
+        this.edificios = new ArrayList<>();
         this.dineroInvertido = 0;
         this.dineroInvertido = 0;
         this.pagoTasasEImpuestos = 0;
@@ -56,6 +58,7 @@ public class Jugador {
         this.tiradasCarcel = 0;
         this.vueltas = 0;
         this.propiedades = new ArrayList<>();
+        this.edificios = new ArrayList<>();
         this.dineroInvertido = 0;
         this.pagoTasasEImpuestos = 0;
         this.pagoDeAlquileres = 0;
@@ -76,6 +79,20 @@ public class Jugador {
     public void eliminarPropiedad(Casilla casilla) {
         if(this.propiedades.contains(casilla)) {
             propiedades.remove(casilla);
+        }
+    }
+
+    //Método para añadir un edificio a un jugador
+    public void anhadirEdificio(Edificio edificio) {
+        if(!this.edificios.contains(edificio)) {
+            edificios.add(edificio);
+        }
+    }
+
+    //Método para añadir un edificio a un jugador
+    public void eliminarEdificio(Edificio edificio) {
+        if(this.edificios.contains(edificio)) {
+            edificios.remove(edificio);
         }
     }
 
@@ -226,6 +243,10 @@ public class Jugador {
 
     public float getPremiosInversionesBote() {
         return premiosInversionesBote;
+    }
+
+    public ArrayList<Edificio> getEdificios() {
+        return edificios;
     }
 
 }
