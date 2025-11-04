@@ -387,9 +387,9 @@ public class Menu {
         Casilla casillaActual = actual.getAvatar().getLugar();
         solvente = casillaActual.evaluarCasilla(actual, banca, suma);
 
-        // MANEJAR CARTAS DE SUERTE Y COMUNIDAD DESPUÉS DE EVALUAR
+
+        // En el manejo de cartas:
         if (casillaActual.getTipo().equals("Suerte") || casillaActual.getTipo().equals("Comunidad")) {
-            System.out.println("Ejecutando acción de carta...");
             ejecutarCarta(actual, casillaActual.getTipo());
         }
 
@@ -647,7 +647,7 @@ public class Menu {
         cartasComunidad = new ArrayList<>();
 
         // Cartas de Suerte
-        cartasSuerte.add(new Carta(1, "Suerte", "Decides hacer un viaje de placer. Avanza hasta Soalr19. Si pasas por la casilla de Salida, cobra 2.000.000€.", "avanzar:19"));
+        cartasSuerte.add(new Carta(1, "Suerte", "Decides hacer un viaje de placer. Avanza hasta Solar19. Si pasas por la casilla de Salida, cobra 2.000.000€.", "avanzar:33"));
         cartasSuerte.add(new Carta(2, "Suerte", "Los acreedores te persiguen por impago. Ve a la Cárcel.", "irCarcel"));
         cartasSuerte.add(new Carta(3, "Suerte", "¡Has ganado el bote de la loteria! Recibe 1.000.000€.", "recibir:1000000"));
         cartasSuerte.add(new Carta(4, "Suerte", "Has sido elegido presidente. Paga a cada jugador 250.000€.", "pagarTodos:250000"));
@@ -660,8 +660,8 @@ public class Menu {
         cartasComunidad.add(new Carta(2, "Comunidad", "Te investigan por fraude. Ve a la Cárcel.", "irCarcel"));
         cartasComunidad.add(new Carta(3, "Comunidad", "Colócate en la casilla de Salida.", "irSalida"));
         cartasComunidad.add(new Carta(4, "Comunidad", "Devolución de Hacienda. Cobra 500.000€.", "recibir:500000"));
-        cartasComunidad.add(new Carta(5, "Comunidad", "Retrocede hasta Solar1 para comprar antigüedades exóticas.", "avanzar:1"));
-        cartasComunidad.add(new Carta(6, "Comunidad", "Ve a Solar20 para disfrutar del San Fermín.", "avanzar:20"));
+        cartasComunidad.add(new Carta(5, "Comunidad", "Retrocede hasta Solar1 para comprar antigüedades exóticas.", "retroceder:16"));
+        cartasComunidad.add(new Carta(6, "Comunidad", "Ve a Solar20 para disfrutar del San Fermín.", "avanzar:35"));
     }
 
     // Método para ejecutar acción de carta
@@ -693,8 +693,18 @@ public class Menu {
                 System.out.printf("No tienes suficiente dinero para pagar a todos los jugadores. Necesitas %,.0f€ pero tienes %,.0f€\n",
                         totalAPagar, jugador.getFortuna());
                 puedePagar = false;
-
-            } else if (accion.startsWith("retroceder:")) {
+            }
+            if (puedePagar) {
+                System.out.printf("%s paga %,.0f€ a cada jugador:\n", jugador.getNombre(), cantidad);
+                for (Jugador otro : jugadores) {
+                    if (otro != jugador && otro != banca) {
+                        jugador.restarFortuna(cantidad);  // ← RESTAR AL QUE PAGA
+                        otro.sumarFortuna(cantidad);      // ← SUMAR AL QUE RECIBE
+                        System.out.printf("  - Paga %,.0f€ a %s\n", cantidad, otro.getNombre());
+                    }
+                }
+            }
+        } else if (accion.startsWith("retroceder:")) {
                 int casillas = Integer.parseInt(accion.split(":")[1]);
                 int posicionActual = jugador.getAvatar().getLugar().getPosicion();
                 int nuevaPosicion = (posicionActual - casillas + 40) % 40;
@@ -702,7 +712,7 @@ public class Menu {
                 jugador.getAvatar().colocar(tablero.getPosiciones(), nuevaPosicion);
                 System.out.println("Has retrocedido " + casillas + " casillas.");
 
-            } else if (accion.startsWith("pagar:")) {
+        } else if (accion.startsWith("pagar:")) {
                 float cantidadPago = Float.parseFloat(accion.split(":")[1]);
                 if (jugador.getFortuna() >= cantidadPago) {
                     jugador.restarFortuna(cantidadPago);
@@ -712,7 +722,7 @@ public class Menu {
                     System.out.println("No tienes suficiente dinero para pagar.");
                 }
 
-            } else if (accion.equals("transporteCercano")) {
+        } else if (accion.equals("transporteCercano")) {
                 int posicionActual = jugador.getAvatar().getLugar().getPosicion();
                 String[] nombresTransporte = {"Trans1", "Trans2", "Trans3", "Trans4"};
                 int[] posicionesTransporte = {6, 16, 26, 36};
@@ -739,14 +749,14 @@ public class Menu {
                     }
                 }
 
-            } else if (accion.equals("irSalida")) {
+        } else if (accion.equals("irSalida")) {
                 jugador.getAvatar().colocar(tablero.getPosiciones(), 1); // Posición 1 = Salida
                 jugador.sumarFortuna(Valor.SUMA_VUELTA);
                 System.out.printf("¡Has cobrado %,.0f€ por pasar por salida!\n", Valor.SUMA_VUELTA);
-            }
-            System.out.printf("Fortuna actual de %s: %,.0f€\n", jugador.getNombre(), jugador.getFortuna());
         }
+        System.out.printf("Fortuna actual de %s: %,.0f€\n", jugador.getNombre(), jugador.getFortuna());
     }
+
 
     public void ejecutarCarta(Jugador jugador, String tipoCarta) {
         Carta carta = obtenerSiguienteCarta(tipoCarta);
