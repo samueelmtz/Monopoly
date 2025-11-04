@@ -70,6 +70,7 @@ public class Menu {
                 System.out.println("> describir casilla");
                 System.out.println("> describir jugador");
                 System.out.println("> estadisticas");
+                System.out.println("> edificar");
                 System.out.println("> comprar");
                 System.out.println("> listar enventa");
                 System.out.println("> edificar");
@@ -231,6 +232,14 @@ public class Menu {
                     mostrarEstadisticasJuego();
                 } else {
                     System.out.println("Comando incorrecto. Uso: estadisticas <nombre_jugador> o estadisticas");
+                }
+                break;
+
+            case "edificar":
+                if (comandos.length == 2) {
+                    edificar(comandos[1]);
+                } else {
+                    System.out.println("Comando incorrecto. Uso: edificar <tipo_edificio>");
                 }
                 break;
 
