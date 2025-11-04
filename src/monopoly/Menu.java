@@ -35,6 +35,7 @@ public class Menu {
         // Crear lista de jugadores y avatares
         jugadores = new ArrayList<>();
         avatares = new ArrayList<>();
+        edificios = new ArrayList<>();
 
         // Crear la banca
         banca = new Jugador(); //
@@ -278,16 +279,8 @@ public class Menu {
                 }
                 System.out.println("],");
 
-                // Mostrar edificios
-                System.out.println("    edificios: [");
-                ArrayList<Edificio> edificios = jugador.getEdificios();
-                for (int i = 0; i < edificios.size(); i++) {
-                    System.out.print(edificios.get(i).getId() + ",");
-                    if (i < edificios.size() - 1) {
-                        System.out.print(", ");
-                    }
-                }
-                System.out.println("],");
+                // Mostrar edificios (no implementado en Jugador aún)
+                System.out.println("    edificios: []");
 
                 //System.out.println("    hipotecas: " + jugador.getHipotecas() + ","); // aun no se construyeron las hipotecas
                 System.out.println("}");
@@ -504,16 +497,8 @@ public class Menu {
             }
             System.out.println("],");
 
-            // Mostrar edificios
-            System.out.println("    edificios: [");
-            ArrayList<Edificio> edificios = jugador.getEdificios();
-            for (int i = 0; i < edificios.size(); i++) {
-                System.out.print(edificios.get(i).getId() + ",");
-                if (i < edificios.size() - 1) {
-                    System.out.print(", ");
-                }
-            }
-            System.out.println("],");
+            // Mostrar edificios (no implementado en Jugador aún)
+            System.out.println("    edificios: []");
 
             //System.out.println("    hipotecas: " + jugador.getHipotecas() + ",");
 
@@ -952,17 +937,11 @@ public class Menu {
             return;
         }
 
-        // Verificar distribución uniforme (no más de 1 edificio de diferencia entre casillas del grupo)
-        if (!verificarDistribucionUniforme(grupo, tipoEdificio, casillaActual)) {
-            System.out.println("No se puede edificar por distribución no uniforme en el grupo.");
-            return;
-        }
-
         // Obtener contadores de edificios actuales
-        int casasEnCasilla = getCasasEnCasilla(casillaActual);
-        int hotelesEnCasilla = getHotelesEnCasilla(casillaActual);
-        int piscinasEnCasilla = getPiscinasEnCasilla(casillaActual);
-        int pistasEnCasilla = getPistasEnCasilla(casillaActual);
+        int casasEnCasilla = casillaActual.getNumCasas();
+        int hotelesEnCasilla = casillaActual.getNumHoteles();
+        int piscinasEnCasilla = casillaActual.getNumPiscinas();
+        int pistasEnCasilla = casillaActual.getNumPistasDeporte();
 
         // Verificar límites de construcción
         if (!puedeConstruir(tipoEdificio, casasEnCasilla, hotelesEnCasilla, piscinasEnCasilla, pistasEnCasilla, grupo)) {
@@ -983,40 +962,6 @@ public class Menu {
 
         // Construir el edificio
         construirEdificio(jugadorActual, casillaActual, tipoEdificio, coste);
-    }
-
-    /**
-     * Verifica la distribución uniforme de edificios en el grupo
-     */
-    private boolean verificarDistribucionUniforme(Grupo grupo, String tipoEdificio, Casilla casillaActual) {
-        int minEdificios = Integer.MAX_VALUE;
-        int maxEdificios = Integer.MIN_VALUE;
-
-        for (Casilla casilla : grupo.getMiembros()) {
-            int totalEdificios = casilla.getNumCasas() + casilla.getNumHoteles();
-            if (totalEdificios < minEdificios) {
-                minEdificios = totalEdificios;
-            }
-            if (totalEdificios > maxEdificios) {
-                maxEdificios = totalEdificios;
-            }
-        }
-
-        // Verificar que la diferencia no sea mayor a 1
-        return (maxEdificios - minEdificios) <= 1;
-    }
-
-    private int getCasasEnCasilla(Casilla casilla) {
-        return casilla.getNumCasas();
-    }
-    private int getHotelesEnCasilla(Casilla casilla) {
-        return casilla.getNumHoteles();
-    }
-    private int getPiscinasEnCasilla(Casilla casilla) {
-        return casilla.getNumPiscinas();
-    }
-    private int getPistasEnCasilla(Casilla casilla) {
-        return casilla.getNumPistasDeporte();
     }
 
     /**
@@ -1124,7 +1069,6 @@ public class Menu {
                 return false;
         }
         return true;
-
     }
 }
 
