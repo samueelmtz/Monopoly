@@ -928,7 +928,9 @@ public class Menu {
         }
 
         // Calcular coste
-        float coste = calcularCosteEdificio(casillaActual, tipoEdificio);
+        String tipoParaEdificio = tipoEdificio.equals("pista_deporte") ? "pista de deporte" : tipoEdificio;
+        Edificio edificioTemp = new Edificio(tipoParaEdificio, casillaActual);
+        float coste = edificioTemp.getCoste();
 
         // Verificar si tiene suficiente dinero
         if (jugadorActual.getFortuna() < coste) {
@@ -950,7 +952,6 @@ public class Menu {
 
         for (Casilla casilla : grupo.getMiembros()) {
             int totalEdificios = casilla.getNumCasas() + casilla.getNumHoteles();
-
             if (totalEdificios < minEdificios) {
                 minEdificios = totalEdificios;
             }
@@ -982,6 +983,7 @@ public class Menu {
     private void construirEdificio(Jugador jugador, Casilla casilla, String tipoEdificio, float coste) {
         boolean construido = false;
 
+        // Intentar construir usando los métodos existentes en Casilla
         switch (tipoEdificio) {
             case "casa":
                 construido = casilla.anhadirCasa();
@@ -993,6 +995,7 @@ public class Menu {
                 construido = casilla.anhadirPiscina();
                 break;
             case "pista_deporte":
+            case "pista de deporte":
                 construido = casilla.anhadirPistaDeporte();
                 break;
         }
@@ -1001,9 +1004,6 @@ public class Menu {
             // Restar el coste de la fortuna del jugador
             jugador.restarFortuna(coste);
             jugador.sumarDineroInvertido(coste);
-
-            // Generar ID del edificio
-            String idEdificio = generarIdEdificio(tipoEdificio);
 
             System.out.printf("Se ha edificado un %s en %s.\n", tipoEdificio, casilla.getNombre());
             System.out.printf("La fortuna de %s se reduce en %,.0f€.\n", jugador.getNombre(), coste);
@@ -1026,28 +1026,6 @@ public class Menu {
                 casilla.getNumHoteles(),
                 casilla.getNumPiscinas(),
                 casilla.getNumPistasDeporte());
-    }
-
-    /**
-     * Genera un ID único para el edificio
-     */
-    private String generarIdEdificio(String tipoEdificio) {
-        // En una implementación real, esto vendría de una secuencia o base de datos
-        return tipoEdificio + "-" + System.currentTimeMillis();
-    }
-
-    private float calcularCosteEdificio(Casilla casilla, String tipoEdificio) {
-        switch (tipoEdificio) {
-            case "casa":
-            case "hotel":
-                return casilla.getPrecioCasa();
-            case "piscina":
-                return casilla.getPrecioPiscina();
-            case "pista_deporte":
-                return casilla.getPrecioPistaDeporte();
-            default:
-                return 0;
-        }
     }
 
     /**
