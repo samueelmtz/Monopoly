@@ -55,6 +55,7 @@ public class Edificio {
             case "piscina":
                 return "piscina-" + (++contadorPiscinas);
             case "pista":
+            case "pista_deporte":
                 return "pista-" + (++contadorPistas);
             default:
                 System.out.println("Tipo de edificio desconocido");
@@ -67,7 +68,7 @@ public class Edificio {
     * @param tipo Tipo de edificio
     */
     public boolean EsEdificioValido(String tipo){
-        return tipo.equals("casa") || tipo.equals("hotel") || tipo.equals("piscina")  || tipo.equals("pista de deporte");
+        return tipo.equals("casa") || tipo.equals("hotel") || tipo.equals("piscina")  || tipo.equals("pista_deporte");
     }
 
     /* Método para calcular el coste de construcción de un tipo de edificio
@@ -78,7 +79,7 @@ public class Edificio {
         return switch (tipo) {
             case "casa", "hotel" -> lugar.getPrecioCasa();
             case "piscina" -> lugar.getPrecioPiscina();
-            case "pista de deporte" -> lugar.getPrecioPistaDeporte();
+            case "pista" , "pista_deporte" -> lugar.getPrecioPistaDeporte();
             default -> 0;
         };
     }
