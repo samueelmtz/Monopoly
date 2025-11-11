@@ -1208,6 +1208,28 @@ public class Menu {
                 break;
         }
 
+        // Actualizar fortuna del jugador
+        jugadorActual.sumarFortuna(ingreso);
+        System.out.printf("%s ha recibido %,.0f€ por vender %d %s de %s.\n",
+                jugadorActual.getNombre(), ingreso, aVender,
+                tipoVenta.equals("pista_deporte") ? "pistas de deporte" : tipoVenta,
+                casilla.getNombre());
+
+        // Verificar si la casilla ya no tiene edificios y eliminarla de las propiedades del jugador si es necesario
+        if (casilla.getNumCasas() == 0 && casilla.getNumHoteles() == 0 &&
+            casilla.getNumPiscinas() == 0 && casilla.getNumPistasDeporte() == 0) {
+            
+            // Buscar y eliminar la casilla de la lista de propiedades del jugador
+            ArrayList<Casilla> propiedades = jugadorActual.getPropiedades();
+            for (int i = 0; i < propiedades.size(); i++) {
+                if (propiedades.get(i).getNombre().equals(casilla.getNombre())) {
+                    propiedades.remove(i);
+                    System.out.println("La propiedad " + casilla.getNombre() + " ya no tiene edificios y ha sido eliminada de tus propiedades.");
+                    break;
+                }
+            }
+        }
+
         // Ingresar dinero al jugador
         jugadorActual.sumarFortuna(ingreso);
 
