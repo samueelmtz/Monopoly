@@ -297,7 +297,7 @@ public class Menu {
                 }
                 System.out.println("],");
 
-                // Mostrar edificios (no implementado en Jugador aún)
+                // Mostrar edificios
                 System.out.println("    edificios: [");
                 ArrayList<Edificio> edificiosJugador = jugador.getEdificios();
                 for (int i = 0; i < edificiosJugador.size(); i++) {
@@ -307,6 +307,7 @@ public class Menu {
                     }
                 }
                 System.out.println("]");
+
 
 
                 //System.out.println("    hipotecas: " + jugador.getHipotecas() + ","); // aun no se construyeron las hipotecas
