@@ -77,6 +77,7 @@ public class Menu {
                 System.out.println("> comprar");
                 System.out.println("> listar enventa");
                 System.out.println("> edificar");
+                System.out.println("> vender edificio");
                 System.out.println("> listar edificios");
                 System.out.println("> ver tablero");
                 System.out.println("> salir");
@@ -248,6 +249,24 @@ public class Menu {
                     edificar(comandos[1]);
                 } else {
                     System.out.println("Comando incorrecto. Uso: edificar <tipo_edificio>");
+                }
+                break;
+
+            case "vender":
+                // vender <casas|hoteles|piscina|pista_deporte> <nombre_casilla> <cantidad>
+                if (comandos.length >= 4) {
+                    String tipoVenta = comandos[1].toLowerCase();
+                    String nombreCasilla = comandos[2];
+                    int cantidad;
+                    try {
+                        cantidad = Integer.parseInt(comandos[3]);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Cantidad inválida. Uso: vender <tipo> <nombre_casilla> <cantidad>");
+                        break;
+                    }
+                    venderEdificios(tipoVenta, nombreCasilla, cantidad);
+                } else {
+                    System.out.println("Comando incorrecto. Uso: vender <casas|hoteles|piscina|pista_deporte> <nombre_casilla> <cantidad>");
                 }
                 break;
 
@@ -1078,6 +1097,133 @@ public class Menu {
                 return false;
         }
         return true;
+    }
+
+    /**
+     * Vende edificios de una casilla a su precio de compra.
+     * Solo se permite vender edificios (casas, hoteles, piscina, pista_deporte), no propiedades.
+     */
+    private void venderEdificios(String tipoVenta, String nombreCasilla, int cantidadSolicitada) {
+        Jugador jugadorActual = jugadores.get(turno);
+
+        if (cantidadSolicitada <= 0) {
+            System.out.println("La cantidad a vender debe ser positiva.");
+            return;
+        }
+
+        // Solo se aceptan tipos de edificio válidos
+        if (!(tipoVenta.equals("casas") || tipoVenta.equals("hoteles") || tipoVenta.equals("piscina") || tipoVenta.equals("pista_deporte"))) {
+            System.out.println("Tipo de edificio no reconocido para vender: " + tipoVenta);
+            return;
+        }
+
+        // Encontrar la casilla por nombre
+        Casilla casilla = tablero.encontrar_casilla(nombreCasilla);
+        if (casilla == null) {
+            System.out.println("Casilla no encontrada: " + nombreCasilla);
+            return;
+        }
+
+        // Debe ser un solar para tener edificios
+        if (!casilla.getTipo().equals("Solar")) {
+            System.out.println("Solo se pueden vender edificios en solares.");
+            return;
+        }
+
+        // Comprobar propiedad
+        if (casilla.getDuenho() != jugadorActual) {
+            System.out.println("Esta propiedad no pertenece a " + jugadorActual.getNombre() + ".");
+            return;
+        }
+
+        // Obtener disponibles y precio unitario
+        int disponibles;
+        float precioUnitario;
+        switch (tipoVenta) {
+            case "casas":
+                disponibles = casilla.getNumCasas();
+                precioUnitario = casilla.getPrecioCasa();
+                break;
+            case "hoteles":
+                disponibles = casilla.getNumHoteles();
+                precioUnitario = casilla.getPrecioHotel();
+                break;
+            case "piscina":
+                disponibles = casilla.getNumPiscinas();
+                precioUnitario = casilla.getPrecioPiscina();
+                break;
+            case "pista_deporte":
+                disponibles = casilla.getNumPistasDeporte();
+                precioUnitario = casilla.getPrecioPistaDeporte();
+                break;
+            default:
+                return;
+        }
+
+        if (disponibles == 0) {
+            String tipoTexto = tipoVenta.equals("pista_deporte") ? "pistas de deporte" : tipoVenta;
+            System.out.println("No hay " + tipoTexto + " para vender en " + casilla.getNombre() + ".");
+            return;
+        }
+
+        int aVender = Math.min(cantidadSolicitada, disponibles);
+        float ingreso = precioUnitario * aVender;
+
+        // Actualizar contadores
+        switch (tipoVenta) {
+            case "casas":
+                casilla.setNumCasas(disponibles - aVender);
+                break;
+            case "hoteles":
+                casilla.setNumHoteles(disponibles - aVender);
+                break;
+            case "piscina":
+                casilla.setNumPiscinas(disponibles - aVender);
+                break;
+            case "pista_deporte":
+                casilla.setNumPistasDeporte(disponibles - aVender);
+                break;
+        }
+
+        // Ingresar dinero al jugador
+        jugadorActual.sumarFortuna(ingreso);
+
+        // Mensajes
+        if (aVender < cantidadSolicitada) {
+            String tipoTexto = tipoVenta.equals("pista_deporte") ? "pista de deporte" : (tipoVenta.equals("piscina") ? "piscina" : tipoVenta.substring(0, tipoVenta.length()));
+            // tipoVenta ya va en plural para casas/hoteles; mostramos singular cuando aVender==1
+            System.out.printf("Solamente se puede vender %d %s, recibiendo %,.0f€.%n",
+                    aVender,
+                    (aVender == 1 ? (tipoVenta.equals("casas")?"casa": tipoVenta.equals("hoteles")?"hotel": tipoTexto) : (tipoVenta.equals("pista_deporte")?"pistas de deporte": tipoVenta)),
+                    ingreso);
+        } else {
+            String tipoPlural = tipoVenta.equals("pista_deporte") ? "pistas de deporte" : tipoVenta;
+            System.out.printf("%s ha vendido %d %s en %s, recibiendo %,.0f€.%n",
+                    jugadorActual.getNombre(), aVender, tipoPlural, casilla.getNombre(), ingreso);
+        }
+
+        // Estado restante: solo del tipo vendido
+        int quedan;
+        String etiqueta;
+        switch (tipoVenta) {
+            case "casas":
+                quedan = casilla.getNumCasas();
+                etiqueta = quedan == 1 ? "casa" : "casas";
+                break;
+            case "hoteles":
+                quedan = casilla.getNumHoteles();
+                etiqueta = quedan == 1 ? "hotel" : "hoteles";
+                break;
+            case "piscina":
+                quedan = casilla.getNumPiscinas();
+                etiqueta = quedan == 1 ? "piscina" : "piscinas";
+                break;
+            default:
+                quedan = casilla.getNumPistasDeporte();
+                etiqueta = quedan == 1 ? "pista de deporte" : "pistas de deporte";
+                break;
+        }
+        System.out.printf("En la propiedad queda %d %s.%n", quedan, etiqueta);
     }
 }
 
