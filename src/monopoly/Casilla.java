@@ -734,5 +734,6 @@ public class Casilla {
         return this.valorHipoteca;
     }
 
+
 }
 
