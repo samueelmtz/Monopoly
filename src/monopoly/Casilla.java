@@ -23,6 +23,8 @@ public class Casilla {
     private int numHoteles; //Número de hoteles construidos en la casilla
     private int numPiscinas; //Número de piscinas construidas en la casilla
     private int numPistas; //Número de pistas de deporte construidas en la casilla
+    private boolean hipotecada; //Indica si la casilla está hipotecada
+    private float valorHipoteca;
 
     //Constructores:
     public Casilla() {
@@ -47,6 +49,8 @@ public class Casilla {
         this.numHoteles = 0;
         this.numPiscinas = 0;
         this.numPistas = 0;
+        this.hipotecada = false;
+        this.valorHipoteca = valor / 2;
     }
     /*Constructor para casillas tipo Servicios o Transporte:
      * Parámetros: nombre casilla, tipo (debe ser serv. o transporte), posición en el tablero, valor y dueño.
@@ -626,6 +630,58 @@ public class Casilla {
         return false;
     }
 
+    /**
+     * Verifica si la casilla puede ser hipotecada
+     */
+    public boolean puedeHipotecar(Jugador jugador) {
+        // Verificar que el jugador es el dueño
+        if (this.duenho != jugador) {
+            return false;
+        }
+
+        // Verificar que no está ya hipotecada
+        if (this.hipotecada) {
+            return false;
+        }
+
+        // Verificar que no tiene edificios si es solar
+        if (this.tipo.equals("Solar") && (this.numCasas > 0 || this.numHoteles > 0 || this.numPiscinas > 0 || this.numPistas > 0)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Hipoteca la casilla
+     */
+    public boolean hipotecar() {
+        if (!this.hipotecada) {
+            this.hipotecada = true;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Deshipoteca la casilla
+     */
+    public boolean deshipotecar() {
+        if (this.hipotecada) {
+            this.hipotecada = false;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Verifica si la casilla está hipotecada
+     */
+    public boolean isHipotecada() {
+        return this.hipotecada;
+    }
+
+
     //GETTERS Y SETTERS
     private float getAlquilerPistaDeporte() {
         return getAlquilerPiscina(); // Según PDF, mismo alquiler que piscina
@@ -665,5 +721,18 @@ public class Casilla {
     public void setNumPistasDeporte(int numPistasDeporte) {
         this.numPistas = numPistasDeporte;
     }
+
+    public void setHipotecada(boolean hipotecada) {
+        this.hipotecada = hipotecada;
+    }
+
+    public void setValorHipoteca(float valorHipoteca) {
+        this.valorHipoteca = valorHipoteca;
+    }
+
+    public float getValorHipoteca() {
+        return this.valorHipoteca;
+    }
+
 }
 

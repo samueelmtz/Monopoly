@@ -79,6 +79,7 @@ public class Menu {
                 System.out.println("> edificar");
                 System.out.println("> vender edificio");
                 System.out.println("> listar edificios");
+                System.out.println("> hipotecar propiedad");
                 System.out.println("> ver tablero");
                 System.out.println("> salir");
                 System.out.println("Acción a ejecutar: ");
