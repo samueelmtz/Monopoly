@@ -1248,6 +1248,7 @@ public class Menu {
         }
         System.out.printf("En la propiedad queda %d %s.%n", quedan, etiqueta);
     }
+
 }
 
 
