@@ -298,7 +298,7 @@ public class Menu {
                 System.out.println("],");
 
                 // Mostrar edificios (no implementado en Jugador aún)
-                System.out.println("    edificios: []");
+                System.out.println("    edificios: [");
                 ArrayList<Edificio> edificiosJugador = jugador.getEdificios();
                 for (int i = 0; i < edificiosJugador.size(); i++) {
                     System.out.print(edificiosJugador.get(i).getId());
@@ -986,7 +986,8 @@ public class Menu {
         }
 
         // Calcular coste (usar tipoProcesado)
-        Edificio edificioTemp = new Edificio(tipoEdificio, casillaActual);
+        String tipoParaCalculo = tipoEdificio.equals("pista_deporte") ? "pista" : tipoEdificio;
+        Edificio edificioTemp = new Edificio(tipoParaCalculo, casillaActual);
         float coste = edificioTemp.getCoste();
 
         // Verificar si tiene suficiente dinero
