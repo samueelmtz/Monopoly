@@ -202,10 +202,9 @@ public class Menu {
                             listarAvatares();
                             break;
                         case "edificios":
-                            if(comandos.length == 2) {
+                            if (comandos.length == 2) {
                                 listarEdificios(null);
-                            }
-                            else if(comandos.length == 3){
+                            } else if (comandos.length == 3) {
                                 listarEdificios(comandos[2]);
                             }
                             break;
@@ -281,6 +280,15 @@ public class Menu {
 
                 // Mostrar edificios (no implementado en Jugador aún)
                 System.out.println("    edificios: []");
+                ArrayList<Edificio> edificiosJugador = jugador.getEdificios();
+                for (int i = 0; i < edificiosJugador.size(); i++) {
+                    System.out.print(edificiosJugador.get(i).getId());
+                    if (i < edificiosJugador.size() - 1) {
+                        System.out.print(", ");
+                    }
+                }
+                System.out.println("]");
+
 
                 //System.out.println("    hipotecas: " + jugador.getHipotecas() + ","); // aun no se construyeron las hipotecas
                 System.out.println("}");
@@ -513,11 +521,11 @@ public class Menu {
 
     //Método que realiza las acciones asociadas al comando 'listar edificios'
     private void listarEdificios(String colorGrupo) {
-        if(colorGrupo != null) {
+        if (colorGrupo != null) {
 
         }
 
-        for (Edificio edificio : edificios){
+        for (Edificio edificio : edificios) {
             System.out.println("{");
             System.out.println("    id: " + edificio.getId() + ",");
             System.out.println("    propietario: " + edificio.getDuenho().getNombre() + ",");
@@ -690,54 +698,54 @@ public class Menu {
                 }
             }
         } else if (accion.startsWith("retroceder:")) {
-                int casillas = Integer.parseInt(accion.split(":")[1]);
-                int posicionActual = jugador.getAvatar().getLugar().getPosicion();
-                int nuevaPosicion = (posicionActual - casillas + 40) % 40;
-                // AQUÍ ESTOY USANDO colocar() DIRECTAMENTE:
-                jugador.getAvatar().colocar(tablero.getPosiciones(), nuevaPosicion);
-                System.out.println("Has retrocedido " + casillas + " casillas.");
+            int casillas = Integer.parseInt(accion.split(":")[1]);
+            int posicionActual = jugador.getAvatar().getLugar().getPosicion();
+            int nuevaPosicion = (posicionActual - casillas + 40) % 40;
+            // AQUÍ ESTOY USANDO colocar() DIRECTAMENTE:
+            jugador.getAvatar().colocar(tablero.getPosiciones(), nuevaPosicion);
+            System.out.println("Has retrocedido " + casillas + " casillas.");
 
         } else if (accion.startsWith("pagar:")) {
-                float cantidadPago = Float.parseFloat(accion.split(":")[1]);
-                if (jugador.getFortuna() >= cantidadPago) {
-                    jugador.restarFortuna(cantidadPago);
-                    tablero.añadirAlBote(cantidadPago);
-                    System.out.printf("Has pagado %,.0f€\n", cantidadPago);
-                } else {
-                    System.out.println("No tienes suficiente dinero para pagar.");
-                }
+            float cantidadPago = Float.parseFloat(accion.split(":")[1]);
+            if (jugador.getFortuna() >= cantidadPago) {
+                jugador.restarFortuna(cantidadPago);
+                tablero.añadirAlBote(cantidadPago);
+                System.out.printf("Has pagado %,.0f€\n", cantidadPago);
+            } else {
+                System.out.println("No tienes suficiente dinero para pagar.");
+            }
 
         } else if (accion.equals("transporteCercano")) {
-                int posicionActual = jugador.getAvatar().getLugar().getPosicion();
-                String[] nombresTransporte = {"Trans1", "Trans2", "Trans3", "Trans4"};
-                int[] posicionesTransporte = {6, 16, 26, 36};
+            int posicionActual = jugador.getAvatar().getLugar().getPosicion();
+            String[] nombresTransporte = {"Trans1", "Trans2", "Trans3", "Trans4"};
+            int[] posicionesTransporte = {6, 16, 26, 36};
 
-                String transporteCercano = null;
-                int menorDistancia = Integer.MAX_VALUE;
+            String transporteCercano = null;
+            int menorDistancia = Integer.MAX_VALUE;
 
-                for (int i = 0; i < posicionesTransporte.length; i++) {
-                    int distancia = (posicionesTransporte[i] - posicionActual + 40) % 40;
-                    if (distancia < menorDistancia && distancia > 0) {
-                        menorDistancia = distancia;
-                        transporteCercano = nombresTransporte[i];
-                    }
+            for (int i = 0; i < posicionesTransporte.length; i++) {
+                int distancia = (posicionesTransporte[i] - posicionActual + 40) % 40;
+                if (distancia < menorDistancia && distancia > 0) {
+                    menorDistancia = distancia;
+                    transporteCercano = nombresTransporte[i];
                 }
+            }
 
-                if (transporteCercano != null) {
-                    // USAR MÉTODO EXISTENTE: colocar()
-                    // USAR MÉTODO EXISTENTE encontrar_casilla(String nombre)
-                    Casilla destino = tablero.encontrar_casilla(transporteCercano);
-                    if (destino != null) {
-                        jugador.getAvatar().colocar(tablero.getPosiciones(), destino.getPosicion());
-                        System.out.println("Te has movido a " + destino.getNombre());
-                        destino.evaluarCasilla(jugador, banca, 0);
-                    }
+            if (transporteCercano != null) {
+                // USAR MÉTODO EXISTENTE: colocar()
+                // USAR MÉTODO EXISTENTE encontrar_casilla(String nombre)
+                Casilla destino = tablero.encontrar_casilla(transporteCercano);
+                if (destino != null) {
+                    jugador.getAvatar().colocar(tablero.getPosiciones(), destino.getPosicion());
+                    System.out.println("Te has movido a " + destino.getNombre());
+                    destino.evaluarCasilla(jugador, banca, 0);
                 }
+            }
 
         } else if (accion.equals("irSalida")) {
-                jugador.getAvatar().colocar(tablero.getPosiciones(), 1); // Posición 1 = Salida
-                jugador.sumarFortuna(Valor.SUMA_VUELTA);
-                System.out.printf("¡Has cobrado %,.0f€ por pasar por salida!\n", Valor.SUMA_VUELTA);
+            jugador.getAvatar().colocar(tablero.getPosiciones(), 1); // Posición 1 = Salida
+            jugador.sumarFortuna(Valor.SUMA_VUELTA);
+            System.out.printf("¡Has cobrado %,.0f€ por pasar por salida!\n", Valor.SUMA_VUELTA);
         }
         System.out.printf("Fortuna actual de %s: %,.0f€\n", jugador.getNombre(), jugador.getFortuna());
     }
@@ -953,14 +961,13 @@ public class Menu {
         int piscinasEnCasilla = casillaActual.getNumPiscinas();
         int pistasEnCasilla = casillaActual.getNumPistasDeporte();
 
-        // Verificar límites de construcción
+        // Verificar límites de construcción (usar tipoProcesado)
         if (!puedeConstruir(tipoEdificio, casasEnCasilla, hotelesEnCasilla, piscinasEnCasilla, pistasEnCasilla, grupo)) {
             return;
         }
 
-        // Calcular coste
-        String tipoParaEdificio = tipoEdificio.equals("pista_deporte") ? "pista de deporte" : tipoEdificio;
-        Edificio edificioTemp = new Edificio(tipoParaEdificio, casillaActual);
+        // Calcular coste (usar tipoProcesado)
+        Edificio edificioTemp = new Edificio(tipoEdificio, casillaActual);
         float coste = edificioTemp.getCoste();
 
         // Verificar si tiene suficiente dinero
@@ -970,7 +977,7 @@ public class Menu {
             return;
         }
 
-        // Construir el edificio
+        // Construir el edificio (pasar tipoEdificio original para el mensaje)
         construirEdificio(jugadorActual, casillaActual, tipoEdificio, coste);
     }
 
@@ -994,12 +1001,25 @@ public class Menu {
             case "pista_deporte":
                 construido = casilla.anhadirPistaDeporte();
                 break;
+            default:
+                System.out.println("Tipo de edificio no reconocido: " + tipoEdificio);
+                return;
         }
 
         if (construido) {
             // Restar el coste de la fortuna del jugador
             jugador.restarFortuna(coste);
             jugador.sumarDineroInvertido(coste);
+
+            // CREAR EL OBJETO EDIFICIO Y AÑADIRLO AL JUGADOR
+            String tipoParaEdificio = tipoEdificio.equals("pista_deporte") ? "pista" : tipoEdificio;
+            Edificio nuevoEdificio = new Edificio(tipoParaEdificio, casilla);
+
+            // Añadir el edificio al jugador
+            jugador.anhadirEdificio(nuevoEdificio);
+
+            // Añadir el edificio a la lista global de edificios
+            edificios.add(nuevoEdificio);
 
             System.out.printf("Se ha edificado un %s en %s.\n", tipoEdificio, casilla.getNombre());
             System.out.printf("La fortuna de %s se reduce en %,.0f€.\n", jugador.getNombre(), coste);
@@ -1080,6 +1100,8 @@ public class Menu {
         return true;
     }
 }
+
+
 
 
 

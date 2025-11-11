@@ -78,7 +78,7 @@ public class Edificio {
         return switch (tipo) {
             case "casa", "hotel" -> lugar.getPrecioCasa();
             case "piscina" -> lugar.getPrecioPiscina();
-            case "pista de deporte" -> lugar.getPrecioPistaDeporte();
+            case "pista" -> lugar.getPrecioPistaDeporte();
             default -> 0;
         };
     }
