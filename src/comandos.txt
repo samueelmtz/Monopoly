@@ -20,3 +20,14 @@ lanzar dados 4+2
 comprar solar5
 describir jugador pedro
 edificar casa
+edificar casa
+edificar casa
+edificar hotel
+edificar casa
+edificar hotel
+edificar hotel
+edificar piscina
+edificar piscina
+edificar pista_deporte
+edificar pista_deporte
+describir jugador pedro
