@@ -39,6 +39,7 @@ public class Edificio {
         this.casilla = lugar;
         this.duenho = casilla.getDuenho();
         this.grupo = casilla.getGrupo();
+        this.coste = calcularCoste(lugar, tipo);
     }
 
     //MÉTODOS
@@ -82,7 +83,7 @@ public class Edificio {
         };
     }
 
-    public void asignarValores() {
+    /*public void asignarValores() {
         // Color del grupo y número de casillas del grupo
         String color = this.casilla.getGrupo().getColorGrupo();
         int n = this.casilla.getGrupo().getNumCasillas();
@@ -108,7 +109,7 @@ public class Edificio {
         } else {
             this.coste = 0f;
         }
-    }
+    }*/
 
     //GETTERS
     public String getId() {

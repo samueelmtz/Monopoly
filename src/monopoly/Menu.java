@@ -992,7 +992,6 @@ public class Menu {
                 construido = casilla.anhadirPiscina();
                 break;
             case "pista_deporte":
-            case "pista de deporte":
                 construido = casilla.anhadirPistaDeporte();
                 break;
         }
