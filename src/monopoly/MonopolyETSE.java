@@ -1,4 +1,4 @@
-package monopoly; b
+package monopoly;
 
 public class MonopolyETSE {
 
