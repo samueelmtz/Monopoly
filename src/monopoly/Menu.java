@@ -549,7 +549,14 @@ public class Menu {
             System.out.println("],");
 
             // Mostrar edificios (no implementado en Jugador aún)
-            System.out.println("    edificios: []");
+            System.out.print("    edificios: [");
+            ArrayList<Edificio> edificiosJugador = jugador.getEdificios();
+            for (int i = 0; i < edificiosJugador.size(); i++) {
+                System.out.print(edificiosJugador.get(i).getId());
+                if (i < edificiosJugador.size() - 1) {
+                    System.out.print(", ");
+                }
+            }
 
             //System.out.println("    hipotecas: " + jugador.getHipotecas() + ",");
 
@@ -1056,7 +1063,7 @@ public class Menu {
             jugador.restarFortuna(coste);
             jugador.sumarDineroInvertido(coste);
 
-            // CREAR EL OBJETO EDIFICIO Y AÑADIRLO AL JUGADOR
+            // CREAR SOLO UN OBJETO EDIFICIO - VERIFICAR QUE ESTO SE EJECUTE UNA VEZ
             String tipoParaEdificio = tipoEdificio.equals("pista_deporte") ? "pista" : tipoEdificio;
             Edificio nuevoEdificio = new Edificio(tipoParaEdificio, casilla);
 

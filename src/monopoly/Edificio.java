@@ -15,10 +15,11 @@ public class Edificio {
     private Casilla casilla; //Casilla en la que se edifica
     private float coste; //Precio del edificio
     private Grupo grupo; //Grupo de la casilla edificada
-    private int contadorCasas;
-    private int contadorHoteles;
-    private int contadorPiscinas;
-    private int contadorPistas;
+
+    private static int contadorCasas = 0;
+    private static int contadorHoteles = 0;
+    private static int contadorPiscinas = 0;
+    private static int contadorPistas = 0;
 
     //CONSTRUCTORES
     public Edificio(){
@@ -40,10 +41,6 @@ public class Edificio {
         this.duenho = casilla.getDuenho();
         this.grupo = casilla.getGrupo();
         this.coste = calcularCoste(lugar, tipo);
-        this.contadorCasas = 0;
-        this.contadorHoteles = 0;
-        this.contadorPiscinas = 0;
-        this.contadorPistas = 0;
     }
 
     //MÉTODOS
