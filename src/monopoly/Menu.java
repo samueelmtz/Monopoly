@@ -1289,6 +1289,16 @@ public class Menu {
             }
         }
 
+        // ELIMINAR TAMBIÉN DE LA LISTA GLOBAL DE EDIFICIOS
+        int eliminadosGlobal = 0;
+        for (int i = edificios.size() - 1; i >= 0 && eliminadosGlobal < aVender; i--) {
+            Edificio edificio = edificios.get(i);
+            if (edificio.getCasilla() == casilla && edificio.getTipo().equals(tipoParaEliminar)) {
+                edificios.remove(i);
+                eliminadosGlobal++;
+            }
+        }
+
         // Actualizar contadores en la casilla
         switch (tipoVenta) {
             case "casas":
@@ -1316,8 +1326,7 @@ public class Menu {
             tipoTexto = tipoTexto.substring(0, tipoTexto.length() - 1); // Singular
         }
 
-        System.out.printf("%s ha recibido %,.0f€ por vender %d %s de %s.\n",
-                jugadorActual.getNombre(), ingreso, aVender, tipoTexto, casilla.getNombre());
+        System.out.printf("%s ha recibido %,.0f€ por vender %d %s de %s.\n", jugadorActual.getNombre(), ingreso, aVender, tipoTexto, casilla.getNombre());
 
         // Estado restante
         int quedan;
