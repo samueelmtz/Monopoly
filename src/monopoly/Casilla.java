@@ -63,6 +63,8 @@ public class Casilla {
         this.valor = valor;
         this.duenho = duenho;
         this.avatares = new ArrayList<Avatar>();
+        this.hipotecada = false;
+        this.valorHipoteca = 0f; //servicios y transportes no pueden hipotecarse
     }
 
     /*Constructor utilizado para inicializar las casillas de tipo IMPUESTOS.
@@ -126,7 +128,42 @@ public class Casilla {
 
                 switch (this.tipo) {
                     case "Solar":
-                        aPagar = this.impuesto;
+                        if (this.isHipotecada()) {
+                            System.out.println("La propiedad " + this.nombre + " está hipotecada. No se cobra alquiler.");
+                            break;
+                        }
+
+                        // NUEVO: Calcular alquiler total según edificios
+                        aPagar = this.impuesto; // Alquiler base
+
+                        if (this.numCasas > 0) {
+                            aPagar += getAlquilerCasa() * this.numCasas;
+                        }
+                        if (this.numHoteles > 0) {
+                            aPagar += getAlquilerHotel() * this.numHoteles;
+                        }
+                        if (this.numPiscinas > 0) {
+                            aPagar += getAlquilerPiscina() * this.numPiscinas;
+                        }
+                        if (this.numPistas > 0) {
+                            aPagar += getAlquilerPistaDeporte() * this.numPistas;
+                        }
+
+                        // AÑADIR TAMBIÉN LA REGLA DEL DOBLE POR GRUPO COMPLETO
+                        if (this.grupo != null && this.numCasas == 0 && this.numHoteles == 0) {
+                            boolean tieneTodoElGrupo = true;
+                            for (Casilla casillaGrupo : this.grupo.getMiembros()) {
+                                if (casillaGrupo.getDuenho() != this.duenho) {
+                                    tieneTodoElGrupo = false;
+                                    break;
+                                }
+                            }
+                            if (tieneTodoElGrupo) {
+                                aPagar *= 2;
+                                System.out.println("¡Grupo completo! Alquiler doble.");
+                            }
+                        }
+
                         System.out.printf("Alquiler de solar: %,.0f€\n", aPagar);
                         actual.sumarPagoDeAlquileres(aPagar);
                         receptor.sumarCobroDeAlquileres(aPagar);
@@ -140,13 +177,38 @@ public class Casilla {
                         break;
 
                     case "Servicios":
-                        int x = 4;
-                        aPagar = (float) tirada * x * Valor.FACTOR_SERVICIO;
-                        System.out.printf("Alquiler de servicio: dados(%d) * %d * %,.0f€ = %,.0f€\n", tirada, x, Valor.FACTOR_SERVICIO, aPagar);
+                        if (this.isHipotecada()) {
+                            System.out.println("El servicio " + this.nombre + " está hipotecado. No se cobra alquiler.");
+                            break;
+                        }
+
+                        // ✅ CORREGIDO: Contar cuántos servicios tiene el dueño
+                        int serviciosDelDuenho = 0;
+                        for (Casilla propiedad : this.duenho.getPropiedades()) {
+                            if (propiedad.getTipo().equals("Servicios")) {
+                                serviciosDelDuenho++;
+                            }
+                        }
+
+                        // Determinar multiplicador según cantidad de servicios
+                        int multiplicador;
+                        if (serviciosDelDuenho == 1) {
+                            multiplicador = 4;
+                        } else if (serviciosDelDuenho == 2) {
+                            multiplicador = 10;
+                        } else {
+                            multiplicador = 4; // Por defecto (no debería pasar)
+                        }
+
+                        aPagar = (float) tirada * multiplicador * Valor.FACTOR_SERVICIO;
+
+                        System.out.printf("Alquiler de servicio: dados(%d) × %d × %,.0f€ = %,.0f€\n",
+                                tirada, multiplicador, Valor.FACTOR_SERVICIO, aPagar);
+                        System.out.printf("El dueño tiene %d servicio(s)\n", serviciosDelDuenho);
+
                         actual.sumarPagoDeAlquileres(aPagar);
                         receptor.sumarCobroDeAlquileres(aPagar);
                         break;
-
                     default:
                         break;
                 }
@@ -644,6 +706,7 @@ public class Casilla {
      * Verifica si la casilla puede ser hipotecada
      */
     public boolean puedeHipotecar(Jugador jugador) {
+
         // Verificar que el jugador es el dueño
         if (this.duenho == null || !this.duenho.equals(jugador)) {
             System.out.println(jugador.getNombre() + " no puede hipotecar " + this.nombre + ". No es una propiedad que le pertenece.");
@@ -656,6 +719,12 @@ public class Casilla {
             return false;
         }
 
+        // ✅ CORREGIDO: Solo los solares se pueden hipotecar
+        if (!this.tipo.equals("Solar")) {
+            System.out.println(this.nombre + " no se puede hipotecar. Solo los solares son hipotecables.");
+            return false;
+        }
+
         // Verificar que no tiene edificios si es solar
         if (this.tipo.equals("Solar")) {
             int totalEdificios = this.numCasas + this.numHoteles + this.numPiscinas + this.numPistas;
@@ -664,13 +733,6 @@ public class Casilla {
                 return false;
             }
         }
-
-        // Verificar que es un tipo de propiedad que se puede hipotecar
-        if (!this.esTipoComprable()) {
-            System.out.println(this.nombre + " no se puede hipotecar.");
-            return false;
-        }
-
         return true;
     }
 
