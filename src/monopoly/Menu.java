@@ -1071,13 +1071,33 @@ public class Menu {
     private void construirEdificio(Jugador jugador, Casilla casilla, String tipoEdificio, float coste) {
         boolean construido = false;
 
-        // Intentar construir usando los métodos existentes en Casilla
         switch (tipoEdificio) {
             case "casa":
                 construido = casilla.anhadirCasa();
                 break;
             case "hotel":
-                construido = casilla.anhadirHotel();
+                // PARA HOTEL: Primero eliminar las casas existentes antes de construir
+                if (casilla.getNumCasas() == 4) {
+                    // ELIMINAR TODAS LAS CASAS DE ESTA CASILLA
+                    // Eliminar de la lista global de edificios (recorrer en orden inverso)
+                    for (int i = edificios.size() - 1; i >= 0; i--) {
+                        Edificio edificio = edificios.get(i);
+                        if (edificio.getCasilla() == casilla && edificio.getTipo().equals("casa")) {
+                            edificios.remove(i);
+                        }
+                    }
+
+                    // Eliminar de la lista del jugador (recorrer en orden inverso)
+                    ArrayList<Edificio> edificiosJugador = jugador.getEdificios();
+                    for (int i = edificiosJugador.size() - 1; i >= 0; i--) {
+                        Edificio edificio = edificiosJugador.get(i);
+                        if (edificio.getCasilla() == casilla && edificio.getTipo().equals("casa")) {
+                            edificiosJugador.remove(i);
+                        }
+                    }
+
+                    construido = casilla.anhadirHotel();
+                }
                 break;
             case "piscina":
                 construido = casilla.anhadirPiscina();
@@ -1095,7 +1115,7 @@ public class Menu {
             jugador.restarFortuna(coste);
             jugador.sumarDineroInvertido(coste);
 
-            // CREAR EL OBJETO EDIFICIO Y AÑADIRLO AL JUGADOR
+            // CREAR EL NUEVO OBJETO EDIFICIO
             String tipoParaEdificio = tipoEdificio.equals("pista_deporte") ? "pista" : tipoEdificio;
             Edificio nuevoEdificio = new Edificio(tipoParaEdificio, casilla);
 
@@ -1115,7 +1135,6 @@ public class Menu {
             System.out.println("Error: No se pudo construir el " + tipoEdificio + " en " + casilla.getNombre());
         }
     }
-
     /**
      * Muestra el estado actual de los edificios en una casilla
      */
