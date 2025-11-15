@@ -645,17 +645,29 @@ public class Casilla {
      */
     public boolean puedeHipotecar(Jugador jugador) {
         // Verificar que el jugador es el dueño
-        if (this.duenho != jugador) {
+        if (this.duenho == null || !this.duenho.equals(jugador)) {
+            System.out.println(jugador.getNombre() + " no puede hipotecar " + this.nombre + ". No es una propiedad que le pertenece.");
             return false;
         }
 
         // Verificar que no está ya hipotecada
         if (this.hipotecada) {
+            System.out.println(jugador.getNombre() + " no puede hipotecar " + this.nombre + ". Ya está hipotecada.");
             return false;
         }
 
         // Verificar que no tiene edificios si es solar
-        if (this.tipo.equals("Solar") && (this.numCasas > 0 || this.numHoteles > 0 || this.numPiscinas > 0 || this.numPistas > 0)) {
+        if (this.tipo.equals("Solar")) {
+            int totalEdificios = this.numCasas + this.numHoteles + this.numPiscinas + this.numPistas;
+            if (totalEdificios > 0) {
+                System.out.println(jugador.getNombre() + " no puede hipotecar " + this.nombre + ". Tiene edificios que deben venderse primero.");
+                return false;
+            }
+        }
+
+        // Verificar que es un tipo de propiedad que se puede hipotecar
+        if (!this.esTipoComprable()) {
+            System.out.println(this.nombre + " no se puede hipotecar.");
             return false;
         }
 
