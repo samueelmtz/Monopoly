@@ -549,7 +549,16 @@ public class Menu {
             System.out.println("],");
 
             // Mostrar edificios (no implementado en Jugador aún)
-            System.out.println("    edificios: []");
+            System.out.print("    edificios: [");
+            ArrayList<Edificio> edificiosJugador = jugador.getEdificios();
+            for (int i = 0; i < edificiosJugador.size(); i++) {
+                System.out.print(edificiosJugador.get(i).getId());
+                if (i < edificiosJugador.size() - 1) {
+                    System.out.print(", ");
+                }
+            }
+            System.out.println("],");
+
 
             //System.out.println("    hipotecas: " + jugador.getHipotecas() + ",");
 
