@@ -548,11 +548,12 @@ public class Menu {
             }
             System.out.println("],");
 
-            // Mostrar edificios (no implementado en Jugador aún)
+            // Mostrar edificios
             System.out.print("    edificios: [");
             ArrayList<Edificio> edificiosJugador = jugador.getEdificios();
             for (int i = 0; i < edificiosJugador.size(); i++) {
-                System.out.print(edificiosJugador.get(i).getId());
+                Edificio edificio = edificiosJugador.get(i);
+                System.out.print(edificio.getId() + "(" + edificio.getCasilla().getNombre() + ")");
                 if (i < edificiosJugador.size() - 1) {
                     System.out.print(", ");
                 }
@@ -571,19 +572,20 @@ public class Menu {
 
     //Método que realiza las acciones asociadas al comando 'listar edificios'
     private void listarEdificios(String colorGrupo) {
-        if (colorGrupo != null) {
-
+        if(edificios.isEmpty()) {
+            System.out.println("No hay edificios en este momento.");
         }
 
-        for (Edificio edificio : edificios) {
-            System.out.println("{");
-            System.out.println("    id: " + edificio.getId() + ",");
-            System.out.println("    propietario: " + edificio.getDuenho().getNombre() + ",");
-            System.out.println("    casilla: " + edificio.getCasilla().getNombre() + ",");
-            System.out.println("    grupo: " + edificio.getGrupo().getColorGrupo() + ",");
-            System.out.println("    coste: " + String.format("%,.0f", edificio.getCoste()) + ",");
-            System.out.println("}");
+        //Modo sin grupo
+        if(colorGrupo == null) {
+            for (int i = 0; i < edificios.size(); i++) {
+                Edificio edificio = edificios.get(i);
+                String info = edificio.infoEdificio();
+                System.out.println(info);
+            }
         }
+
+
     }
 
     // Método que realiza las acciones asociadas al comando 'acabar turno'.
@@ -1063,7 +1065,7 @@ public class Menu {
             jugador.restarFortuna(coste);
             jugador.sumarDineroInvertido(coste);
 
-            // CREAR SOLO UN OBJETO EDIFICIO - VERIFICAR QUE ESTO SE EJECUTE UNA VEZ
+            // CREAR EL OBJETO EDIFICIO Y AÑADIRLO AL JUGADOR
             String tipoParaEdificio = tipoEdificio.equals("pista_deporte") ? "pista" : tipoEdificio;
             Edificio nuevoEdificio = new Edificio(tipoParaEdificio, casilla);
 
