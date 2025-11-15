@@ -1,4 +1,4 @@
-package monopoly;
+package monopoly; avad
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -80,6 +80,7 @@ public class Menu {
                 System.out.println("> vender edificio");
                 System.out.println("> listar edificios");
                 System.out.println("> hipotecar propiedad");
+                System.out.println("> deshipotecar propiedad");
                 System.out.println("> ver tablero");
                 System.out.println("> salir");
                 System.out.println("Acción a ejecutar: ");
@@ -275,6 +276,14 @@ public class Menu {
                     hipotecarPropiedad(comandos[1]);
                 } else {
                     System.out.println("Comando incorrecto. Uso: hipotecar <nombre_casilla>");
+                }
+                break;
+
+            case "deshipotecar":
+                if (comandos.length == 2) {
+                    deshipotecarPropiedad(comandos[1]);
+                } else{
+                    System.out.println("Comando incorrecto. Uso: deshipotecar <nombre_casilla>");
                 }
                 break;
 
@@ -1395,8 +1404,54 @@ public class Menu {
             System.out.println("No se pudo hipotecar " + nombreCasilla);
         }
     }
-}
 
+    private void deshipotecarPropiedad(String nombreCasilla) {
+        Jugador jugadorActual = jugadores.get(turno);
+        Casilla casilla = tablero.encontrar_casilla(nombreCasilla);
+
+        if (casilla == null) {
+            System.out.println("Casilla no encontrada: " + nombreCasilla);
+            return;
+        }
+
+        // Verificar que el jugador es el dueño
+        if (casilla.getDuenho() != jugadorActual) {
+            System.out.println("Esta propiedad no pertenece a " + jugadorActual.getNombre() + ".");
+            return;
+        }
+
+        // Verificar que la propiedad está hipotecada
+        if (!casilla.isHipotecada()) {
+            System.out.println("La propiedad " + nombreCasilla + " no está hipotecada.");
+            return;
+        }
+
+        // Calcular coste de deshipoteca (valor de hipoteca)
+        float costeDeshipoteca = casilla.getValorHipoteca();
+
+        // Verificar si tiene suficiente dinero
+        if (jugadorActual.getFortuna() < costeDeshipoteca) {
+            System.out.printf("No tienes suficiente dinero para deshipotecar. Necesitas %,.0f€ pero tienes %,.0f€\n",
+                    costeDeshipoteca, jugadorActual.getFortuna());
+            return;
+        }
+
+        // Realizar la deshipoteca
+        if (casilla.deshipotecar()) {
+            jugadorActual.restarFortuna(costeDeshipoteca);
+            jugadorActual.sumarPagoTasasEImpuestos(costeDeshipoteca);
+
+            System.out.printf("%s ha deshipotecado %s por %,.0f€.\n",
+                    jugadorActual.getNombre(), nombreCasilla, costeDeshipoteca);
+            System.out.println("La propiedad puede volver a recibir alquileres y edificarse.");
+
+            System.out.printf("Fortuna actual de %s: %,.0f€\n",
+                    jugadorActual.getNombre(), jugadorActual.getFortuna());
+        } else {
+            System.out.println("No se pudo deshipotecar " + nombreCasilla);
+        }
+    }
+}
 
 
 
