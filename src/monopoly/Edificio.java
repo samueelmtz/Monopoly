@@ -40,13 +40,17 @@ public class Edificio {
         this.duenho = casilla.getDuenho();
         this.grupo = casilla.getGrupo();
         this.coste = calcularCoste(lugar, tipo);
+        this.contadorCasas = 0;
+        this.contadorHoteles = 0;
+        this.contadorPiscinas = 0;
+        this.contadorPistas = 0;
     }
 
     //MÉTODOS
     /* Genera IDs únicos como casa-1, hotel-2, etc.
     * @param tipo Tipo de edificio
     */
-    private String generarID(String tipo) {
+    public String generarID(String tipo) {
         switch (tipo) {
             case "casa":
                 return "casa-" + (++contadorCasas);
@@ -84,33 +88,20 @@ public class Edificio {
         };
     }
 
-    /*public void asignarValores() {
-        // Color del grupo y número de casillas del grupo
-        String color = this.casilla.getGrupo().getColorGrupo();
-        int n = this.casilla.getGrupo().getNumCasillas();
+    // Lista todas las edificaciones en su respectivo array
+    public String infoEdificio() {
+        String cadena = "";
 
-        Map<String, Float> grupoValores = Map.of(
-                "WHITE",  Valor.GRUPO1 / (float) n,
-                "CYAN",   Valor.GRUPO2 / (float) n,
-                "BLUE",   Valor.GRUPO3 / (float) n,
-                "YELLOW", Valor.GRUPO4 / (float) n,
-                "BLACK",  Valor.GRUPO5 / (float) n,
-                "GREEN",  Valor.GRUPO6 / (float) n,
-                "RED",    Valor.GRUPO7 / (float) n,
-                "PURPLE", Valor.GRUPO8 / (float) n
-        );
+        cadena += "{\n";
+        cadena += "\tid: " + this.id + ",\n";
+        cadena += "\tpropietario: " + this.duenho.getNombre() + ",\n";
+        cadena += "\tcasilla: " + this.casilla.getNombre() + ",\n";
+        cadena += "\tgrupo: " + this.grupo.getColorGrupo() + ",\n";
+        cadena += "\tcoste: " + this.coste + "\n";
+        cadena += "},\n";
 
-        // Si tu color viene en otro formato, puedes normalizar:
-
-        Float valorInicialSolar = grupoValores.get(color);
-
-        if (valorInicialSolar != null) {
-
-            this.coste = calcularCoste(this.casilla, this.tipoEdificio);
-        } else {
-            this.coste = 0f;
-        }
-    }*/
+        return cadena;
+    }
 
     //GETTERS
     public String getId() {
