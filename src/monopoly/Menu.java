@@ -1054,7 +1054,7 @@ public class Menu {
         int pistasEnCasilla = casillaActual.getNumPistasDeporte();
 
         // Verificar límites de construcción (usar tipoProcesado)
-        if (!puedeConstruir(tipoEdificio, casasEnCasilla, hotelesEnCasilla, piscinasEnCasilla, pistasEnCasilla, grupo)) {
+        if (!puedeConstruir(tipoEdificio, casasEnCasilla, hotelesEnCasilla, piscinasEnCasilla, pistasEnCasilla, grupo, casillaActual)) {
             return;
         }
 
@@ -1172,7 +1172,7 @@ public class Menu {
     /**
      * Verifica si se puede construir un tipo específico de edificio
      */
-    private boolean puedeConstruir(String tipoEdificio, int casas, int hoteles, int piscinas, int pistas, Grupo grupo) {
+    private boolean puedeConstruir(String tipoEdificio, int casas, int hoteles, int piscinas, int pistas, Grupo grupo, Casilla casillaActual) {
         switch (tipoEdificio) {
             case "casa":
                 if (casas >= 4) {
@@ -1222,8 +1222,26 @@ public class Menu {
                 System.out.println("Tipo de edificio no reconocido: " + tipoEdificio);
                 return false;
         }
+        boolean hayEdificiosEnGrupo = false;
+        for (Casilla casilla : grupo.getMiembros()) {
+            if (casilla != casillaActual) {
+                int totalEdificios = casilla.getNumCasas() + casilla.getNumHoteles() +
+                        casilla.getNumPiscinas() + casilla.getNumPistasDeporte();
+                if (totalEdificios > 0) {
+                    hayEdificiosEnGrupo = true;
+                    break;
+                }
+            }
+        }
+
+        if (hayEdificiosEnGrupo) {
+            System.out.println("No se puede edificar ningún edificio más en esta casilla ni en el grupo al que la casilla pertenece porque ya hay un edificio en este grupo.");
+            return false;
+        }
+
         return true;
     }
+
 
     //Metodo para vender un edificio
     private void venderEdificios(String tipoVenta, String nombreCasilla, int cantidadSolicitada) {
