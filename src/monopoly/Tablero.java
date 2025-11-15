@@ -120,6 +120,7 @@ public class Tablero {
         this.insertarLadoEste();
     }
 
+
     //Metodo que inserta las casillas del lado sur.
     private void insertarLadoSur() {
         ArrayList<Casilla> ladoSur = this.posiciones.get(0);

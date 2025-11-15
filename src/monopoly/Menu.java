@@ -916,6 +916,7 @@ public class Menu {
         return grupoMasRentable;
     }
 
+
     private String calcularCasillaMasFrecuentada() {
         Casilla masFrecuentada = null;
         int maxVisitas = 0;

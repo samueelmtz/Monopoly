@@ -627,6 +627,7 @@ public class Casilla {
         return false;
     }
 
+
     /**
      * Añade una pista de deporte a la casilla (requiere hotel)
      */

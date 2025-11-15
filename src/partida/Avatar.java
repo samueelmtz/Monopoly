@@ -90,6 +90,7 @@ public class Avatar {
         }
     }
 
+
     //Nueva funcion que mueve el avatar a una casilla en especifico (necesario para la carcel o para moverAvatar)
     public void colocar(ArrayList<ArrayList<Casilla>> casillas, int nuevaPosicion) {
         if (this.lugar != null) {
