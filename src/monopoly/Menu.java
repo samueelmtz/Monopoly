@@ -279,19 +279,29 @@ public class Menu {
     /*Metodo que realiza las acciones asociadas al comando 'describir jugador'.
      * Parámetro: comando introducido*/
     public void descJugador(String[] partes) {
+        // Verificar que hay suficientes partes en el comando
+        if (partes.length < 3) {
+            System.out.println("Error: Comando incompleto. Uso: describir jugador <nombre_jugador>");
+            return;
+        }
+
         String nombreJugador = partes[2];
         for (Jugador jugador : jugadores) {
             if (jugador.getNombre().equalsIgnoreCase(nombreJugador)) {
                 System.out.println("{");
                 System.out.println("    nombre: " + jugador.getNombre() + ",");
-                System.out.println("    avatar: " + jugador.getAvatar().getId() + ",");
+                System.out.println("    avatar: " + (jugador.getAvatar() != null ? jugador.getAvatar().getId() : "-") + ",");
                 System.out.println("    fortuna: " + String.format("%,.0f", jugador.getFortuna()) + ",");
 
-                // Mostrar nombres de propiedades en lugar de objetos
+                // Mostrar propiedades
                 System.out.print("    propiedades: [");
                 ArrayList<Casilla> propiedades = jugador.getPropiedades();
                 for (int i = 0; i < propiedades.size(); i++) {
-                    System.out.print(propiedades.get(i).getNombre());
+                    Casilla propiedad = propiedades.get(i);
+                    System.out.print(propiedad.getNombre());
+                    if (propiedad.isHipotecada()) {
+                        System.out.print("(H)");
+                    }
                     if (i < propiedades.size() - 1) {
                         System.out.print(", ");
                     }
@@ -299,19 +309,31 @@ public class Menu {
                 System.out.println("],");
 
                 // Mostrar edificios
-                System.out.println("    edificios: [");
+                System.out.print("    edificios: [");
                 ArrayList<Edificio> edificiosJugador = jugador.getEdificios();
                 for (int i = 0; i < edificiosJugador.size(); i++) {
-                    System.out.print(edificiosJugador.get(i).getId());
+                    Edificio edificio = edificiosJugador.get(i);
+                    System.out.print(edificio.getId() + "(" + edificio.getCasilla().getNombre() + ")");
                     if (i < edificiosJugador.size() - 1) {
                         System.out.print(", ");
                     }
                 }
+                System.out.println("],");
+
+                // Mostrar propiedades hipotecadas
+                System.out.print("    hipotecas: [");
+                boolean primeraHipoteca = true;
+                for (Casilla propiedad : propiedades) {
+                    if (propiedad.isHipotecada()) {
+                        if (!primeraHipoteca) {
+                            System.out.print(", ");
+                        }
+                        System.out.print(propiedad.getNombre() + ":" + String.format("%,.0f", propiedad.getValorHipoteca()) + "€");
+                        primeraHipoteca = false;
+                    }
+                }
                 System.out.println("]");
 
-
-
-                //System.out.println("    hipotecas: " + jugador.getHipotecas() + ","); // aun no se construyeron las hipotecas
                 System.out.println("}");
                 return;
             }
