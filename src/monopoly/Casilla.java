@@ -52,6 +52,7 @@ public class Casilla {
         this.hipotecada = false;
         this.valorHipoteca = valor / 2;
     }
+
     /*Constructor para casillas tipo Servicios o Transporte:
      * Parámetros: nombre casilla, tipo (debe ser serv. o transporte), posición en el tablero, valor y dueño.
      */
@@ -626,6 +627,7 @@ public class Casilla {
         }
         return false;
     }
+
 
     /**
      * Añade una pista de deporte a la casilla (requiere hotel)

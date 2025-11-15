@@ -549,7 +549,16 @@ public class Menu {
             System.out.println("],");
 
             // Mostrar edificios (no implementado en Jugador aún)
-            System.out.println("    edificios: []");
+            // Mostrar edificios
+            System.out.print("    edificios: [");
+            ArrayList<Edificio> edificiosJugador = jugador.getEdificios();
+            for (int i = 0; i < edificiosJugador.size(); i++) {
+                Edificio edificio = edificiosJugador.get(i);
+                System.out.print(edificio.getId() + "(" + edificio.getCasilla().getNombre() + ")");
+                if (i < edificiosJugador.size() - 1) {
+                    System.out.print(", ");
+                }
+            }
 
             //System.out.println("    hipotecas: " + jugador.getHipotecas() + ",");
 
@@ -915,6 +924,7 @@ public class Menu {
 
         return grupoMasRentable;
     }
+
 
     private String calcularCasillaMasFrecuentada() {
         Casilla masFrecuentada = null;

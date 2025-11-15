@@ -154,6 +154,7 @@ public class Jugador {
         }
     }
 
+
     public boolean isEnCarcel() {
         return enCarcel;
     }

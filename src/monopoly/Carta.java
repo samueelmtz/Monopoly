@@ -13,6 +13,7 @@ public class Carta {
         this.accion = accion;
     }
 
+
     //Getters
     public int getId() {
         return id;
