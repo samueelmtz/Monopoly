@@ -31,10 +31,3 @@ edificar piscina
 edificar pista_deporte
 edificar pista_deporte
 describir jugador pedro
-vender hoteles Solar5 1
-vender piscina Solar5 1
-vender pista_deporte Solar5 1
-describir jugador pedro
-hipotecar solar5
-describir jugador pedro
-edificar casa
