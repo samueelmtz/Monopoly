@@ -602,6 +602,14 @@ public class Casilla {
     public boolean anhadirHotel() {
         if (numHoteles == 0 && numCasas == 4) {
             numHoteles++;
+
+            // ELIMINAR LAS CASAS DE LA LISTA DE EDIFICIOS DEL JUGADOR
+            if (this.duenho != null) {
+                ArrayList<Edificio> edificiosJugador = this.duenho.getEdificios();
+                // Eliminar todas las casas de esta casilla
+                edificiosJugador.removeIf(edificio -> edificio.getCasilla() == this && edificio.getTipo().equals("casa"));
+            }
+
             numCasas = 0; // Las casas se reemplazan por el hotel
             return true;
         }

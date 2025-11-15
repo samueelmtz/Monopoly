@@ -1144,10 +1144,7 @@ public class Menu {
         return true;
     }
 
-    /**
-     * Vende edificios de una casilla a su precio de compra.
-     * Solo se permite vender edificios (casas, hoteles, piscina, pista_deporte), no propiedades.
-     */
+    //Metodo para vender un edificio
     private void venderEdificios(String tipoVenta, String nombreCasilla, int cantidadSolicitada) {
         Jugador jugadorActual = jugadores.get(turno);
 
@@ -1184,22 +1181,28 @@ public class Menu {
         // Obtener disponibles y precio unitario
         int disponibles;
         float precioUnitario;
+        String tipoParaEliminar; // Tipo para eliminar de la lista de edificios
+
         switch (tipoVenta) {
             case "casas":
                 disponibles = casilla.getNumCasas();
                 precioUnitario = casilla.getPrecioCasa();
+                tipoParaEliminar = "casa";
                 break;
             case "hoteles":
                 disponibles = casilla.getNumHoteles();
                 precioUnitario = casilla.getPrecioHotel();
+                tipoParaEliminar = "hotel";
                 break;
             case "piscina":
                 disponibles = casilla.getNumPiscinas();
                 precioUnitario = casilla.getPrecioPiscina();
+                tipoParaEliminar = "piscina";
                 break;
             case "pista_deporte":
                 disponibles = casilla.getNumPistasDeporte();
                 precioUnitario = casilla.getPrecioPistaDeporte();
+                tipoParaEliminar = "pista";
                 break;
             default:
                 return;
@@ -1214,7 +1217,20 @@ public class Menu {
         int aVender = Math.min(cantidadSolicitada, disponibles);
         float ingreso = precioUnitario * aVender;
 
-        // Actualizar contadores
+        // ELIMINAR LOS EDIFICIOS DE LA LISTA DEL JUGADOR
+        ArrayList<Edificio> edificiosJugador = jugadorActual.getEdificios();
+        int eliminados = 0;
+
+        // Buscar y eliminar los edificios de este tipo en esta casilla
+        for (int i = edificiosJugador.size() - 1; i >= 0 && eliminados < aVender; i--) {
+            Edificio edificio = edificiosJugador.get(i);
+            if (edificio.getCasilla() == casilla && edificio.getTipo().equals(tipoParaEliminar)) {
+                edificiosJugador.remove(i);
+                eliminados++;
+            }
+        }
+
+        // Actualizar contadores en la casilla
         switch (tipoVenta) {
             case "casas":
                 casilla.setNumCasas(disponibles - aVender);
@@ -1232,44 +1248,19 @@ public class Menu {
 
         // Actualizar fortuna del jugador
         jugadorActual.sumarFortuna(ingreso);
-        System.out.printf("%s ha recibido %,.0f€ por vender %d %s de %s.\n",
-                jugadorActual.getNombre(), ingreso, aVender,
-                tipoVenta.equals("pista_deporte") ? "pistas de deporte" : tipoVenta,
-                casilla.getNombre());
-
-        // Verificar si la casilla ya no tiene edificios y eliminarla de las propiedades del jugador si es necesario
-        if (casilla.getNumCasas() == 0 && casilla.getNumHoteles() == 0 &&
-            casilla.getNumPiscinas() == 0 && casilla.getNumPistasDeporte() == 0) {
-            
-            // Buscar y eliminar la casilla de la lista de propiedades del jugador
-            ArrayList<Casilla> propiedades = jugadorActual.getPropiedades();
-            for (int i = 0; i < propiedades.size(); i++) {
-                if (propiedades.get(i).getNombre().equals(casilla.getNombre())) {
-                    propiedades.remove(i);
-                    System.out.println("La propiedad " + casilla.getNombre() + " ya no tiene edificios y ha sido eliminada de tus propiedades.");
-                    break;
-                }
-            }
-        }
-
-        // Ingresar dinero al jugador
-        jugadorActual.sumarFortuna(ingreso);
 
         // Mensajes
-        if (aVender < cantidadSolicitada) {
-            String tipoTexto = tipoVenta.equals("pista_deporte") ? "pista de deporte" : (tipoVenta.equals("piscina") ? "piscina" : tipoVenta.substring(0, tipoVenta.length()));
-            // tipoVenta ya va en plural para casas/hoteles; mostramos singular cuando aVender==1
-            System.out.printf("Solamente se puede vender %d %s, recibiendo %,.0f€.%n",
-                    aVender,
-                    (aVender == 1 ? (tipoVenta.equals("casas")?"casa": tipoVenta.equals("hoteles")?"hotel": tipoTexto) : (tipoVenta.equals("pista_deporte")?"pistas de deporte": tipoVenta)),
-                    ingreso);
-        } else {
-            String tipoPlural = tipoVenta.equals("pista_deporte") ? "pistas de deporte" : tipoVenta;
-            System.out.printf("%s ha vendido %d %s en %s, recibiendo %,.0f€.%n",
-                    jugadorActual.getNombre(), aVender, tipoPlural, casilla.getNombre(), ingreso);
+        String tipoTexto = tipoVenta.equals("pista_deporte") ? "pistas de deporte" :
+                tipoVenta.equals("piscina") ? "piscina" : tipoVenta;
+
+        if (aVender == 1 && !tipoVenta.equals("pista_deporte")) {
+            tipoTexto = tipoTexto.substring(0, tipoTexto.length() - 1); // Singular
         }
 
-        // Estado restante: solo del tipo vendido
+        System.out.printf("%s ha recibido %,.0f€ por vender %d %s de %s.\n",
+                jugadorActual.getNombre(), ingreso, aVender, tipoTexto, casilla.getNombre());
+
+        // Estado restante
         int quedan;
         String etiqueta;
         switch (tipoVenta) {
@@ -1290,11 +1281,9 @@ public class Menu {
                 etiqueta = quedan == 1 ? "pista de deporte" : "pistas de deporte";
                 break;
         }
-        System.out.printf("En la propiedad queda %d %s.%n", quedan, etiqueta);
+        System.out.printf("En la propiedad queda %d %s.\n", quedan, etiqueta);
     }
-
 }
-
 
 
 
