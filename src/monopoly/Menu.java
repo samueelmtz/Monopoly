@@ -270,6 +270,14 @@ public class Menu {
                 }
                 break;
 
+            case "hipotecar":
+                if (comandos.length == 2) {
+                    hipotecarPropiedad(comandos[1]);
+                } else {
+                    System.out.println("Comando incorrecto. Uso: hipotecar <nombre_casilla>");
+                }
+                break;
+
             default:
                 System.out.println("Comando no reconocido: " + comando);
                 break;
@@ -1290,6 +1298,50 @@ public class Menu {
                 break;
         }
         System.out.printf("En la propiedad queda %d %s.\n", quedan, etiqueta);
+    }
+
+    /**
+     * Método para hipotecar una propiedad
+     */
+    private void hipotecarPropiedad(String nombreCasilla) {
+        Jugador jugadorActual = jugadores.get(turno);
+        Casilla casilla = tablero.encontrar_casilla(nombreCasilla);
+
+        if (casilla == null) {
+            System.out.println("Casilla no encontrada: " + nombreCasilla);
+            return;
+        }
+
+        // Verificar si la propiedad puede ser hipotecada
+        if (!casilla.puedeHipotecar(jugadorActual)) {
+            // Los mensajes específicos se manejan en el método puedeHipotecar
+            return;
+        }
+
+        // Verificar si es un solar con edificios
+        if (casilla.getTipo().equals("Solar")) {
+            int totalEdificios = casilla.getNumCasas() + casilla.getNumHoteles() +
+                    casilla.getNumPiscinas() + casilla.getNumPistasDeporte();
+
+            if (totalEdificios > 0) {
+                System.out.println("No se puede hipotecar " + nombreCasilla +
+                        " porque tiene edificios. Debes venderlos primero.");
+                return;
+            }
+        }
+
+        // Realizar la hipoteca
+        if (casilla.hipotecar()) {
+            float valorHipoteca = casilla.getValorHipoteca();
+            jugadorActual.sumarFortuna(valorHipoteca);
+
+            System.out.printf("%s recibe %,.0f€ por la hipoteca de %s. ",
+                    jugadorActual.getNombre(), valorHipoteca, nombreCasilla);
+            System.out.println("No puede recibir alquileres ni edificar en el grupo " +
+                    (casilla.getGrupo() != null ? casilla.getGrupo().getColorGrupo() : "") + ".");
+        } else {
+            System.out.println("No se pudo hipotecar " + nombreCasilla);
+        }
     }
 }
 
