@@ -1,4 +1,4 @@
-package monopoly; avad
+package monopoly;
 
 import java.io.File;
 import java.io.FileNotFoundException;
