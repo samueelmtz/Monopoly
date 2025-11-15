@@ -50,16 +50,20 @@ public class Edificio {
     public String generarID(String tipo) {
         switch (tipo) {
             case "casa":
-                return "casa-" + (++contadorCasas);
+                contadorCasas++;
+                return "casa-" + contadorCasas;
             case "hotel":
-                return "hotel-" + (++contadorHoteles);
+                contadorHoteles++;
+                return "hotel-" + contadorHoteles;
             case "piscina":
-                return "piscina-" + (++contadorPiscinas);
+                contadorPiscinas++;
+                return "piscina-" + contadorPiscinas;
             case "pista":
             case "pista_deporte":
-                return "pista-" + (++contadorPistas);
+                contadorPistas++;
+                return "pista-" + contadorPistas;
             default:
-                System.out.println("Tipo de edificio desconocido");
+                System.out.println("Tipo de edificio desconocido: " + tipo);
                 break;
         }
         return "";

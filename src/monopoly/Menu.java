@@ -1058,10 +1058,23 @@ public class Menu {
             return;
         }
 
-        // Calcular coste (usar tipoProcesado)
+        // Calcular coste directamente sin crear un objeto Edificio temporal
         String tipoParaCalculo = tipoEdificio.equals("pista_deporte") ? "pista" : tipoEdificio;
-        Edificio edificioTemp = new Edificio(tipoParaCalculo, casillaActual);
-        float coste = edificioTemp.getCoste();
+        float coste = 0;
+        switch (tipoParaCalculo) {
+            case "casa":
+                coste = casillaActual.getPrecioCasa();
+                break;
+            case "hotel":
+                coste = casillaActual.getPrecioCasa(); // Asumiendo que el precio es el mismo que una casa
+                break;
+            case "piscina":
+                coste = casillaActual.getPrecioPiscina();
+                break;
+            case "pista":
+                coste = casillaActual.getPrecioPistaDeporte();
+                break;
+        }
 
         // Verificar si tiene suficiente dinero
         if (jugadorActual.getFortuna() < coste) {
