@@ -170,7 +170,13 @@ public class Casilla {
                         break;
 
                     case "Transporte":
-                        aPagar = Valor.ALQUILER_TRANSPORTE;
+                        int transportesDelDuenho = 0;
+                        for (Casilla propiedad : this.duenho.getPropiedades()) {
+                            if (propiedad.getTipo().equals("Transporte")) {
+                                transportesDelDuenho++;
+                            }
+                        }
+                        aPagar = Valor.ALQUILER_TRANSPORTE * transportesDelDuenho;
                         System.out.printf("Alquiler de transporte: %,.0f€\n", aPagar);
                         actual.sumarPagoDeAlquileres(aPagar);
                         receptor.sumarCobroDeAlquileres(aPagar);

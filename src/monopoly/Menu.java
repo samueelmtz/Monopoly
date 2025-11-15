@@ -554,7 +554,7 @@ public class Menu {
             System.out.println("    avatar: " + jugador.getAvatar().getId() + ",");
             System.out.println("    fortuna: " + String.format("%,.0f", jugador.getFortuna()) + ",");
 
-            // Mostrar nombres de propiedades en lugar de objetos
+            // Propiedades
             System.out.print("    propiedades: [");
             ArrayList<Casilla> propiedades = jugador.getPropiedades();
             for (int i = 0; i < propiedades.size(); i++) {
@@ -565,7 +565,7 @@ public class Menu {
             }
             System.out.println("],");
 
-            // Mostrar edificios
+            // Edificios
             System.out.print("    edificios: [");
             ArrayList<Edificio> edificiosJugador = jugador.getEdificios();
             for (int i = 0; i < edificiosJugador.size(); i++) {
@@ -575,8 +575,24 @@ public class Menu {
                     System.out.print(", ");
                 }
             }
+            System.out.println("],");
 
-            //System.out.println("    hipotecas: " + jugador.getHipotecas() + ",");
+            // Hipotecas
+            System.out.print("    hipotecas: [");
+            boolean primeraHipoteca = true;
+            for (Casilla propiedad : propiedades) {
+                if (propiedad.isHipotecada()) {
+                    if (!primeraHipoteca) {
+                        System.out.print(", ");
+                    }
+                    System.out.print(propiedad.getNombre());
+                    primeraHipoteca = false;
+                }
+            }
+            if (primeraHipoteca) {
+                System.out.print("-");
+            }
+            System.out.println("]");
 
             System.out.println("}");
         }
