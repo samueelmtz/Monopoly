@@ -772,8 +772,17 @@ public class Menu {
         String accion = carta.getAccion();
 
         if (accion.startsWith("avanzar:")) {
-            int posicion = Integer.parseInt(accion.split(":")[1]);
-            jugador.getAvatar().colocar(tablero.getPosiciones(), posicion);
+            int posicionDestino = Integer.parseInt(accion.split(":")[1]);
+            int posicionActual = jugador.getAvatar().getLugar().getPosicion();
+
+            //VERIFICAR SI PASA POR SALIDA
+            if (pasaPorSalida(posicionActual, posicionDestino)) {
+                jugador.sumarFortuna(Valor.SUMA_VUELTA);
+                jugador.sumarPasarPorCasillaDeSalida(Valor.SUMA_VUELTA);
+                System.out.printf("¡Has pasado por Salida y cobrado %,.0f€!\n", Valor.SUMA_VUELTA);
+            }
+
+            jugador.getAvatar().colocar(tablero.getPosiciones(), posicionDestino);
 
         } else if (accion.equals("irCarcel")) {
             jugador.encarcelar(tablero.getPosiciones());
@@ -857,6 +866,16 @@ public class Menu {
         System.out.printf("Fortuna actual de %s: %,.0f€\n", jugador.getNombre(), jugador.getFortuna());
     }
 
+    /**
+     * Verifica si al moverse de una posición a otra se pasa por la casilla de Salida
+     */
+    private boolean pasaPorSalida(int desde, int hasta) {
+        // Si el movimiento es hacia atrás (dando vuelta completa)
+        if (hasta < desde) {
+            return true; // Siempre pasa por Salida cuando va de mayor a menor número
+        }
+        return false;
+    }
 
     public void ejecutarCarta(Jugador jugador, String tipoCarta) {
         Carta carta = obtenerSiguienteCarta(tipoCarta);
