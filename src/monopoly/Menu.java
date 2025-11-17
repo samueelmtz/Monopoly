@@ -786,10 +786,12 @@ public class Menu {
 
         } else if (accion.equals("irCarcel")) {
             jugador.encarcelar(tablero.getPosiciones());
+            jugador.sumarVecesEnCarcel();
 
         } else if (accion.startsWith("recibir:")) {
             float cantidad = Float.parseFloat(accion.split(":")[1]);
             jugador.sumarFortuna(cantidad);
+            jugador.sumarPremiosInversionesOBote(cantidad);
             System.out.printf("¡Has recibido %,.0f€!\n", cantidad);
 
         } else if (accion.startsWith("pagarTodos:")) {
@@ -808,6 +810,7 @@ public class Menu {
                 for (Jugador otro : jugadores) {
                     if (otro != jugador && otro != banca) {
                         jugador.restarFortuna(cantidad);  // ← RESTAR AL QUE PAGA
+                        jugador.sumarPagoTasasEImpuestos(cantidad);
                         otro.sumarFortuna(cantidad);      // ← SUMAR AL QUE RECIBE
                         System.out.printf("  - Paga %,.0f€ a %s\n", cantidad, otro.getNombre());
                     }
@@ -825,6 +828,7 @@ public class Menu {
             float cantidadPago = Float.parseFloat(accion.split(":")[1]);
             if (jugador.getFortuna() >= cantidadPago) {
                 jugador.restarFortuna(cantidadPago);
+                jugador.sumarPagoTasasEImpuestos(cantidadPago);
                 tablero.añadirAlBote(cantidadPago);
                 System.out.printf("Has pagado %,.0f€\n", cantidadPago);
             } else {
@@ -860,6 +864,7 @@ public class Menu {
         } else if (accion.equals("irSalida")) {
             jugador.getAvatar().colocar(tablero.getPosiciones(), 1); // Posición 1 = Salida
             jugador.sumarFortuna(Valor.SUMA_VUELTA);
+            jugador.sumarPasarPorCasillaDeSalida(Valor.SUMA_VUELTA);
             System.out.printf("¡Has cobrado %,.0f€ por pasar por salida!\n", Valor.SUMA_VUELTA);
         }
         System.out.printf("Fortuna actual de %s: %,.0f€\n", jugador.getNombre(), jugador.getFortuna());

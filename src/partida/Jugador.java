@@ -183,6 +183,10 @@ public class Jugador {
         this.premiosInversionesBote += cantidad;
     }
 
+    public void sumarVecesEnCarcel() {
+        this.vecesEnCarcel ++;
+    }
+
     //Getters y setters:
     public String getNombre() {
         return nombre;
