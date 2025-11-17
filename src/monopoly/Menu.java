@@ -799,10 +799,10 @@ public class Menu {
             // Verificar si tiene suficiente dinero para pagar a todos
             float totalAPagar = cantidad * (jugadores.size() - 1); // -1 porque no se paga a sí mismo
             if (jugador.getFortuna() < totalAPagar) {
-                System.out.printf("No tienes suficiente dinero para pagar a todos los jugadores. Necesitas %,.0f€ pero tienes %,.0f€\n",
-                        totalAPagar, jugador.getFortuna());
+                System.out.printf("No tienes suficiente dinero para pagar a todos los jugadores. Necesitas %,.0f€ pero tienes %,.0f€\n", totalAPagar, jugador.getFortuna());
                 puedePagar = false;
             }
+            //comprobar que no se pague a el mismo ni a la banca
             if (puedePagar) {
                 System.out.printf("%s paga %,.0f€ a cada jugador:\n", jugador.getNombre(), cantidad);
                 for (Jugador otro : jugadores) {
@@ -816,8 +816,8 @@ public class Menu {
         } else if (accion.startsWith("retroceder:")) {
             int casillas = Integer.parseInt(accion.split(":")[1]);
             int posicionActual = jugador.getAvatar().getLugar().getPosicion();
-            int nuevaPosicion = (posicionActual - casillas + 40) % 40;
-            // AQUÍ ESTOY USANDO colocar() DIRECTAMENTE:
+            int nuevaPosicion = (posicionActual - casillas + 40) % 40; //sumar 40 para evitar numeros negativos antes del modulo
+            // usar colocar() DIRECTAMENTE:
             jugador.getAvatar().colocar(tablero.getPosiciones(), nuevaPosicion);
             System.out.println("Has retrocedido " + casillas + " casillas.");
 
@@ -837,7 +837,7 @@ public class Menu {
             int[] posicionesTransporte = {6, 16, 26, 36};
 
             String transporteCercano = null;
-            int menorDistancia = Integer.MAX_VALUE;
+            int menorDistancia = 50; // Valor inicial mas alto que cualquier distancia posible (40)
 
             for (int i = 0; i < posicionesTransporte.length; i++) {
                 int distancia = (posicionesTransporte[i] - posicionActual + 40) % 40;
@@ -848,8 +848,7 @@ public class Menu {
             }
 
             if (transporteCercano != null) {
-                // USAR MÉTODO EXISTENTE: colocar()
-                // USAR MÉTODO EXISTENTE encontrar_casilla(String nombre)
+
                 Casilla destino = tablero.encontrar_casilla(transporteCercano);
                 if (destino != null) {
                     jugador.getAvatar().colocar(tablero.getPosiciones(), destino.getPosicion());
@@ -1070,8 +1069,8 @@ public class Menu {
         // Verificar que el jugador tiene todas las casillas del grupo
         Grupo grupo = casillaActual.getGrupo();
         boolean tieneTodoElGrupo = true;
-        for (Casilla casillaGrupo : grupo.getMiembros()) {
-            if (casillaGrupo.getDuenho() != jugadorActual) {
+        for (Casilla casillaGrupo : grupo.getMiembros()) { //Para cada casilla del grupo
+            if (casillaGrupo.getDuenho() != jugadorActual) { //Si no es dueño de alguna casilla del grupo
                 tieneTodoElGrupo = false;
                 break;
             }
