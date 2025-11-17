@@ -58,10 +58,9 @@ public class Edificio {
             case "piscina":
                 contadorPiscinas++;
                 return "piscina-" + contadorPiscinas;
-            case "pista":
             case "pista_deporte":
                 contadorPistas++;
-                return "pista-" + contadorPistas;
+                return "pista_deporte" + contadorPistas;
             default:
                 System.out.println("Tipo de edificio desconocido: " + tipo);
                 break;
@@ -81,9 +80,8 @@ public class Edificio {
     * @param tipo Tipo de edificio a construír
     */
     public static float calcularCoste(String tipoEdificio, Casilla casilla) {
-        String tipoNormalizado = tipoEdificio.equals("pista_deporte") ? "pista" : tipoEdificio;
 
-        return switch (tipoNormalizado) {
+        return switch (tipoEdificio) {
             case "casa", "hotel" -> casilla.getPrecioCasa();
             case "piscina" -> casilla.getPrecioPiscina();
             case "pista" -> casilla.getPrecioPistaDeporte();

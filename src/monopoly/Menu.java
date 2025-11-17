@@ -1150,7 +1150,7 @@ public class Menu {
                 // PARA HOTEL: Primero eliminar las casas existentes antes de construir
                 if (casilla.getNumCasas() == 4) {
                     // ELIMINAR TODAS LAS CASAS DE ESTA CASILLA
-                    // Eliminar de la lista global de edificios (recorrer en orden inverso)
+                    // Eliminar de la lista global de edificios (recorrer en orden inverso para evitar problemas de indices al eliminar)
                     for (int i = edificios.size() - 1; i >= 0; i--) {
                         Edificio edificio = edificios.get(i);
                         if (edificio.getCasilla() == casilla && edificio.getTipo().equals("casa")) {
@@ -1158,7 +1158,7 @@ public class Menu {
                         }
                     }
 
-                    // Eliminar de la lista del jugador (recorrer en orden inverso)
+                    // Eliminar de la lista del jugador (recorrer en orden inverso para evitar problemas de indices al eliminar)
                     ArrayList<Edificio> edificiosJugador = jugador.getEdificios();
                     for (int i = edificiosJugador.size() - 1; i >= 0; i--) {
                         Edificio edificio = edificiosJugador.get(i);
@@ -1187,8 +1187,7 @@ public class Menu {
             jugador.sumarDineroInvertido(coste);
 
             // CREAR EL NUEVO OBJETO EDIFICIO
-            String tipoParaEdificio = tipoEdificio.equals("pista_deporte") ? "pista" : tipoEdificio;
-            Edificio nuevoEdificio = new Edificio(tipoParaEdificio, casilla);
+            Edificio nuevoEdificio = new Edificio(tipoEdificio, casilla);
 
             // Añadir el edificio al jugador
             jugador.anhadirEdificio(nuevoEdificio);
@@ -1350,7 +1349,7 @@ public class Menu {
             case "pista_deporte":
                 disponibles = casilla.getNumPistasDeporte();
                 precioUnitario = casilla.getPrecioPistaDeporte();
-                tipoParaEliminar = "pista";
+                tipoParaEliminar = "pista_deporte";
                 break;
             default:
                 return;
