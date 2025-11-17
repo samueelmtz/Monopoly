@@ -1095,7 +1095,7 @@ public class Menu {
             }
         }
 
-        // Verificar si la casilla está  NO este hipotecada
+        // Verificar si la casilla está hipotecada
         if (casillaActual.isHipotecada()) {
             System.out.println("No se puede edificar en " + casillaActual.getNombre() + " porque está hipotecada.");
             return;
