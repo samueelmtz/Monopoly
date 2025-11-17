@@ -1202,12 +1202,7 @@ public class Menu {
      * Muestra el estado actual de los edificios en una casilla
      */
     private void mostrarEstadoEdificios(Casilla casilla) {
-        System.out.printf("Edificios en %s: %d casas, %d hoteles, %d piscinas, %d pistas de deporte\n",
-                casilla.getNombre(),
-                casilla.getNumCasas(),
-                casilla.getNumHoteles(),
-                casilla.getNumPiscinas(),
-                casilla.getNumPistasDeporte());
+        System.out.printf("Edificios en %s: %d casas, %d hoteles, %d piscinas, %d pistas de deporte\n", casilla.getNombre(), casilla.getNumCasas(), casilla.getNumHoteles(), casilla.getNumPiscinas(), casilla.getNumPistasDeporte());
     }
 
     /**
@@ -1263,11 +1258,12 @@ public class Menu {
                 System.out.println("Tipo de edificio no reconocido: " + tipoEdificio);
                 return false;
         }
+
+        //Verificar si hay edificios en el resto de casillas del grupo, si hay no se puede edificar
         boolean hayEdificiosEnGrupo = false;
         for (Casilla casilla : grupo.getMiembros()) {
             if (casilla != casillaActual) {
-                int totalEdificios = casilla.getNumCasas() + casilla.getNumHoteles() +
-                        casilla.getNumPiscinas() + casilla.getNumPistasDeporte();
+                int totalEdificios = casilla.getNumCasas() + casilla.getNumHoteles() + casilla.getNumPiscinas() + casilla.getNumPistasDeporte();
                 if (totalEdificios > 0) {
                     hayEdificiosEnGrupo = true;
                     break;
@@ -1288,6 +1284,7 @@ public class Menu {
     private void venderEdificios(String tipoVenta, String nombreCasilla, int cantidadSolicitada) {
         Jugador jugadorActual = jugadores.get(turno);
 
+        // La cantidad a vender debe ser positiva
         if (cantidadSolicitada <= 0) {
             System.out.println("La cantidad a vender debe ser positiva.");
             return;
@@ -1348,20 +1345,21 @@ public class Menu {
                 return;
         }
 
+        //Si no hay edificios disponibles
         if (disponibles == 0) {
-            String tipoTexto = tipoVenta.equals("pista_deporte") ? "pistas de deporte" : tipoVenta;
-            System.out.println("No hay " + tipoTexto + " para vender en " + casilla.getNombre() + ".");
+            System.out.println("No hay " + tipoParaEliminar + " para vender en " + casilla.getNombre() + ".");
             return;
         }
 
-        int aVender = Math.min(cantidadSolicitada, disponibles);
-        float ingreso = precioUnitario * aVender;
+        // Determinar cuántos se pueden vender
+        int aVender = Math.min(cantidadSolicitada, disponibles); //Elige el minimo entre lo solicitado y lo disponible
+        float ingreso = precioUnitario * aVender; // Calcular ingreso total
 
         // ELIMINAR LOS EDIFICIOS DE LA LISTA DEL JUGADOR
         ArrayList<Edificio> edificiosJugador = jugadorActual.getEdificios();
         int eliminados = 0;
 
-        // Buscar y eliminar los edificios de este tipo en esta casilla
+        // Buscar y eliminar los edificios de este tipo en esta casilla (recorrer en orden inverso para evitar problemas de indices al eliminar)
         for (int i = edificiosJugador.size() - 1; i >= 0 && eliminados < aVender; i--) {
             Edificio edificio = edificiosJugador.get(i);
             if (edificio.getCasilla() == casilla && edificio.getTipo().equals(tipoParaEliminar)) {
@@ -1370,7 +1368,7 @@ public class Menu {
             }
         }
 
-        // ELIMINAR TAMBIÉN DE LA LISTA GLOBAL DE EDIFICIOS
+        // ELIMINAR TAMBIÉN DE LA LISTA GLOBAL DE EDIFICIOS (recorrer en orden inverso para evitar problemas de indices al eliminar)
         int eliminadosGlobal = 0;
         for (int i = edificios.size() - 1; i >= 0 && eliminadosGlobal < aVender; i--) {
             Edificio edificio = edificios.get(i);
@@ -1383,7 +1381,7 @@ public class Menu {
         // Actualizar contadores en la casilla
         switch (tipoVenta) {
             case "casas":
-                casilla.setNumCasas(disponibles - aVender);
+                casilla.setNumCasas(disponibles - aVender); //Actualizar (casas disponibles - minimo de (disponibles, solicitadas))
                 break;
             case "hoteles":
                 casilla.setNumHoteles(disponibles - aVender);
@@ -1399,38 +1397,26 @@ public class Menu {
         // Actualizar fortuna del jugador
         jugadorActual.sumarFortuna(ingreso);
 
-        // Mensajes
-        String tipoTexto = tipoVenta.equals("pista_deporte") ? "pistas de deporte" :
-                tipoVenta.equals("piscina") ? "piscina" : tipoVenta;
-
-        if (aVender == 1 && !tipoVenta.equals("pista_deporte")) {
-            tipoTexto = tipoTexto.substring(0, tipoTexto.length() - 1); // Singular
-        }
-
-        System.out.printf("%s ha recibido %,.0f€ por vender %d %s de %s.\n", jugadorActual.getNombre(), ingreso, aVender, tipoTexto, casilla.getNombre());
+        // Mostrar resultado de la venta
+        System.out.printf("%s ha recibido %,.0f€ por vender %d %s de %s.\n", jugadorActual.getNombre(), ingreso, aVender, tipoParaEliminar, casilla.getNombre());
 
         // Estado restante
         int quedan;
-        String etiqueta;
         switch (tipoVenta) {
             case "casas":
                 quedan = casilla.getNumCasas();
-                etiqueta = quedan == 1 ? "casa" : "casas";
                 break;
             case "hoteles":
                 quedan = casilla.getNumHoteles();
-                etiqueta = quedan == 1 ? "hotel" : "hoteles";
                 break;
             case "piscina":
                 quedan = casilla.getNumPiscinas();
-                etiqueta = quedan == 1 ? "piscina" : "piscinas";
                 break;
             default:
                 quedan = casilla.getNumPistasDeporte();
-                etiqueta = quedan == 1 ? "pista de deporte" : "pistas de deporte";
                 break;
         }
-        System.out.printf("En la propiedad queda %d %s.\n", quedan, etiqueta);
+        System.out.printf("En la propiedad queda %d %s.\n", quedan, tipoParaEliminar);
     }
 
     /**
@@ -1445,7 +1431,7 @@ public class Menu {
             return;
         }
 
-        // ✅ CORREGIDO: Validar SIEMPRE primero con puedeHipotecar()
+        // Validar con puedeHipotecar()
         if (!casilla.puedeHipotecar(jugadorActual)) {
             // El mensaje de error ya se muestra en puedeHipotecar()
             return;
