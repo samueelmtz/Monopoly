@@ -158,6 +158,7 @@ public class Jugador {
     public boolean isEnCarcel() {
         return enCarcel;
     }
+// Agrega estos métodos en la clase Jugador (pueden ir al final de la clase):
 
     public void sumarDineroInvertido(float cantidad) {
         this.dineroInvertido += cantidad;

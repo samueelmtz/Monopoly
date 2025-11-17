@@ -32,17 +32,16 @@ public class Menu {
     // Metodo para inciar una partida: crea los jugadores y avatares.
     public void iniciarPartida() {
         Scanner scanner = new Scanner(System.in);
-        // Crear lista de jugadores y avatares
+        // Crear lista de jugadores, avatares y edificios
         jugadores = new ArrayList<>();
         avatares = new ArrayList<>();
         edificios = new ArrayList<>();
 
         // Crear la banca
-        banca = new Jugador(); //
+        banca = new Jugador();
 
-        // Inicializar tablero
+        // Inicializar tablero y cartas
         tablero = new Tablero(banca);
-
         inicializarCartas();
 
         // Inicializar dados
@@ -55,6 +54,7 @@ public class Menu {
         tirado = false;
         solvente = true;
 
+        //Leemos el fichero txt de entrada (si lo hay)
         System.out.print("Introduce la ruta del fichero de comandos (.txt): ");
         String rutaFichero = scanner.nextLine().trim();
 
@@ -119,7 +119,6 @@ public class Menu {
             }
         } catch (FileNotFoundException e) {
             System.out.println("Error al abrir el fichero");
-            return;
         }
     }
 
@@ -143,7 +142,7 @@ public class Menu {
                 if (comandos.length == 1) {
                     turnoJugador();
                 } else {
-                    System.out.println("Comando incorrecto. Uso: turno");
+                    System.out.println("Comando incorrecto. Uso: jugador");
                 }
                 break;
 
@@ -397,7 +396,7 @@ public class Menu {
         }
 
         // Permitir lanzar si no ha tirado O si tiene dados dobles y menos de 3 lanzamientos
-        if (tirado && lanzamientos < 3) {
+        if (tirado && lanzamientos > 3) {
             System.out.println("Ya has lanzado los dados en este turno.");
             return;
         }
@@ -414,14 +413,14 @@ public class Menu {
 
                     // Validar que los valores estén entre 1 y 6
                     if (valorDado1 >= 1 && valorDado1 <= 6 && valorDado2 >= 1 && valorDado2 <= 6) {
-                        System.out.println("✓ Dados forzados a: " + valorDado1 + " y " + valorDado2);
+                        System.out.println("Dados forzados a: " + valorDado1 + " y " + valorDado2);
                     } else {
-                        System.out.println("Error: Los valores deben estar entre 1 y 6. Usando valores aleatorios.");
+                        System.out.println("Error: Los valores deben estar entre 1 y 6. Usando valores aleatorios...");
                         valorDado1 = dado1.hacerTirada();
                         valorDado2 = dado2.hacerTirada();
                     }
                 } else {
-                    System.out.println("Error en formato. Usando valores aleatorios.");
+                    System.out.println("Error en formato. Usando valores aleatorios...");
                     valorDado1 = dado1.hacerTirada();
                     valorDado2 = dado2.hacerTirada();
                 }
@@ -468,7 +467,6 @@ public class Menu {
             // El dinero ya se restó en evaluarCasilla, pero fue a la banca
             // Lo quitamos de la banca y lo ponemos en el bote
             actual.restarFortuna(impuesto);
-            actual.sumarPagoTasasEImpuestos(impuesto);
             tablero.añadirAlBote(impuesto);
 
             System.out.printf("Se han transferido %,.0f€ del impuesto al bote del Parking\n", impuesto);
@@ -519,7 +517,7 @@ public class Menu {
     }
 
 
-    //Metodo que ejecuta todas las acciones relacionadas con el comando 'salir carcel'.
+    //Método que ejecuta todas las acciones relacionadas con el comando 'salir carcel'.
     private void salirCarcel() {
         Jugador jugadorActual = jugadores.get(turno);
         if (jugadorActual.salirDeCarcel()) {
@@ -664,8 +662,6 @@ public class Menu {
         System.out.println("El jugador actual es " + siguienteJugador.getNombre() + ".");
     }
 
-    //FIN ESQUELETO
-
     private void crearJugador(String nombre, String tipoAvatar) {
         // Validar primero el tipo de avatar
         String tipoValidado = validarTipoAvatar(tipoAvatar);
@@ -724,15 +720,11 @@ public class Menu {
         }
     }
 
-    // Metodo auxiliar que permite ver de quien es turno
+    // Método auxiliar que permite ver de quien es turno
     public void turnoJugador() {
         if (jugadores == null || jugadores.isEmpty()) {
             System.out.println("No hay jugadores creados.");
             return;
-        }
-        // Asegura que el índice esté dentro de rango
-        if (turno < 0 || turno >= jugadores.size()) {
-            turno = 0;
         }
 
         Jugador actual = jugadores.get(turno);
@@ -792,7 +784,6 @@ public class Menu {
 
         } else if (accion.equals("irCarcel")) {
             jugador.encarcelar(tablero.getPosiciones());
-            jugador.sumarVecesEnCarcel();
 
         } else if (accion.startsWith("recibir:")) {
             float cantidad = Float.parseFloat(accion.split(":")[1]);
@@ -858,7 +849,6 @@ public class Menu {
             }
 
             if (transporteCercano != null) {
-
                 Casilla destino = tablero.encontrar_casilla(transporteCercano);
                 if (destino != null) {
                     jugador.getAvatar().colocar(tablero.getPosiciones(), destino.getPosicion());
@@ -876,9 +866,7 @@ public class Menu {
         System.out.printf("Fortuna actual de %s: %,.0f€\n", jugador.getNombre(), jugador.getFortuna());
     }
 
-    /**
-     * Verifica si al moverse de una posición a otra se pasa por la casilla de Salida
-     */
+    // Verifica si al moverse de una posición a otra se pasa por la casilla de Salida
     private boolean pasaPorSalida(int desde, int hasta) {
         // Si el movimiento es hacia atrás (dando vuelta completa)
         if (hasta < desde) {
@@ -907,6 +895,7 @@ public class Menu {
         return carta;
     }
 
+    //Mostrar las estadísticas de un jugador
     private void mostrarEstadisticas(String nombreJugador) {
         for (Jugador jugador : jugadores) {
             if (jugador.getNombre().equalsIgnoreCase(nombreJugador)) {
@@ -926,6 +915,7 @@ public class Menu {
         System.out.println("Jugador no encontrado: " + nombreJugador);
     }
 
+    //Mostrar las estadísticas generales
     private void mostrarEstadisticasJuego() {
         System.out.println("$> estadisticas");
         System.out.println("{");
@@ -955,37 +945,53 @@ public class Menu {
         // Recorrer todas las casillas del tablero
         for (ArrayList<Casilla> lado : tablero.getPosiciones()) {
             for (Casilla casilla : lado) {
-                if (casilla.getTipo().equals("Solar") || casilla.getTipo().equals("Transporte") || casilla.getTipo().equals("Servicios")) {
-                    // Calcular rentabilidad: alquiler / valor de la casilla
-                    float rentabilidad = 0;
-                    if (casilla.getValor() > 0) {
-                        rentabilidad = casilla.getImpuesto() / casilla.getValor();
-                    }
+                // SOLO considerar casillas compradas (que no son de la banca)
+                if (casilla.getDuenho() != null &&
+                        !casilla.getDuenho().getNombre().equals("Banca") &&
+                        casilla.getDuenho() != banca) {
 
-                    if (rentabilidad > maxRentabilidad) {
-                        maxRentabilidad = rentabilidad;
-                        masRentable = casilla;
+                    // Solo considerar tipos que pueden generar renta
+                    if (casilla.getTipo().equals("Solar") || casilla.getTipo().equals("Transporte") || casilla.getTipo().equals("Servicios")) {
+                        // Calcular rentabilidad: alquiler / valor de la casilla
+                        float rentabilidad = 0;
+                        if (casilla.getValor() > 0) {
+                            rentabilidad = casilla.getImpuesto() / casilla.getValor();
+                        }
+
+                        if (rentabilidad > maxRentabilidad) {
+                            maxRentabilidad = rentabilidad;
+                            masRentable = casilla;
+                        }
                     }
                 }
             }
         }
 
-        return masRentable != null ? masRentable.getNombre() : "Solar3";
+        // Si no hay casillas compradas, devolver "Ninguna"
+        return masRentable != null ? masRentable.getNombre() : "Ninguna";
     }
+
 
     private String calcularGrupoMasRentable() {
         HashMap<String, Float> rentabilidadGrupos = new HashMap<>();
+        HashMap<String, Integer> propiedadesPorGrupo = new HashMap<>();
 
-        // Calcular rentabilidad de cada grupo
+        // Calcular rentabilidad solo de grupos con propiedades compradas
         for (Grupo grupo : tablero.getGrupos().values()) {
             float rentabilidadTotal = 0;
             int casillasValiosas = 0;
 
             for (Casilla casilla : grupo.getMiembros()) {
-                if (casilla.getValor() > 0) {
-                    float rentabilidad = casilla.getImpuesto() / casilla.getValor();
-                    rentabilidadTotal += rentabilidad;
-                    casillasValiosas++;
+                // SOLO considerar casillas compradas
+                if (casilla.getDuenho() != null &&
+                        !casilla.getDuenho().getNombre().equals("Banca") &&
+                        casilla.getDuenho() != banca) {
+
+                    if (casilla.getValor() > 0) {
+                        float rentabilidad = casilla.getImpuesto() / casilla.getValor();
+                        rentabilidadTotal += rentabilidad;
+                        casillasValiosas++;
+                    }
                 }
             }
 
@@ -994,8 +1000,8 @@ public class Menu {
             }
         }
 
-        // Encontrar el grupo más rentable
-        String grupoMasRentable = "Verde";
+        // Encontrar el grupo más rentable entre los comprados
+        String grupoMasRentable = "Ninguno";
         float maxRentabilidad = -1;
 
         for (String color : rentabilidadGrupos.keySet()) {
@@ -1016,7 +1022,7 @@ public class Menu {
 
         for (ArrayList<Casilla> lado : tablero.getPosiciones()) {
             for (Casilla casilla : lado) {
-                int visitas = casilla.getAvatares().size();
+                int visitas = casilla.getContadorVisitas();
                 if (visitas > maxVisitas) {
                     maxVisitas = visitas;
                     masFrecuentada = casilla;

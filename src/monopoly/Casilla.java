@@ -25,6 +25,7 @@ public class Casilla {
     private int numPistas; //Número de pistas de deporte construidas en la casilla
     private boolean hipotecada; //Indica si la casilla está hipotecada
     private float valorHipoteca;
+    private int contadorVisitas; //Contador de visitas a la casilla
 
     //Constructores:
     public Casilla() {
@@ -51,6 +52,7 @@ public class Casilla {
         this.numPistas = 0;
         this.hipotecada = false;
         this.valorHipoteca = valor / 2;
+        this.contadorVisitas = 0;
     }
 
     /*Constructor para casillas tipo Servicios o Transporte:
@@ -229,7 +231,6 @@ public class Casilla {
 
                     // Aplicar pago a otro jugador
                     actual.restarFortuna(aPagar);
-                    actual.sumarPagoDeAlquileres(aPagar);
                     if (receptor != null) {
                         receptor.sumarFortuna(aPagar);
                     }
@@ -597,6 +598,10 @@ public class Casilla {
         return this.hipotecada;
     }
 
+    // Método para registrar una visita
+    public void registrarVisita() {
+        this.contadorVisitas++;
+    }
 
 
     //GETTERS Y SETTERS
@@ -823,7 +828,10 @@ public class Casilla {
     public float getValorHipoteca() {
         return this.valorHipoteca;
     }
-
+    // Getter para el contador
+    public int getContadorVisitas() {
+        return contadorVisitas;
+    }
 
 }
 
