@@ -105,6 +105,7 @@ public class Avatar {
                     this.lugar = casilla;
                     // Añadir el avatar a la nueva casilla
                     casilla.anhadirAvatar(this);
+                    casilla.registrarVisita();
 
                     System.out.println("Avatar " + this.id + " se movió a " + casilla.getNombre() + " (posición " + nuevaPosicion + ")");
                     return;
