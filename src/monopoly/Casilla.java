@@ -52,6 +52,7 @@ public class Casilla {
         this.hipotecada = false;
         this.valorHipoteca = valor / 2;
     }
+
     /*Constructor para casillas tipo Servicios o Transporte:
      * Parámetros: nombre casilla, tipo (debe ser serv. o transporte), posición en el tablero, valor y dueño.
      */
@@ -62,6 +63,8 @@ public class Casilla {
         this.valor = valor;
         this.duenho = duenho;
         this.avatares = new ArrayList<Avatar>();
+        this.hipotecada = false;
+        this.valorHipoteca = 0f; //servicios y transportes no pueden hipotecarse
     }
 
     /*Constructor utilizado para inicializar las casillas de tipo IMPUESTOS.
@@ -125,27 +128,93 @@ public class Casilla {
 
                 switch (this.tipo) {
                     case "Solar":
-                        aPagar = this.impuesto;
+                        if (this.isHipotecada()) {
+                            System.out.println("La propiedad " + this.nombre + " está hipotecada. No se cobra alquiler.");
+                            break;
+                        }
+
+                        // NUEVO: Calcular alquiler total según edificios
+                        aPagar = this.impuesto; // Alquiler base
+
+                        if (this.numCasas > 0) {
+                            aPagar += getAlquilerCasa() * this.numCasas;
+                        }
+                        if (this.numHoteles > 0) {
+                            aPagar += getAlquilerHotel() * this.numHoteles;
+                        }
+                        if (this.numPiscinas > 0) {
+                            aPagar += getAlquilerPiscina() * this.numPiscinas;
+                        }
+                        if (this.numPistas > 0) {
+                            aPagar += getAlquilerPistaDeporte() * this.numPistas;
+                        }
+
+                        // AÑADIR TAMBIÉN LA REGLA DEL DOBLE POR GRUPO COMPLETO
+                        if (this.grupo != null && this.numCasas == 0 && this.numHoteles == 0) {
+                            boolean tieneTodoElGrupo = true;
+                            for (Casilla casillaGrupo : this.grupo.getMiembros()) {
+                                if (casillaGrupo.getDuenho() != this.duenho) {
+                                    tieneTodoElGrupo = false;
+                                    break;
+                                }
+                            }
+                            if (tieneTodoElGrupo) {
+                                aPagar *= 2;
+                                System.out.println("¡Grupo completo! Alquiler doble.");
+                            }
+                        }
+
                         System.out.printf("Alquiler de solar: %,.0f€\n", aPagar);
                         actual.sumarPagoDeAlquileres(aPagar);
                         receptor.sumarCobroDeAlquileres(aPagar);
                         break;
 
                     case "Transporte":
-                        aPagar = Valor.ALQUILER_TRANSPORTE;
+                        int transportesDelDuenho = 0;
+                        for (Casilla propiedad : this.duenho.getPropiedades()) {
+                            if (propiedad.getTipo().equals("Transporte")) {
+                                transportesDelDuenho++;
+                            }
+                        }
+                        aPagar = Valor.ALQUILER_TRANSPORTE * transportesDelDuenho;
                         System.out.printf("Alquiler de transporte: %,.0f€\n", aPagar);
                         actual.sumarPagoDeAlquileres(aPagar);
                         receptor.sumarCobroDeAlquileres(aPagar);
                         break;
 
                     case "Servicios":
-                        int x = 4;
-                        aPagar = (float) tirada * x * Valor.FACTOR_SERVICIO;
-                        System.out.printf("Alquiler de servicio: dados(%d) * %d * %,.0f€ = %,.0f€\n", tirada, x, Valor.FACTOR_SERVICIO, aPagar);
+                        if (this.isHipotecada()) {
+                            System.out.println("El servicio " + this.nombre + " está hipotecado. No se cobra alquiler.");
+                            break;
+                        }
+
+                        // ✅ CORREGIDO: Contar cuántos servicios tiene el dueño
+                        int serviciosDelDuenho = 0;
+                        for (Casilla propiedad : this.duenho.getPropiedades()) {
+                            if (propiedad.getTipo().equals("Servicios")) {
+                                serviciosDelDuenho++;
+                            }
+                        }
+
+                        // Determinar multiplicador según cantidad de servicios
+                        int multiplicador;
+                        if (serviciosDelDuenho == 1) {
+                            multiplicador = 4;
+                        } else if (serviciosDelDuenho == 2) {
+                            multiplicador = 10;
+                        } else {
+                            multiplicador = 4; // Por defecto (no debería pasar)
+                        }
+
+                        aPagar = (float) tirada * multiplicador * Valor.FACTOR_SERVICIO;
+
+                        System.out.printf("Alquiler de servicio: dados(%d) × %d × %,.0f€ = %,.0f€\n",
+                                tirada, multiplicador, Valor.FACTOR_SERVICIO, aPagar);
+                        System.out.printf("El dueño tiene %d servicio(s)\n", serviciosDelDuenho);
+
                         actual.sumarPagoDeAlquileres(aPagar);
                         receptor.sumarCobroDeAlquileres(aPagar);
                         break;
-
                     default:
                         break;
                 }
@@ -411,6 +480,125 @@ public class Casilla {
         }
     }
 
+    /**
+     * Añade una pista de deporte a la casilla (requiere hotel)
+     */
+    public boolean anhadirCasa() {
+        if (numCasas < 4 && numHoteles == 0) {
+            numCasas++;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Añade un hotel a la casilla (requiere 4 casas)
+     */
+    public boolean anhadirHotel() {
+        if (numHoteles == 0 && numCasas == 4) {
+            numHoteles++;
+
+            // ELIMINAR LAS CASAS DE LA LISTA DE EDIFICIOS DEL JUGADOR
+            if (this.duenho != null) {
+                ArrayList<Edificio> edificiosJugador = this.duenho.getEdificios();
+                // Eliminar todas las casas de esta casilla
+                edificiosJugador.removeIf(edificio -> edificio.getCasilla() == this && edificio.getTipo().equals("casa"));
+            }
+
+            numCasas = 0; // Las casas se reemplazan por el hotel
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Añade una piscina a la casilla (requiere hotel)
+     */
+    public boolean anhadirPiscina() {
+        if (numPiscinas == 0 && numHoteles == 1) {
+            numPiscinas++;
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * Añade una pista de deporte a la casilla (requiere hotel)
+     */
+    public boolean anhadirPistaDeporte() {
+        if (numPistas == 0 && numHoteles == 1) {
+            numPistas++;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Verifica si la casilla puede ser hipotecada
+     */
+    public boolean puedeHipotecar(Jugador jugador) {
+
+        // Verificar que el jugador es el dueño
+        if (this.duenho == null || !this.duenho.equals(jugador)) {
+            System.out.println(jugador.getNombre() + " no puede hipotecar " + this.nombre + ". No es una propiedad que le pertenece.");
+            return false;
+        }
+
+        // Verificar que no está ya hipotecada
+        if (this.hipotecada) {
+            System.out.println(jugador.getNombre() + " no puede hipotecar " + this.nombre + ". Ya está hipotecada.");
+            return false;
+        }
+
+        // ✅ CORREGIDO: Solo los solares se pueden hipotecar
+        if (!this.tipo.equals("Solar")) {
+            System.out.println(this.nombre + " no se puede hipotecar. Solo los solares son hipotecables.");
+            return false;
+        }
+
+        // Verificar que no tiene edificios si es solar
+        if (this.tipo.equals("Solar")) {
+            int totalEdificios = this.numCasas + this.numHoteles + this.numPiscinas + this.numPistas;
+            if (totalEdificios > 0) {
+                System.out.println(jugador.getNombre() + " no puede hipotecar " + this.nombre + ". Tiene edificios que deben venderse primero.");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Hipoteca la casilla
+     */
+    public boolean hipotecar() {
+        if (!this.hipotecada) {
+            this.hipotecada = true;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Deshipoteca la casilla
+     */
+    public boolean deshipotecar() {
+        if (this.hipotecada) {
+            this.hipotecada = false;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Verifica si la casilla está hipotecada
+     */
+    public boolean isHipotecada() {
+        return this.hipotecada;
+    }
+
+
+
     //GETTERS Y SETTERS
     public String getNombre(){
         return nombre;
@@ -585,104 +773,6 @@ public class Casilla {
         }
     }
 
-    /**
-     * Añade una pista de deporte a la casilla (requiere hotel)
-     */
-    public boolean anhadirCasa() {
-        if (numCasas < 4 && numHoteles == 0) {
-            numCasas++;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Añade un hotel a la casilla (requiere 4 casas)
-     */
-    public boolean anhadirHotel() {
-        if (numHoteles == 0 && numCasas == 4) {
-            numHoteles++;
-            numCasas = 0; // Las casas se reemplazan por el hotel
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Añade una piscina a la casilla (requiere hotel)
-     */
-    public boolean anhadirPiscina() {
-        if (numPiscinas == 0 && numHoteles == 1) {
-            numPiscinas++;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Añade una pista de deporte a la casilla (requiere hotel)
-     */
-    public boolean anhadirPistaDeporte() {
-        if (numPistas == 0 && numHoteles == 1) {
-            numPistas++;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Verifica si la casilla puede ser hipotecada
-     */
-    public boolean puedeHipotecar(Jugador jugador) {
-        // Verificar que el jugador es el dueño
-        if (this.duenho != jugador) {
-            return false;
-        }
-
-        // Verificar que no está ya hipotecada
-        if (this.hipotecada) {
-            return false;
-        }
-
-        // Verificar que no tiene edificios si es solar
-        if (this.tipo.equals("Solar") && (this.numCasas > 0 || this.numHoteles > 0 || this.numPiscinas > 0 || this.numPistas > 0)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Hipoteca la casilla
-     */
-    public boolean hipotecar() {
-        if (!this.hipotecada) {
-            this.hipotecada = true;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Deshipoteca la casilla
-     */
-    public boolean deshipotecar() {
-        if (this.hipotecada) {
-            this.hipotecada = false;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Verifica si la casilla está hipotecada
-     */
-    public boolean isHipotecada() {
-        return this.hipotecada;
-    }
-
-
-    //GETTERS Y SETTERS
     private float getAlquilerPistaDeporte() {
         return getAlquilerPiscina(); // Según PDF, mismo alquiler que piscina
     }

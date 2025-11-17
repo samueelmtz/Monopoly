@@ -15,10 +15,11 @@ public class Edificio {
     private Casilla casilla; //Casilla en la que se edifica
     private float coste; //Precio del edificio
     private Grupo grupo; //Grupo de la casilla edificada
-    private int contadorCasas;
-    private int contadorHoteles;
-    private int contadorPiscinas;
-    private int contadorPistas;
+
+    private static int contadorCasas = 0;
+    private static int contadorHoteles = 0;
+    private static int contadorPiscinas = 0;
+    private static int contadorPistas = 0;
 
     //CONSTRUCTORES
     public Edificio(){
@@ -46,19 +47,23 @@ public class Edificio {
     /* Genera IDs únicos como casa-1, hotel-2, etc.
     * @param tipo Tipo de edificio
     */
-    private String generarID(String tipo) {
+    public String generarID(String tipo) {
         switch (tipo) {
             case "casa":
-                return "casa-" + (++contadorCasas);
+                contadorCasas++;
+                return "casa-" + contadorCasas;
             case "hotel":
-                return "hotel-" + (++contadorHoteles);
+                contadorHoteles++;
+                return "hotel-" + contadorHoteles;
             case "piscina":
-                return "piscina-" + (++contadorPiscinas);
+                contadorPiscinas++;
+                return "piscina-" + contadorPiscinas;
             case "pista":
             case "pista_deporte":
-                return "pista-" + (++contadorPistas);
+                contadorPistas++;
+                return "pista-" + contadorPistas;
             default:
-                System.out.println("Tipo de edificio desconocido");
+                System.out.println("Tipo de edificio desconocido: " + tipo);
                 break;
         }
         return "";
@@ -84,33 +89,20 @@ public class Edificio {
         };
     }
 
-    /*public void asignarValores() {
-        // Color del grupo y número de casillas del grupo
-        String color = this.casilla.getGrupo().getColorGrupo();
-        int n = this.casilla.getGrupo().getNumCasillas();
+    // Lista todas las edificaciones en su respectivo array
+    public String infoEdificio() {
+        String cadena = "";
 
-        Map<String, Float> grupoValores = Map.of(
-                "WHITE",  Valor.GRUPO1 / (float) n,
-                "CYAN",   Valor.GRUPO2 / (float) n,
-                "BLUE",   Valor.GRUPO3 / (float) n,
-                "YELLOW", Valor.GRUPO4 / (float) n,
-                "BLACK",  Valor.GRUPO5 / (float) n,
-                "GREEN",  Valor.GRUPO6 / (float) n,
-                "RED",    Valor.GRUPO7 / (float) n,
-                "PURPLE", Valor.GRUPO8 / (float) n
-        );
+        cadena += "{\n";
+        cadena += "\tid: " + this.id + ",\n";
+        cadena += "\tpropietario: " + this.duenho.getNombre() + ",\n";
+        cadena += "\tcasilla: " + this.casilla.getNombre() + ",\n";
+        cadena += "\tgrupo: " + this.grupo.getColorGrupo() + ",\n";
+        cadena += "\tcoste: " + this.coste + "\n";
+        cadena += "},\n";
 
-        // Si tu color viene en otro formato, puedes normalizar:
-
-        Float valorInicialSolar = grupoValores.get(color);
-
-        if (valorInicialSolar != null) {
-
-            this.coste = calcularCoste(this.casilla, this.tipoEdificio);
-        } else {
-            this.coste = 0f;
-        }
-    }*/
+        return cadena;
+    }
 
     //GETTERS
     public String getId() {
@@ -138,3 +130,4 @@ public class Edificio {
     }
 
 }
+
