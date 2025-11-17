@@ -1101,6 +1101,7 @@ public class Menu {
         // Calcular coste del edificio
         float coste = Edificio.calcularCoste(tipoEdificio, casillaActual);
 
+
         // Verificar si tiene suficiente dinero
         if (jugadorActual.getFortuna() < coste) {
             System.out.printf("La fortuna de %s no es suficiente...\n", jugadorActual.getNombre(), tipoEdificio, casillaActual.getNombre());
