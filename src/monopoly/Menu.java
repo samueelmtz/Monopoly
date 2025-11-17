@@ -1178,6 +1178,7 @@ public class Menu {
             jugador.restarFortuna(coste);
             jugador.sumarDineroInvertido(coste);
 
+
             // CREAR EL NUEVO OBJETO EDIFICIO
             Edificio nuevoEdificio = new Edificio(tipoEdificio, casilla);
 

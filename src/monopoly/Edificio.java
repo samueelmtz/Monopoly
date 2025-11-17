@@ -68,6 +68,7 @@ public class Edificio {
         return "";
     }
 
+
     /* Método que comprueba si se trata de un tipo válido de edificio
     * @param tipo Tipo de edificio
     */
