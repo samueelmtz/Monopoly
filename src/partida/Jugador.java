@@ -36,7 +36,6 @@ public class Jugador {
         this.propiedades = new ArrayList<>();
         this.edificios = new ArrayList<>();
         this.dineroInvertido = 0;
-        this.dineroInvertido = 0;
         this.pagoTasasEImpuestos = 0;
         this.pagoDeAlquileres = 0;
         this.cobroDeAlquileres = 0;
@@ -158,7 +157,6 @@ public class Jugador {
     public boolean isEnCarcel() {
         return enCarcel;
     }
-// Agrega estos métodos en la clase Jugador (pueden ir al final de la clase):
 
     public void sumarDineroInvertido(float cantidad) {
         this.dineroInvertido += cantidad;

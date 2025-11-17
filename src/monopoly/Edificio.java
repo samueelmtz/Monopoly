@@ -16,6 +16,7 @@ public class Edificio {
     private float coste; //Precio del edificio
     private Grupo grupo; //Grupo de la casilla edificada
 
+    //Contadores estáticos para que no se reinicie el conteo de IDs al crear nuevos edificios
     private static int contadorCasas = 0;
     private static int contadorHoteles = 0;
     private static int contadorPiscinas = 0;

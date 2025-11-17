@@ -184,7 +184,7 @@ public class Menu {
             case "salir":
                 if (comandos.length >= 2) {
                     String subcomando = comandos[1].toLowerCase();
-                    // ✅ Aceptar ambas versiones
+                    // Aceptar ambas versiones
                     if (subcomando.equals("carcel") || subcomando.equals("cárcel")) {
                         salirCarcel();
                     } else {
@@ -225,7 +225,7 @@ public class Menu {
 
             case "ver":
                 if (comandos.length == 2 && comandos[1].equals("tablero")) {
-                    // Usar toString() directamente
+                    // Usar toString()
                     System.out.println(tablero.toString());
                 } else {
                     System.out.println("Comando incorrecto. Uso: ver tablero");
@@ -612,8 +612,7 @@ public class Menu {
         if(edificios.isEmpty()) {
             System.out.println("No hay edificios en este momento.");
         }
-
-        //Modo sin grupo
+        // Mostrar todos los edificios si no se especifica un grupo
         if(colorGrupo == null) {
             for (int i = 0; i < edificios.size(); i++) {
                 Edificio edificio = edificios.get(i);
@@ -823,7 +822,7 @@ public class Menu {
 
         } else if (accion.startsWith("pagar:")) {
             float cantidadPago = Float.parseFloat(accion.split(":")[1]);
-            if (jugador.getFortuna() >= cantidadPago) {
+            if (jugador.getFortuna() >= cantidadPago) { // Verificar si tiene suficiente dinero
                 jugador.restarFortuna(cantidadPago);
                 jugador.sumarPagoTasasEImpuestos(cantidadPago);
                 tablero.añadirAlBote(cantidadPago);
@@ -834,8 +833,8 @@ public class Menu {
 
         } else if (accion.equals("transporteCercano")) {
             int posicionActual = jugador.getAvatar().getLugar().getPosicion();
-            String[] nombresTransporte = {"Trans1", "Trans2", "Trans3", "Trans4"};
-            int[] posicionesTransporte = {6, 16, 26, 36};
+            String[] nombresTransporte = {"Trans1", "Trans2", "Trans3", "Trans4"}; //Nombres de las casillas de transporte
+            int[] posicionesTransporte = {6, 16, 26, 36}; //Posiciones de las casillas de transporte
 
             String transporteCercano = null;
             int menorDistancia = 50; // Valor inicial mas alto que cualquier distancia posible (40)
@@ -853,7 +852,7 @@ public class Menu {
                 if (destino != null) {
                     jugador.getAvatar().colocar(tablero.getPosiciones(), destino.getPosicion());
                     System.out.println("Te has movido a " + destino.getNombre());
-                    destino.evaluarCasilla(jugador, banca, 0);
+                    destino.evaluarCasilla(jugador, banca, 0); // Evaluar sin mover más
                 }
             }
 
@@ -883,7 +882,7 @@ public class Menu {
 
     private Carta obtenerSiguienteCarta(String tipo) {
         Carta carta;
-
+        // Obtener la carta correspondiente y actualizar el contador a uno siguiente
         if (tipo.equals("Suerte")) {
             carta = cartasSuerte.get(contadorSuerte);
             contadorSuerte = (contadorSuerte + 1) % cartasSuerte.size();
@@ -973,8 +972,7 @@ public class Menu {
 
 
     private String calcularGrupoMasRentable() {
-        HashMap<String, Float> rentabilidadGrupos = new HashMap<>();
-        HashMap<String, Integer> propiedadesPorGrupo = new HashMap<>();
+        HashMap<String, Float> rentabilidadGrupos = new HashMap<>(); //Usar HashMap porque no sabemos cuántos grupos hay comprados
 
         // Calcular rentabilidad solo de grupos con propiedades compradas
         for (Grupo grupo : tablero.getGrupos().values()) {
@@ -996,15 +994,15 @@ public class Menu {
             }
 
             if (casillasValiosas > 0) {
-                rentabilidadGrupos.put(grupo.getColorGrupo(), rentabilidadTotal / casillasValiosas);
+                rentabilidadGrupos.put(grupo.getColorGrupo(), rentabilidadTotal / casillasValiosas); //Meter en el HashMap la rentabilidad media del grupo
             }
         }
 
         // Encontrar el grupo más rentable entre los comprados
         String grupoMasRentable = "Ninguno";
         float maxRentabilidad = -1;
-
-        for (String color : rentabilidadGrupos.keySet()) {
+        //Recorrer el HashMap
+        for (String color : rentabilidadGrupos.keySet()) { //Para cada color de grupo en el HashMap
             float rentabilidad = rentabilidadGrupos.get(color);
             if (rentabilidad > maxRentabilidad) {
                 maxRentabilidad = rentabilidad;
@@ -1020,6 +1018,7 @@ public class Menu {
         Casilla masFrecuentada = null;
         int maxVisitas = 0;
 
+        // Recorrer todas las casillas del tablero
         for (ArrayList<Casilla> lado : tablero.getPosiciones()) {
             for (Casilla casilla : lado) {
                 int visitas = casilla.getContadorVisitas();
@@ -1037,6 +1036,7 @@ public class Menu {
         Jugador jugadorMasVueltas = null;
         int maxVueltas = -1;
 
+        // Recorrer todos los jugadores
         for (Jugador jugador : jugadores) {
             if (jugador.getVueltas() > maxVueltas) {
                 maxVueltas = jugador.getVueltas();
@@ -1051,6 +1051,7 @@ public class Menu {
         Jugador jugadorEnCabeza = null;
         float maxFortuna = -1;
 
+        // Recorrer todos los jugadores
         for (Jugador jugador : jugadores) {
             // Calcular fortuna total: dinero + valor de propiedades
             float fortunaTotal = jugador.getFortuna();
@@ -1067,6 +1068,7 @@ public class Menu {
         return jugadorEnCabeza != null ? jugadorEnCabeza.getNombre() : "Ninguno";
     }
 
+    //Metodo que verifica si se puede construir el edificio y llama a la función de construcción
     private void edificar(String tipoEdificio) {
         Jugador jugadorActual = jugadores.get(turno);
         Casilla casillaActual = jugadorActual.getAvatar().getLugar();
@@ -1110,7 +1112,7 @@ public class Menu {
         int piscinasEnCasilla = casillaActual.getNumPiscinas();
         int pistasEnCasilla = casillaActual.getNumPistasDeporte();
 
-        // Verificar límites de construcción (usar tipoProcesado)
+        // Verificar límites de construcción
         if (!puedeConstruir(tipoEdificio, casasEnCasilla, hotelesEnCasilla, piscinasEnCasilla, pistasEnCasilla, grupo, casillaActual)) {
             return;
         }
@@ -1198,9 +1200,11 @@ public class Menu {
             System.out.println("Error: No se pudo construir el " + tipoEdificio + " en " + casilla.getNombre());
         }
     }
+
     /**
      * Muestra el estado actual de los edificios en una casilla
      */
+
     private void mostrarEstadoEdificios(Casilla casilla) {
         System.out.printf("Edificios en %s: %d casas, %d hoteles, %d piscinas, %d pistas de deporte\n", casilla.getNombre(), casilla.getNumCasas(), casilla.getNumHoteles(), casilla.getNumPiscinas(), casilla.getNumPistasDeporte());
     }
@@ -1439,7 +1443,7 @@ public class Menu {
 
 
         // Solo si pasa la validación, proceder con la hipoteca
-        if (casilla.hipotecar()) {
+        if (casilla.hipotecar()) {  //Valor de hipotecada cambia a true
             float valorHipoteca = casilla.getValorHipoteca();
             jugadorActual.sumarFortuna(valorHipoteca);
 
