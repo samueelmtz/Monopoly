@@ -40,7 +40,7 @@ public class Edificio {
         this.casilla = lugar;
         this.duenho = casilla.getDuenho();
         this.grupo = casilla.getGrupo();
-        this.coste = calcularCoste(lugar, tipo);
+        this.coste = calcularCoste(tipo, lugar);
     }
 
     //MÉTODOS
@@ -80,15 +80,16 @@ public class Edificio {
     * @param lugar Casilla en la que se construirá el edificio
     * @param tipo Tipo de edificio a construír
     */
-    private float calcularCoste(Casilla lugar, String tipo) {
-        return switch (tipo) {
-            case "casa", "hotel" -> lugar.getPrecioCasa();
-            case "piscina" -> lugar.getPrecioPiscina();
-            case "pista" , "pista_deporte" -> lugar.getPrecioPistaDeporte();
-            default -> 0;
+    public static float calcularCoste(String tipoEdificio, Casilla casilla) {
+        String tipoNormalizado = tipoEdificio.equals("pista_deporte") ? "pista" : tipoEdificio;
+
+        return switch (tipoNormalizado) {
+            case "casa", "hotel" -> casilla.getPrecioCasa();
+            case "piscina" -> casilla.getPrecioPiscina();
+            case "pista" -> casilla.getPrecioPistaDeporte();
+            default -> 0f;
         };
     }
-
     // Lista todas las edificaciones en su respectivo array
     public String infoEdificio() {
         String cadena = "";

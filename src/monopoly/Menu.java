@@ -1098,32 +1098,15 @@ public class Menu {
             return;
         }
 
-        // Calcular coste directamente sin crear un objeto Edificio temporal
-        String tipoParaCalculo = tipoEdificio.equals("pista_deporte") ? "pista" : tipoEdificio;
-        float coste = 0;
-        switch (tipoParaCalculo) {
-            case "casa":
-                coste = casillaActual.getPrecioCasa();
-                break;
-            case "hotel":
-                coste = casillaActual.getPrecioCasa(); // Asumiendo que el precio es el mismo que una casa
-                break;
-            case "piscina":
-                coste = casillaActual.getPrecioPiscina();
-                break;
-            case "pista":
-                coste = casillaActual.getPrecioPistaDeporte();
-                break;
-        }
+        // Calcular coste del edificio
+        float coste = Edificio.calcularCoste(tipoEdificio, casillaActual);
 
         // Verificar si tiene suficiente dinero
         if (jugadorActual.getFortuna() < coste) {
-            System.out.printf("La fortuna de %s no es suficiente para edificar un %s en la casilla %s.\n",
-                    jugadorActual.getNombre(), tipoEdificio, casillaActual.getNombre());
+            System.out.printf("La fortuna de %s no es suficiente...\n", jugadorActual.getNombre(), tipoEdificio, casillaActual.getNombre());
             return;
         }
-
-        // Construir el edificio (pasar tipoEdificio original para el mensaje)
+        // Construir (el Edificio calculará el mismo coste internamente)
         construirEdificio(jugadorActual, casillaActual, tipoEdificio, coste);
     }
 
