@@ -183,8 +183,14 @@ public class Menu {
                 break;
 
             case "salir":
-                if (comandos.length == 2 && comandos[1].equals("cárcel")) {
-                    salirCarcel();
+                if (comandos.length >= 2) {
+                    String subcomando = comandos[1].toLowerCase();
+                    // ✅ Aceptar ambas versiones
+                    if (subcomando.equals("carcel") || subcomando.equals("cárcel")) {
+                        salirCarcel();
+                    } else {
+                        System.out.println("Comando incorrecto. Uso: salir cárcel");
+                    }
                 } else {
                     System.out.println("Comando incorrecto. Uso: salir cárcel");
                 }
@@ -462,6 +468,7 @@ public class Menu {
             // El dinero ya se restó en evaluarCasilla, pero fue a la banca
             // Lo quitamos de la banca y lo ponemos en el bote
             actual.restarFortuna(impuesto);
+            actual.sumarPagoTasasEImpuestos(impuesto);
             tablero.añadirAlBote(impuesto);
 
             System.out.printf("Se han transferido %,.0f€ del impuesto al bote del Parking\n", impuesto);
@@ -471,7 +478,6 @@ public class Menu {
         if (casillaActual.getNombre().equals("Parking")) {
             float boteGanado = tablero.reclamarBote(actual);
             if (boteGanado > 0) {
-                System.out.printf("¡%s ha ganado el bote del Parking: %,.0f€!\n", actual.getNombre(), boteGanado);
                 System.out.printf("Fortuna actual de %s: %,.0f€\n", actual.getNombre(), actual.getFortuna());
             }
         }
