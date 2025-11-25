@@ -1,5 +1,6 @@
 package monopoly;
 
+import monopoly.casilla.*;
 import partida.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -433,7 +434,3 @@ public class Tablero {
         return boteParking;
     }
 }
-
-
-
-

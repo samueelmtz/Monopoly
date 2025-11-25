@@ -1,6 +1,7 @@
 package partida;
 
 import monopoly.*;
+import monopoly.casilla.*;
 
 import java.util.Random;
 import java.util.ArrayList;

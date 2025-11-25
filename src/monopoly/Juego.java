@@ -1,13 +1,14 @@
 package monopoly;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+
+import monopoly.edificio.Edificio;
 import partida.*;
 import java.util.Scanner;
 import java.util.HashMap;
 
-public class Menu {
+public class Juego {
 
     //Atributos
     private ArrayList<Jugador> jugadores; //Jugadores de la partida.
@@ -815,7 +816,7 @@ public class Menu {
         } else if (accion.startsWith("retroceder:")) {
             int casillas = Integer.parseInt(accion.split(":")[1]);
             int posicionActual = jugador.getAvatar().getLugar().getPosicion();
-            int nuevaPosicion = (posicionActual - casillas + 40) % 40; //sumar 40 para evitar numeros negativos antes del modulo
+            int nuevaPosicion = (posicionActual - casillas + 40) % 40; //sumar 40 para evitar números negativos antes del modulo
             // usar colocar() DIRECTAMENTE:
             jugador.getAvatar().colocar(tablero.getPosiciones(), nuevaPosicion);
             System.out.println("Has retrocedido " + casillas + " casillas.");
@@ -945,8 +946,7 @@ public class Menu {
         for (ArrayList<Casilla> lado : tablero.getPosiciones()) {
             for (Casilla casilla : lado) {
                 // SOLO considerar casillas compradas (que no son de la banca)
-                if (casilla.getDuenho() != null &&
-                        !casilla.getDuenho().getNombre().equals("Banca") &&
+                if (casilla.getDuenho() != null && !casilla.getDuenho().getNombre().equals("Banca") &&
                         casilla.getDuenho() != banca) {
 
                     // Solo considerar tipos que pueden generar renta
@@ -981,8 +981,7 @@ public class Menu {
 
             for (Casilla casilla : grupo.getMiembros()) {
                 // SOLO considerar casillas compradas
-                if (casilla.getDuenho() != null &&
-                        !casilla.getDuenho().getNombre().equals("Banca") &&
+                if (casilla.getDuenho() != null && !casilla.getDuenho().getNombre().equals("Banca") &&
                         casilla.getDuenho() != banca) {
 
                     if (casilla.getValor() > 0) {
@@ -1356,7 +1355,7 @@ public class Menu {
         }
 
         // Determinar cuántos se pueden vender
-        int aVender = Math.min(cantidadSolicitada, disponibles); //Elige el minimo entre lo solicitado y lo disponible
+        int aVender = Math.min(cantidadSolicitada, disponibles); //Elige el mínimo entre lo solicitado y lo disponible
         float ingreso = precioUnitario * aVender; // Calcular ingreso total
 
         // ELIMINAR LOS EDIFICIOS DE LA LISTA DEL JUGADOR
