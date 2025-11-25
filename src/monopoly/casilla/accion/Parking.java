@@ -1,4 +1,6 @@
 package monopoly.casilla.accion;
 
-public class Parking {
+import monopoly.casilla.Accion;
+
+public class Parking extends Accion {
 }

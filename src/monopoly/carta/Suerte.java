@@ -1,4 +1,4 @@
 package monopoly.carta;
 
-public class Suerte {
+public class Suerte extends Carta{
 }

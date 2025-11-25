@@ -1,4 +1,4 @@
 package monopoly.casilla;
 
-public class Especial {
+public class Especial extends Casilla{
 }

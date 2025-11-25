@@ -1,4 +1,6 @@
 package monopoly.casilla.propiedad;
 
-public class Transporte {
+import monopoly.casilla.Propiedad;
+
+public class Transporte extends Propiedad {
 }
