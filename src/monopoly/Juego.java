@@ -1,5 +1,4 @@
-package monopoly; //askjcajkfc naskj
-
+package monopoly;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -7,7 +6,7 @@ import partida.*;
 import java.util.Scanner;
 import java.util.HashMap;
 
-public class Menu {
+public class Juego {
 
     //Atributos
     private ArrayList<Jugador> jugadores; //Jugadores de la partida.
