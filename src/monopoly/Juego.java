@@ -2,6 +2,8 @@ package monopoly;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+
+import monopoly.edificio.Edificio;
 import partida.*;
 import java.util.Scanner;
 import java.util.HashMap;
