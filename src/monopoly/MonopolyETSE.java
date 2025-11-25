@@ -8,3 +8,5 @@ public class MonopolyETSE {
     }
 
 }
+
+//manolo lama portate bien
