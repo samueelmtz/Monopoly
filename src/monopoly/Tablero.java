@@ -121,7 +121,7 @@ public class Tablero {
     }
 
 
-    //Metodo que inserta las casillas del lado sur.
+    //Método que inserta las casillas del lado sur.
     private void insertarLadoSur() {
         ArrayList<Casilla> ladoSur = this.posiciones.get(0);
 
@@ -336,7 +336,6 @@ public class Tablero {
     // Método auxiliar para mostrar una casilla con color
     private String obtenerCasillaFormateada(Casilla casilla) {
         if (casilla == null) {
-            System.out.print("NULL     ");
             return "NULL";
         }
 

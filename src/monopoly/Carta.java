@@ -1,11 +1,12 @@
 package monopoly;
 
 public class Carta {
-    private int id;
-    private String tipo;
-    private String descripcion;
-    private String accion;
+    private int id; //Identificador para cada tipo de carta
+    private String tipo; //Tipo de carta
+    private String descripcion; //Descripción de uso de la carta
+    private String accion; //Efecto de la carta
 
+    //CONSTRUCTOR PRINCIPAL
     public Carta(int id, String tipo, String descripcion, String accion) {
         this.id = id;
         this.tipo = tipo;
@@ -14,7 +15,7 @@ public class Carta {
     }
 
 
-    //Getters
+    //GETTERS
     public int getId() {
         return id;
     }

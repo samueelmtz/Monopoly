@@ -5,7 +5,7 @@ public class Valor {
     //Se incluyen una serie de constantes útiles para no repetir valores.
     public static final float FORTUNA_BANCA = Float.MAX_VALUE; // Cantidad que tiene inicialmente la Banca
     public static final float FORTUNA_INICIAL = 15000000f; // Cantidad que recibe cada jugador al comenzar la partida
-    public static final float SUMA_VUELTA = 2000000f; // Cantidad que recibe un jugador al pasar pos la Salida
+    public static final float SUMA_VUELTA = 2000000f; // Cantidad que recibe un jugador al pasar por la Salida
     public static final float SALIR_CARCEL = 500000f; // Cantidad que debe pagar un jugador para salir de la cárcel
     public static final float FACTOR_SERVICIO = 50000f;
     public static final float ALQUILER_TRANSPORTE = 250000f;
