@@ -1,4 +1,4 @@
 package monopoly.casilla;
 
-public class Impuesto {
+public class Impuesto extends Casilla{
 }

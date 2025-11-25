@@ -1,4 +1,4 @@
 package monopoly.edificio;
 
-public class Hotel {
+public class Hotel extends Edificio{
 }

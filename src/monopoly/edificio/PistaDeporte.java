@@ -1,4 +1,4 @@
 package monopoly.edificio;
 
-public class PistaDeporte {
+public class PistaDeporte extends Edificio{
 }

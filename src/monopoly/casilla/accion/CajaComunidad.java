@@ -1,4 +1,6 @@
 package monopoly.casilla.accion;
 
-public class CajaComunidad {
+import monopoly.casilla.Accion;
+
+public class CajaComunidad extends Accion {
 }

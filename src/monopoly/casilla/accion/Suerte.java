@@ -1,4 +1,7 @@
 package monopoly.casilla.accion;
 
-public class Suerte {
+import monopoly.casilla.Accion;
+
+public class Suerte extends Accion {
+
 }

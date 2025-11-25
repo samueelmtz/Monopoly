@@ -1,4 +1,6 @@
 package monopoly.casilla.propiedad;
 
-public class Solar {
+import monopoly.casilla.Propiedad;
+
+public class Solar extends Propiedad {
 }

@@ -1,4 +1,4 @@
 package monopoly.carta;
 
-public class CajaComunidad {
+public class CajaComunidad extends Carta{
 }
