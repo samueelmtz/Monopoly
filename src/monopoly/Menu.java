@@ -1290,7 +1290,7 @@ public class Menu {
 
         // La cantidad a vender debe ser positiva
         if (cantidadSolicitada <= 0) {
-            System.out.println("La cantidad a vender debe ser positiva.");
+            System.out.println("La cantidad a vender debe ser positiva.")   ;
             return;
         }
 
@@ -1499,7 +1499,6 @@ public class Menu {
         // Realizar la deshipoteca
         if (casilla.deshipotecar()) {
             jugadorActual.restarFortuna(costeDeshipoteca);
-            jugadorActual.sumarPagoTasasEImpuestos(costeDeshipoteca);
 
             System.out.printf("%s ha deshipotecado %s por %,.0f€.\n",
                     jugadorActual.getNombre(), nombreCasilla, costeDeshipoteca);
