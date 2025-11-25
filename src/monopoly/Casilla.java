@@ -135,7 +135,7 @@ public class Casilla {
                             break;
                         }
 
-                        //Calcular alquiler total según edificios
+                        // NUEVO: Calcular alquiler total según edificios
                         aPagar = this.impuesto; // Alquiler base
 
                         if (this.numCasas > 0) {
@@ -151,7 +151,7 @@ public class Casilla {
                             aPagar += getAlquilerPistaDeporte() * this.numPistas;
                         }
 
-                        // AÑADIR LA REGLA DEL DOBLE POR GRUPO COMPLETO
+                        // AÑADIR TAMBIÉN LA REGLA DEL DOBLE POR GRUPO COMPLETO
                         if (this.grupo != null && this.numCasas == 0 && this.numHoteles == 0) {
                             boolean tieneTodoElGrupo = true;
                             for (Casilla casillaGrupo : this.grupo.getMiembros()) {
@@ -190,7 +190,7 @@ public class Casilla {
                             break;
                         }
 
-                        // Contar cuántos servicios tiene el dueño
+                        // ✅ CORREGIDO: Contar cuántos servicios tiene el dueño
                         int serviciosDelDuenho = 0;
                         for (Casilla propiedad : this.duenho.getPropiedades()) {
                             if (propiedad.getTipo().equals("Servicios")) {
@@ -210,7 +210,8 @@ public class Casilla {
 
                         aPagar = (float) tirada * multiplicador * Valor.FACTOR_SERVICIO;
 
-                        System.out.printf("Alquiler de servicio: dados(%d) × %d × %,.0f€ = %,.0f€\n", tirada, multiplicador, Valor.FACTOR_SERVICIO, aPagar);
+                        System.out.printf("Alquiler de servicio: dados(%d) × %d × %,.0f€ = %,.0f€\n",
+                                tirada, multiplicador, Valor.FACTOR_SERVICIO, aPagar);
                         System.out.printf("El dueño tiene %d servicio(s)\n", serviciosDelDuenho);
 
                         actual.sumarPagoDeAlquileres(aPagar);
@@ -481,7 +482,7 @@ public class Casilla {
     }
 
     /**
-     * Añade una pista de deporte al contador (requiere hotel)
+     * Añade una pista de deporte a la casilla (requiere hotel)
      */
     public boolean anhadirCasa() {
         if (numCasas < 4 && numHoteles == 0) {
@@ -492,7 +493,7 @@ public class Casilla {
     }
 
     /**
-     * Añade un hotel al contador (requiere 4 casas)
+     * Añade un hotel a la casilla (requiere 4 casas)
      */
     public boolean anhadirHotel() {
         if (numHoteles == 0 && numCasas == 4) {
@@ -512,7 +513,7 @@ public class Casilla {
     }
 
     /**
-     * Añade una piscina al contador (requiere hotel)
+     * Añade una piscina a la casilla (requiere hotel)
      */
     public boolean anhadirPiscina() {
         if (numPiscinas == 0 && numHoteles == 1) {
@@ -524,7 +525,7 @@ public class Casilla {
 
 
     /**
-     * Añade una pista de deporte al contador (requiere hotel)
+     * Añade una pista de deporte a la casilla (requiere hotel)
      */
     public boolean anhadirPistaDeporte() {
         if (numPistas == 0 && numHoteles == 1) {
@@ -551,7 +552,7 @@ public class Casilla {
             return false;
         }
 
-        // Solo los solares se pueden hipotecar
+        // CORREGIDO: Solo los solares se pueden hipotecar
         if (!this.tipo.equals("Solar")) {
             System.out.println(this.nombre + " no se puede hipotecar. Solo los solares son hipotecables.");
             return false;
@@ -569,7 +570,7 @@ public class Casilla {
     }
 
     /**
-     * Hipoteca la casilla (booleano)
+     * Hipoteca la casilla
      */
     public boolean hipotecar() {
         if (!this.hipotecada) {
@@ -580,7 +581,7 @@ public class Casilla {
     }
 
     /**
-     * Deshipoteca la casilla (booleano)
+     * Deshipoteca la casilla
      */
     public boolean deshipotecar() {
         if (this.hipotecada) {
