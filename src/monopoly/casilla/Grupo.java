@@ -87,5 +87,5 @@ public class Grupo extends Casilla {
 
     public void setColor(String color) {
         this.colorGrupo = color;
-    }
+    }iuhui
 }
