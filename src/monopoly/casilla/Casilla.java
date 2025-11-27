@@ -50,19 +50,6 @@ public abstract class Casilla {
     // MÉTODO para mostrar información - será sobrescrito en subclases
     public abstract void infoCasilla();
 
-    // MÉTODO para casilla en venta - común pero puede sobrescribirse
-    public void casEnVenta() {
-        if(this.duenho == null || this.duenho.getNombre().equals("Banca")){
-            System.out.println("{");
-            System.out.println("    tipo: " + this.getClass().getSimpleName() + ",");
-            System.out.println("    nombre: " + this.nombre + ",");
-            System.out.println("    valor: " + String.format("%,.0f", this.getValor()) + "€");
-            System.out.println("}");
-        } else {
-            System.out.println("La casilla " + this.nombre + " ya está vendida a " + this.duenho.getNombre());
-        }
-    }
-
     // MÉTODO auxiliar para valor - será implementado en subclases
     public abstract float getValor();
 
