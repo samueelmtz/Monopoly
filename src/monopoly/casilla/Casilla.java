@@ -9,11 +9,13 @@ public abstract class Casilla {
     private int posicion;
     private ArrayList<Avatar> avatares;
     private int contadorVisitas;
+    private Jugador duenho;
 
     // Constructores
-    public Casilla(String nombre, int posicion) {
+    public Casilla(String nombre, int posicion, Jugador duenho) {
         this.nombre = nombre;
         this.posicion = posicion;
+        this.duenho = duenho;
         this.avatares = new ArrayList<>();
         this.contadorVisitas = 0;
     }
@@ -41,25 +43,40 @@ public abstract class Casilla {
         this.contadorVisitas++;
     }
 
-    public boolean estaAvatar(Avatar avatar){
-        return avatar.getLugar().equals(this);
+    public abstract boolean estaAvatar(Avatar avatar);
+    public abstract int frecuenciaVisita();
+
+    // GETTERS y SETTERS comunes
+    public String getNombre() {
+        return this.nombre;
     }
 
-    // GETTERS comunes
-    public String getNombre() {
-        return nombre;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public int getPosicion() {
-        return posicion;
+        return this.posicion;
+    }
+
+    public void setPosicion(int posicion) {
+        this.posicion = posicion;
+    }
+
+    public Jugador getDuenho() {
+        return this.duenho;
+    }
+
+    public void setDuenho(Jugador duenho) {
+        this.duenho = duenho;
     }
 
     public ArrayList<Avatar> getAvatares() {
-        return avatares;
+        return this.avatares;
     }
 
     public int getContadorVisitas() {
-        return contadorVisitas;
+        return this.contadorVisitas;
     }
 
     // MÉTODO para verificar si es comprable - común pero puede sobrescribirse

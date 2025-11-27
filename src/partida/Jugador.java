@@ -2,7 +2,9 @@ package partida;
 
 import java.util.ArrayList;
 
-import monopoly.*;
+import monopoly.Valor;
+import monopoly.edificio.Edificio;
+import monopoly.casilla.Casilla;
 
 
 public class Jugador {
