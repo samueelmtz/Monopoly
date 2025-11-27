@@ -16,18 +16,17 @@ public class Accion extends Casilla {
     // MÉTODOS REQUERIDOS por el PDF - IMPLEMENTACIÓN
     @Override
     public boolean estaAvatar(Avatar avatar) {
-        return this.avatares.contains(avatar);
+        return this.getAvatares().contains(avatar);
     }
 
     @Override
     public int frecuenciaVisita() {
-        return this.contadorVisitas;
+        return this.getContadorVisitas();
     }
 
     @Override
     public String toString() {
-        return String.format("Accion{nombre='%s', posicion=%d, tipo=%s}",
-                nombre, posicion, tipoAccion);
+        return String.format("Accion{nombre='%s', posicion=%d, tipo=%s}", this.getNombre(), this.getPosicion(), tipoAccion);
     }
 
     // MÉTODO de evaluación de casilla
@@ -46,12 +45,11 @@ public class Accion extends Casilla {
         System.out.println("{");
         System.out.println("\tTipo: Acción");
         System.out.println("\tSubtipo: " + this.tipoAccion);
-        System.out.println("\tNombre: " + this.nombre);
+        System.out.println("\tNombre: " + this.getNombre());
         System.out.println("}");
     }
 
     // Las casillas de acción no tienen valor monetario
-    @Override
     public float getValor() {
         return 0;
     }
