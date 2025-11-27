@@ -8,7 +8,7 @@ public class Grupo {
     private ArrayList<Propiedad> propiedades;
     private String colorGrupo;
     private int numCasillas;
-
+    private ArrayList<Casilla> miembros;
     /**
      * Constructor para un grupo con dos propiedades.
      */
@@ -76,6 +76,17 @@ public class Grupo {
     }
 
     // GETTERS Y SETTERS
+
+    public ArrayList<Casilla> getMiembros() {
+        return new ArrayList<>(miembros); // Devolver copia para proteger encapsulación
+    }
+
+    // SETTER para miembros (si es necesario)
+    public void setMiembros(ArrayList<Casilla> miembros) {
+        this.miembros = new ArrayList<>(miembros);
+        this.numCasillas = miembros.size();
+    }
+
     public ArrayList<Propiedad> getPropiedades() {
         return propiedades;
     }
