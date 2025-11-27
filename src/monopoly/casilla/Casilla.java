@@ -6,11 +6,11 @@ import java.util.ArrayList;
 
 public abstract class Casilla {
     // Atributos COMUNES a todas las casillas
-    protected String nombre;
-    protected int posicion;
-    protected ArrayList<Avatar> avatares;
-    protected int contadorVisitas;
-    protected Jugador duenho; // Dueño (puede ser null para casillas no comprables)
+    private String nombre;
+    private int posicion;
+    private ArrayList<Avatar> avatares;
+    private int contadorVisitas;
+    private Jugador duenho; // Dueño (puede ser null para casillas no comprables)
 
     // Constructores
     public Casilla(String nombre, int posicion, Jugador duenho) {
@@ -104,5 +104,3 @@ public abstract class Casilla {
         return false; // Por defecto no es comprable, se sobrescribe en propiedades
     }
 }
-
-
