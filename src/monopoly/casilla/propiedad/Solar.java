@@ -262,7 +262,7 @@ public class Solar extends Propiedad {
         }
     }
 
-    private float getAlquilerCasa() {
+    public float getAlquilerCasa() {
         switch(this.getNombre()) {
             case "Solar1": return 400000;
             case "Solar2": return 800000;
@@ -284,7 +284,7 @@ public class Solar extends Propiedad {
         }
     }
 
-    private float getAlquilerHotel() {
+    public float getAlquilerHotel() {
         switch(this.getNombre()) {
             case "Solar1": return 2500000;
             case "Solar2": return 4500000;
@@ -306,7 +306,7 @@ public class Solar extends Propiedad {
         }
     }
 
-    private float getAlquilerPiscina() {
+    public float getAlquilerPiscina() {
         switch(this.getNombre()) {
             case "Solar1": return 500000;
             case "Solar2": return 900000;
@@ -328,7 +328,7 @@ public class Solar extends Propiedad {
         }
     }
 
-    private float getAlquilerPistaDeporte() {
+    public float getAlquilerPistaDeporte() {
         return getAlquilerPiscina();
     }
 
