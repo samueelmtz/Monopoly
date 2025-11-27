@@ -1,13 +1,16 @@
+// monopoly/casilla/Accion.java
 package monopoly.casilla;
 
 import partida.Jugador;
 import partida.Avatar;
 
-public abstract class Accion extends Casilla {
+public class Accion extends Casilla {
+    private String tipoAccion; // "Suerte", "Comunidad", "Parking"
 
     // Constructor
-    public Accion(String nombre, int posicion, Jugador duenho) {
+    public Accion(String nombre, int posicion, Jugador duenho, String tipoAccion) {
         super(nombre, posicion, duenho);
+        this.tipoAccion = tipoAccion;
     }
 
     // MÉTODOS REQUERIDOS por el PDF - IMPLEMENTACIÓN
@@ -24,16 +27,28 @@ public abstract class Accion extends Casilla {
     @Override
     public String toString() {
         return String.format("Accion{nombre='%s', posicion=%d, tipo=%s}",
-                nombre, posicion, this.getClass().getSimpleName());
+                nombre, posicion, tipoAccion);
     }
 
-    // MÉTODO COMÚN para acciones - será sobrescrito
+    // MÉTODO de evaluación de casilla
     @Override
-    public abstract boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada);
+    public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
+        if (actual.getAvatar().getLugar() == this) {
+            System.out.println("Has caído en " + this.tipoAccion + ". Se procesará la acción correspondiente.");
+            return true;
+        }
+        return false;
+    }
 
-    // MÉTODO de información - será sobrescrito
+    // MÉTODO de información
     @Override
-    public abstract void infoCasilla();
+    public void infoCasilla() {
+        System.out.println("{");
+        System.out.println("\tTipo: Acción");
+        System.out.println("\tSubtipo: " + this.tipoAccion);
+        System.out.println("\tNombre: " + this.nombre);
+        System.out.println("}");
+    }
 
     // Las casillas de acción no tienen valor monetario
     @Override
@@ -45,5 +60,10 @@ public abstract class Accion extends Casilla {
     @Override
     public boolean esTipoComprable() {
         return false;
+    }
+
+    // GETTER específico
+    public String getTipoAccion() {
+        return tipoAccion;
     }
 }

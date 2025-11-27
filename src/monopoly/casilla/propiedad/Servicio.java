@@ -3,16 +3,14 @@ package monopoly.casilla.propiedad;
 import partida.Jugador;
 import partida.Avatar;
 import monopoly.Valor;
-import java.util.ArrayList;
 
-public class Transporte extends Propiedad {
+public class Servicio extends Propiedad {
 
     // Constructor
-    public Transporte(String nombre, int posicion, float valor, Jugador duenho) {
-        super(nombre, posicion, valor, Valor.ALQUILER_TRANSPORTE, duenho);
+    public Servicio(String nombre, int posicion, float valor, Jugador duenho) {
+        super(nombre, posicion, valor, 0, duenho); // El impuesto se calcula dinámicamente
     }
 
-    // MÉTODOS REQUERIDOS por el PDF - IMPLEMENTACIÓN
     @Override
     public boolean perteneceAJugador(Jugador jugador) {
         return this.duenho != null && this.duenho.equals(jugador);
@@ -30,7 +28,7 @@ public class Transporte extends Propiedad {
 
     @Override
     public String toString() {
-        return String.format("Transporte{nombre='%s', posicion=%d, valor=%,.0f€}",
+        return String.format("Servicio{nombre='%s', posicion=%d, valor=%,.0f€}",
                 nombre, posicion, valor);
     }
 
@@ -40,13 +38,18 @@ public class Transporte extends Propiedad {
         if (actual.getAvatar().getLugar() == this) {
             // Verificar si está disponible para compra
             if (this.duenho == null || this.duenho == banca || this.duenho.getNombre().equals("Banca")) {
-                System.out.println("¡Este transporte está disponible para compra! Usa el comando 'comprar " + this.nombre + "' para adquirirla.");
+                System.out.println("¡Este servicio está disponible para compra! Usa el comando 'comprar " + this.nombre + "' para adquirirla.");
                 return true;
             }
 
             // Si tiene dueño y no es el jugador actual, calcular alquiler
             if (this.duenho != null && this.duenho != banca && this.duenho != actual) {
-                float aPagar = calcularAlquilerTransporte();
+                if (this.hipotecada) {
+                    System.out.println("El servicio " + this.nombre + " está hipotecado. No se cobra alquiler.");
+                    return true;
+                }
+
+                float aPagar = calcularAlquilerServicio(tirada);
 
                 // Verificar solvencia
                 if (actual.getFortuna() < aPagar) {
@@ -67,55 +70,75 @@ public class Transporte extends Propiedad {
         return false;
     }
 
-    private float calcularAlquilerTransporte() {
-        // Contar cuántos transportes tiene el dueño
-        int transportesDelDuenho = 0;
+    private float calcularAlquilerServicio(int tirada) {
+        // Contar cuántos servicios tiene el dueño
+        int serviciosDelDuenho = 0;
         if (this.duenho != null) {
             for (monopoly.casilla.Casilla propiedad : this.duenho.getPropiedades()) {
-                if (propiedad instanceof Transporte) {
-                    transportesDelDuenho++;
+                if (propiedad instanceof Servicio) {
+                    serviciosDelDuenho++;
                 }
             }
         }
 
-        float alquiler = Valor.ALQUILER_TRANSPORTE * transportesDelDuenho;
-        System.out.printf("Alquiler de transporte: %,.0f€ (el dueño tiene %d transporte%s)\n",
-                alquiler, transportesDelDuenho, transportesDelDuenho != 1 ? "s" : "");
-        return alquiler;
+        // Determinar multiplicador según cantidad de servicios
+        int multiplicador;
+        if (serviciosDelDuenho == 1) {
+            multiplicador = 4;
+        } else if (serviciosDelDuenho == 2) {
+            multiplicador = 10;
+        } else {
+            multiplicador = 4; // Por defecto
+        }
+
+        float aPagar = (float) tirada * multiplicador * Valor.FACTOR_SERVICIO;
+
+        System.out.printf("Alquiler de servicio: dados(%d) × %d × %,.0f€ = %,.0f€\n",
+                tirada, multiplicador, Valor.FACTOR_SERVICIO, aPagar);
+        System.out.printf("El dueño tiene %d servicio(s)\n", serviciosDelDuenho);
+
+        return aPagar;
     }
 
     // MÉTODO de información
     @Override
     public void infoCasilla() {
         System.out.println("{");
-        System.out.println("\tTipo: Transporte");
+        System.out.println("\tTipo: Servicio");
         System.out.println("\tDueño: " + (this.duenho != null ? this.duenho.getNombre() : "Banca"));
         System.out.println(String.format("\tPrecio: %,.0f€", this.valor));
-        System.out.println(String.format("\tPago por caer: %,.0f€ × número de transportes del dueño", Valor.ALQUILER_TRANSPORTE));
+        System.out.println(String.format("\tPago por caer: dados × multiplicador × %,.0f€", Valor.FACTOR_SERVICIO));
+        System.out.println("\t\t(multiplicador=4 si se posee un servicio, multiplicador=10 si se poseen 2)");
 
         // Mostrar información adicional si tiene dueño
         if (this.duenho != null && !this.duenho.getNombre().equals("Banca")) {
-            int transportesDelDuenho = 0;
+            int serviciosDelDuenho = 0;
             for (monopoly.casilla.Casilla propiedad : this.duenho.getPropiedades()) {
-                if (propiedad instanceof Transporte) {
-                    transportesDelDuenho++;
+                if (propiedad instanceof Servicio) {
+                    serviciosDelDuenho++;
                 }
             }
-            System.out.println("\tEl dueño tiene " + transportesDelDuenho + " transporte(s)");
+            System.out.println("\tEl dueño tiene " + serviciosDelDuenho + " servicio(s)");
         }
         System.out.println("}");
     }
 
-    // Los transportes no se pueden hipotecar - sobrescribir métodos relevantes
+    // Los servicios no se pueden hipotecar - sobrescribir métodos relevantes
     @Override
     public boolean puedeHipotecar(Jugador jugador) {
-        System.out.println("Los transportes no se pueden hipotecar.");
+        System.out.println("Los servicios no se pueden hipotecar.");
         return false;
     }
 
     @Override
     public boolean hipotecar() {
-        System.out.println("Los transportes no se pueden hipotecar.");
+        System.out.println("Los servicios no se pueden hipotecar.");
+        return false;
+    }
+
+    @Override
+    public boolean deshipotecar() {
+        System.out.println("Los servicios no se pueden hipotecar.");
         return false;
     }
 }
