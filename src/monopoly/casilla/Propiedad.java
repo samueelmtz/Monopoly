@@ -103,22 +103,6 @@ public class Propiedad extends Casilla {
         return true;
     }
 
-    public boolean hipotecar() {
-        if (!this.hipotecada) {
-            this.hipotecada = true;
-            return true;
-        }
-        return false;
-    }
-
-    public boolean deshipotecar() {
-        if (this.hipotecada) {
-            this.hipotecada = false;
-            return true;
-        }
-        return false;
-    }
-
     public boolean isHipotecada() {
         return this.hipotecada;
     }
