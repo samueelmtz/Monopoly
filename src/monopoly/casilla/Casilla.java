@@ -6,17 +6,15 @@ import java.util.ArrayList;
 
 public abstract class Casilla {
     // Atributos COMUNES a todas las casillas
-    private String nombre;
-    private int posicion;
-    private ArrayList<Avatar> avatares;
-    private int contadorVisitas;
-    private Jugador duenho; // Dueño (puede ser null para casillas no comprables)
+    protected String nombre;
+    protected int posicion;
+    protected ArrayList<Avatar> avatares;
+    protected int contadorVisitas;
 
     // Constructores
-    public Casilla(String nombre, int posicion, Jugador duenho) {
+    public Casilla(String nombre, int posicion) {
         this.nombre = nombre;
         this.posicion = posicion;
-        this.duenho = duenho;
         this.avatares = new ArrayList<>();
         this.contadorVisitas = 0;
     }
@@ -26,9 +24,9 @@ public abstract class Casilla {
         this.contadorVisitas = 0;
     }
 
-    //metodos abstractos comunes
-    public abstract boolean estaAvatar(Avatar avatar);
-    public abstract int frecuenciaVisita();
+    //Métodos abstractos comunes
+    public abstract boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada);
+    public abstract void infoCasilla();
     public abstract String toString();
 
     // MÉTODOS COMUNES que ya tienes en tu clase original
@@ -44,38 +42,17 @@ public abstract class Casilla {
         this.contadorVisitas++;
     }
 
-    // MÉTODO COMÚN para evaluación de casilla - será sobrescrito en subclases
-    public abstract boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada);
+    public boolean estaAvatar(Avatar avatar){
+        return avatar.getLugar().equals(this);
+    }
 
-    // MÉTODO para mostrar información - será sobrescrito en subclases
-    public abstract void infoCasilla();
-
-    // MÉTODO auxiliar para valor - será implementado en subclases
-    public abstract float getValor();
-
-    // GETTERS Y SETTERS comunes
+    // GETTERS comunes
     public String getNombre() {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
     public int getPosicion() {
         return posicion;
-    }
-
-    public void setPosicion(int posicion) {
-        this.posicion = posicion;
-    }
-
-    public Jugador getDuenho() {
-        return duenho;
-    }
-
-    public void setDuenho(Jugador duenho) {
-        this.duenho = duenho;
     }
 
     public ArrayList<Avatar> getAvatares() {
@@ -91,3 +68,4 @@ public abstract class Casilla {
         return false; // Por defecto no es comprable, se sobrescribe en propiedades
     }
 }
+
