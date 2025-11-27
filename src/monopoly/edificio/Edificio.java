@@ -63,3 +63,4 @@ public abstract class Edificio {
                 id, tipoEdificio, solar.getNombre(), coste);
     }
 }
+
