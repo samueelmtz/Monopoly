@@ -1,15 +1,14 @@
 package monopoly.casilla;
-b jbhjb
 import partida.Avatar;
 import partida.Jugador;
 import java.util.ArrayList;
 
 public abstract class Casilla {
     // Atributos COMUNES a todas las casillas
-    protected String nombre;
-    protected int posicion;
-    protected ArrayList<Avatar> avatares;
-    protected int contadorVisitas;
+    private String nombre;
+    private int posicion;
+    private ArrayList<Avatar> avatares;
+    private int contadorVisitas;
 
     // Constructores
     public Casilla(String nombre, int posicion) {

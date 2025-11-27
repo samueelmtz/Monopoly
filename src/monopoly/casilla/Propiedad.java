@@ -10,6 +10,7 @@ public abstract class Propiedad extends Casilla {
     private boolean hipotecada;
     private float valorHipoteca;
     private float impuesto;
+    private Jugador duenho;
 
     // Constructores
     public Propiedad(String nombre, int posicion, float valor, float impuesto, Jugador duenho) {
@@ -17,6 +18,7 @@ public abstract class Propiedad extends Casilla {
         this.valor = valor;
         this.impuesto = impuesto;
         this.hipotecada = false;
+        this.duenho = duenho;
         this.valorHipoteca = valor / 2;
     }
 
@@ -87,6 +89,8 @@ public abstract class Propiedad extends Casilla {
     public void setHipotecada(boolean hipotecada) { this.hipotecada = hipotecada; }
     public float getValorHipoteca() { return valorHipoteca; }
     public void setValorHipoteca(float valorHipoteca) { this.valorHipoteca = valorHipoteca; }
+    public Jugador getDuenho() { return duenho; }
+    public void setDuenho(Jugador duenho) { this.duenho = duenho; }
 
     @Override
     public abstract String toString();
