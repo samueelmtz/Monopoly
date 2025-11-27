@@ -1,4 +1,3 @@
-// monopoly/casilla/Propiedad.java
 package monopoly.casilla;
 
 import partida.Jugador;
@@ -10,6 +9,7 @@ public class Propiedad extends Casilla {
     private boolean hipotecada;
     private float valorHipoteca;
     private float impuesto;
+    private Grupo grupo;
 
     // Constructores
     public Propiedad(String nombre, int posicion, float valor, float impuesto, Jugador duenho) {
@@ -17,6 +17,7 @@ public class Propiedad extends Casilla {
         this.valor = valor;
         this.impuesto = impuesto;
         this.hipotecada = false;
+        this.grupo = null;
         this.valorHipoteca = valor / 2;
     }
 
@@ -59,7 +60,9 @@ public class Propiedad extends Casilla {
 
     // MÉTODOS COMUNES
     @Override
-    public boolean esTipoComprable() { return true; }
+    public boolean esTipoComprable() {
+        return true;
+    }
 
     @Override
     public boolean estaAvatar(Avatar avatar) {
@@ -71,7 +74,9 @@ public class Propiedad extends Casilla {
         return this.getContadorVisitas();
     }
 
-    public float getValor() { return this.valor; }
+    public float getValor() {
+        return this.valor;
+    }
 
     public void comprarCasilla(Jugador solicitante, Jugador banca) {
         if (solicitante.getAvatar().getLugar() == this) {
@@ -119,12 +124,29 @@ public class Propiedad extends Casilla {
     }
 
     // GETTERS Y SETTERS
-    public float getValorPropiedad() { return valor; }
-    public void setValor(float valor) { this.valor = valor; }
-    public float getImpuesto() { return impuesto; }
-    public void setImpuesto(float impuesto) { this.impuesto = impuesto; }
-    public float getValorHipoteca() { return valorHipoteca; }
-    public void setValorHipoteca(float valorHipoteca) { this.valorHipoteca = valorHipoteca; }
+    public float getValorPropiedad() {
+        return valor;
+    }
+
+    public void setValor(float valor) {
+        this.valor = valor;
+    }
+
+    public float getImpuesto() {
+        return impuesto;
+    }
+
+    public void setImpuesto(float impuesto) {
+        this.impuesto = impuesto;
+    }
+
+    public float getValorHipoteca() {
+        return valorHipoteca;
+    }
+
+    public void setValorHipoteca(float valorHipoteca) {
+        this.valorHipoteca = valorHipoteca;
+    }
 
     @Override
     public String toString() {
@@ -152,5 +174,13 @@ public class Propiedad extends Casilla {
         System.out.println("\tDueño: " + (this.getDuenho() != null ? this.getDuenho().getNombre() : "Banca"));
         System.out.println(String.format("\tPrecio: %,.0f€", this.valor));
         System.out.println("}");
+    }
+
+    public Grupo getGrupo() {
+        return grupo;
+    }
+
+    public void setGrupo(Grupo grupo) {
+        this.grupo = grupo;
     }
 }

@@ -47,7 +47,7 @@ public class Solar extends Propiedad {
     public String toString() {
         return String.format("Solar{nombre='%s', posicion=%d, valor=%,.0f€, grupo=%s}",
                 this.getNombre(), this.getPosicion(), this.getValorPropiedad(),
-                grupo != null ? grupo.getColorGrupo() : "null");
+                grupo != null ? grupo.getColor() : "null");
     }
 
     // MÉTODO infoCasilla() IMPLEMENTADO
@@ -56,7 +56,7 @@ public class Solar extends Propiedad {
         System.out.println("{");
         System.out.println("\tTipo: Solar");
         if (this.grupo != null) {
-            System.out.println("\tColor del grupo: " + this.grupo.getColorGrupo());
+            System.out.println("\tColor del grupo: " + this.grupo.getColor());
         }
         System.out.println("\tDueño: " + (this.getDuenho() != null ? this.getDuenho().getNombre() : "Banca"));
         System.out.println(String.format("\tPrecio: %,.0f€", this.getValorPropiedad()));

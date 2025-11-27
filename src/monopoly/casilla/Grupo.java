@@ -1,20 +1,16 @@
 package monopoly.casilla;
 
-import partida.*;
-import monopoly.casilla.propiedad.*;
+import monopoly.casilla.Propiedad;
+import partida.Jugador;
 import java.util.ArrayList;
 
-public class Grupo extends Casilla {
+public class Grupo {
     private ArrayList<Propiedad> propiedades;
     private String colorGrupo;
     private int numCasillas;
 
     /**
      * Constructor para un grupo con dos propiedades.
-     *
-     * @param prop1      miembro 1
-     * @param prop2      miembro 2
-     * @param colorGrupo Color del grupo
      */
     public Grupo(Propiedad prop1, Propiedad prop2, String colorGrupo) {
         this.propiedades = new ArrayList<>();
@@ -22,15 +18,14 @@ public class Grupo extends Casilla {
         this.propiedades.add(prop1);
         this.propiedades.add(prop2);
         this.numCasillas = 2;
+
+        // Establecer este grupo en las propiedades
+        prop1.setGrupo(this);
+        prop2.setGrupo(this);
     }
 
     /**
      * Constructor para un grupo con tres propiedades.
-     *
-     * @param prop1      Solar miembro 1
-     * @param prop2      Solar miembro 2
-     * @param prop3      Solar miembro 3
-     * @param colorGrupo Color del grupo
      */
     public Grupo(Propiedad prop1, Propiedad prop2, Propiedad prop3, String colorGrupo) {
         this.propiedades = new ArrayList<>();
@@ -39,41 +34,45 @@ public class Grupo extends Casilla {
         this.propiedades.add(prop2);
         this.propiedades.add(prop3);
         this.numCasillas = 3;
+
+        // Establecer este grupo en las propiedades
+        prop1.setGrupo(this);
+        prop2.setGrupo(this);
+        prop3.setGrupo(this);
     }
 
     public void anhadirPropiedad(Propiedad propiedad) {
         this.propiedades.add(propiedad);
         this.numCasillas++;
+        propiedad.setGrupo(this);
     }
 
-    // Implementación de métodos abstractos
-    @Override
-    public boolean estaAvatar(Avatar avatar) {
-        return false; // Los grupos no son casillas físicas
-    }
-
-    @Override
-    public String toString() {
-        return "Grupo{" + "color='" + colorGrupo + "', propiedades=" + propiedades.size() + "}";
-    }
-
-    @Override
-    public void infoCasilla() {
-        System.out.println("Grupo: " + getNombre() + " - Color: " + colorGrupo);
-        System.out.println("Propiedades del grupo:");
-        for (Propiedad prop : propiedades) {
-            System.out.println("  - " + prop.getNombre());
+    /**
+     * Verifica si un jugador tiene todas las propiedades del grupo.
+     */
+    public boolean jugadorTieneGrupoCompleto(Jugador jugador) {
+        for (Propiedad propiedad : propiedades) {
+            if (!propiedad.perteneceAJugador(jugador)) {
+                return false;
+            }
         }
+        return true;
     }
 
-    @Override
-    public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
-        return false; // Los grupos no se evalúan
-    }
-
-    @Override
-    public boolean esTipoComprable() {
-        return false;
+    /**
+     * Muestra información del grupo.
+     */
+    public void mostrarInfo() {
+        System.out.println("{");
+        System.out.println("    Grupo: " + colorGrupo);
+        System.out.println("    Número de propiedades: " + numCasillas);
+        System.out.println("    Propiedades: [");
+        for (Propiedad prop : propiedades) {
+            System.out.println("        " + prop.getNombre() +
+                    " (Dueño: " + (prop.getDuenho() != null ? prop.getDuenho().getNombre() : "Banca") + ")");
+        }
+        System.out.println("    ]");
+        System.out.println("}");
     }
 
     // GETTERS Y SETTERS
@@ -81,11 +80,20 @@ public class Grupo extends Casilla {
         return propiedades;
     }
 
-    public String getColor() {
+    public String getColorGrupo() {
         return colorGrupo;
     }
 
-    public void setColor(String color) {
-        this.colorGrupo = color;
+    public void setColorGrupo(String colorGrupo) {
+        this.colorGrupo = colorGrupo;
+    }
+
+    public int getNumCasillas() {
+        return numCasillas;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Grupo{color='%s', propiedades=%d}", colorGrupo, numCasillas);
     }
 }
