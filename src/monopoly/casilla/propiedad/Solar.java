@@ -5,7 +5,7 @@ import monopoly.casilla.Propiedad;
 import partida.Jugador;
 import partida.Avatar;
 import monopoly.Valor;
-import monopoly.Grupo;
+import monopoly.casilla.Grupo;
 import java.util.ArrayList;
 
 public class Solar extends Propiedad {
