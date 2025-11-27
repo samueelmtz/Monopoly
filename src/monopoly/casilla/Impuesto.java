@@ -1,13 +1,15 @@
+// monopoly/casilla/Impuesto.java
 package monopoly.casilla;
 
 import partida.Jugador;
 import partida.Avatar;
+import monopoly.Valor;
 
 public class Impuesto extends Casilla {
     private float cantidadImpuesto;
 
     // Constructor
-    public Impuesto(String nombre, int posicion, float cantidadImpuesto, Jugador duenho) {
+    public Impuesto(String nombre, int posicion, Jugador duenho, float cantidadImpuesto) {
         super(nombre, posicion, duenho);
         this.cantidadImpuesto = cantidadImpuesto;
     }
@@ -15,25 +17,25 @@ public class Impuesto extends Casilla {
     // MÉTODOS REQUERIDOS por el PDF - IMPLEMENTACIÓN
     @Override
     public boolean estaAvatar(Avatar avatar) {
-        return this.avatares.contains(avatar);
+        return this.getAvatares().contains(avatar);
     }
 
     @Override
     public int frecuenciaVisita() {
-        return this.contadorVisitas;
+        return this.getContadorVisitas();
     }
 
     @Override
     public String toString() {
         return String.format("Impuesto{nombre='%s', posicion=%d, impuesto=%,.0f€}",
-                nombre, posicion, cantidadImpuesto);
+                this.getNombre(), this.getPosicion(), cantidadImpuesto);
     }
 
     // MÉTODO de evaluación de casilla
     @Override
     public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
         if (actual.getAvatar().getLugar() == this) {
-            System.out.printf("Has caído en %s. Impuesto a pagar: %,.0f€\n", this.nombre, this.cantidadImpuesto);
+            System.out.printf("Impuesto a pagar: %,.0f€\n", this.cantidadImpuesto);
 
             // Verificar solvencia
             if (actual.getFortuna() < this.cantidadImpuesto) {
@@ -42,8 +44,14 @@ public class Impuesto extends Casilla {
                 return false;
             }
 
-            // El pago se procesará en el menú/juego principal
+            // Aplicar pago del impuesto
+            actual.restarFortuna(this.cantidadImpuesto);
             actual.sumarPagoTasasEImpuestos(this.cantidadImpuesto);
+
+            // El dinero va al bote del Parking
+            // Esto se manejará desde el Tablero/Juego
+            System.out.printf("%s ha pagado %,.0f€ de impuestos\n",
+                    actual.getNombre(), this.cantidadImpuesto);
             return true;
         }
         return false;
@@ -54,12 +62,12 @@ public class Impuesto extends Casilla {
     public void infoCasilla() {
         System.out.println("{");
         System.out.println("\tTipo: Impuesto");
+        System.out.println("\tNombre: " + this.getNombre());
         System.out.println(String.format("\tA pagar: %,.0f€", this.cantidadImpuesto));
         System.out.println("}");
     }
 
-    // Las casillas de impuesto no tienen valor monetario
-    @Override
+    // Las casillas de impuesto no tienen valor de compra
     public float getValor() {
         return 0;
     }
