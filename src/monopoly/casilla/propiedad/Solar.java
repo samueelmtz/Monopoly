@@ -139,6 +139,7 @@ public class Solar extends Propiedad {
                 this.getDuenho().sumarFortuna(aPagar);
                 this.getDuenho().sumarCobroDeAlquileres(aPagar);
 
+
                 System.out.printf("%s ha pagado %,.0f€ de alquiler a %s\n", actual.getNombre(), aPagar, this.getDuenho().getNombre());
             }
             return true;

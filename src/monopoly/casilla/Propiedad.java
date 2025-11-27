@@ -4,6 +4,7 @@ package monopoly.casilla;
 import partida.Jugador;
 import partida.Avatar;
 
+
 public abstract class Propiedad extends Casilla {
     // Atributos específicos de propiedades - PRIVADOS
     private float valor;
