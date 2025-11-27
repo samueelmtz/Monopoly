@@ -1,5 +1,5 @@
 package monopoly.casilla;
-
+b jbhjb
 import partida.Avatar;
 import partida.Jugador;
 import java.util.ArrayList;
