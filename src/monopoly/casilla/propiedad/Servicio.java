@@ -10,10 +10,10 @@ public class Servicio extends Propiedad {
 
     // Constructor
     public Servicio(String nombre, int posicion, float valor, Jugador duenho) {
-        super(nombre, posicion, valor, 0, duenho);
+        super(nombre, posicion, valor, 0, duenho); // El impuesto se calcula dinámicamente
     }
 
-    // MÉTODOS REQUERIDOS
+    // MÉTODOS REQUERIDOS por el PDF - IMPLEMENTACIÓN
     @Override
     public boolean perteneceAJugador(Jugador jugador) {
         return this.getDuenho() != null && this.getDuenho().equals(jugador);
@@ -35,15 +35,40 @@ public class Servicio extends Propiedad {
                 this.getNombre(), this.getPosicion(), this.getValorPropiedad());
     }
 
-    // MÉTODO de evaluación de casilla
+    // MÉTODO infoCasilla() IMPLEMENTADO
+    @Override
+    public void infoCasilla() {
+        System.out.println("{");
+        System.out.println("\tTipo: Servicio");
+        System.out.println("\tDueño: " + (this.getDuenho() != null ? this.getDuenho().getNombre() : "Banca"));
+        System.out.println(String.format("\tPrecio: %,.0f€", this.getValorPropiedad()));
+        System.out.println(String.format("\tPago por caer: dados × multiplicador × %,.0f€", Valor.FACTOR_SERVICIO));
+        System.out.println("\t\t(multiplicador=4 si se posee un servicio, multiplicador=10 si se poseen 2)");
+
+        // Mostrar información adicional si tiene dueño
+        if (this.getDuenho() != null && !this.getDuenho().getNombre().equals("Banca")) {
+            int serviciosDelDuenho = 0;
+            for (monopoly.casilla.Casilla propiedad : this.getDuenho().getPropiedades()) {
+                if (propiedad instanceof Servicio) {
+                    serviciosDelDuenho++;
+                }
+            }
+            System.out.println("\tEl dueño tiene " + serviciosDelDuenho + " servicio(s)");
+        }
+        System.out.println("}");
+    }
+
+    // MÉTODO de evaluación de casilla - Polimorfismo
     @Override
     public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
         if (actual.getAvatar().getLugar() == this) {
+            // Verificar si está disponible para compra
             if (this.getDuenho() == null || this.getDuenho() == banca || this.getDuenho().getNombre().equals("Banca")) {
                 System.out.println("¡Este servicio está disponible para compra! Usa el comando 'comprar " + this.getNombre() + "' para adquirirla.");
                 return true;
             }
 
+            // Si tiene dueño y no es el jugador actual, calcular alquiler
             if (this.getDuenho() != null && this.getDuenho() != banca && this.getDuenho() != actual) {
                 if (this.isHipotecada()) {
                     System.out.println("El servicio " + this.getNombre() + " está hipotecado. No se cobra alquiler.");
@@ -52,11 +77,13 @@ public class Servicio extends Propiedad {
 
                 float aPagar = calcularAlquilerServicio(tirada);
 
+                // Verificar solvencia
                 if (actual.getFortuna() < aPagar) {
                     System.out.printf("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n", aPagar, actual.getFortuna());
                     return false;
                 }
 
+                // Aplicar pago
                 actual.restarFortuna(aPagar);
                 actual.sumarPagoDeAlquileres(aPagar);
                 this.getDuenho().sumarFortuna(aPagar);
@@ -70,6 +97,7 @@ public class Servicio extends Propiedad {
     }
 
     private float calcularAlquilerServicio(int tirada) {
+        // Contar cuántos servicios tiene el dueño
         int serviciosDelDuenho = 0;
         if (this.getDuenho() != null) {
             for (monopoly.casilla.Casilla propiedad : this.getDuenho().getPropiedades()) {
@@ -79,13 +107,14 @@ public class Servicio extends Propiedad {
             }
         }
 
+        // Determinar multiplicador según cantidad de servicios
         int multiplicador;
         if (serviciosDelDuenho == 1) {
             multiplicador = 4;
         } else if (serviciosDelDuenho == 2) {
             multiplicador = 10;
         } else {
-            multiplicador = 4;
+            multiplicador = 4; // Por defecto
         }
 
         float aPagar = (float) tirada * multiplicador * Valor.FACTOR_SERVICIO;
@@ -97,29 +126,7 @@ public class Servicio extends Propiedad {
         return aPagar;
     }
 
-    // MÉTODO de información
-    @Override
-    public void infoCasilla() {
-        System.out.println("{");
-        System.out.println("\tTipo: Servicio");
-        System.out.println("\tDueño: " + (this.getDuenho() != null ? this.getDuenho().getNombre() : "Banca"));
-        System.out.println(String.format("\tPrecio: %,.0f€", this.getValorPropiedad()));
-        System.out.println(String.format("\tPago por caer: dados × multiplicador × %,.0f€", Valor.FACTOR_SERVICIO));
-        System.out.println("\t\t(multiplicador=4 si se posee un servicio, multiplicador=10 si se poseen 2)");
-
-        if (this.getDuenho() != null && !this.getDuenho().getNombre().equals("Banca")) {
-            int serviciosDelDuenho = 0;
-            for (monopoly.casilla.Casilla propiedad : this.getDuenho().getPropiedades()) {
-                if (propiedad instanceof Servicio) {
-                    serviciosDelDuenho++;
-                }
-            }
-            System.out.println("\tEl dueño tiene " + serviciosDelDuenho + " servicio(s)");
-        }
-        System.out.println("}");
-    }
-
-    // Los servicios no se pueden hipotecar
+    // Los servicios no se pueden hipotecar - sobrescribir métodos relevantes
     @Override
     public boolean puedeHipotecar(Jugador jugador) {
         System.out.println("Los servicios no se pueden hipotecar.");

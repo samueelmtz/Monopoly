@@ -1,4 +1,3 @@
-// monopoly/casilla/propiedad/Transporte.java
 package monopoly.casilla.propiedad;
 
 import monopoly.casilla.Propiedad;
@@ -14,7 +13,7 @@ public class Transporte extends Propiedad {
         super(nombre, posicion, valor, Valor.ALQUILER_TRANSPORTE, duenho);
     }
 
-    // MÉTODOS REQUERIDOS
+    // MÉTODOS REQUERIDOS por el PDF - IMPLEMENTACIÓN
     @Override
     public boolean perteneceAJugador(Jugador jugador) {
         return this.getDuenho() != null && this.getDuenho().equals(jugador);
@@ -36,23 +35,49 @@ public class Transporte extends Propiedad {
                 this.getNombre(), this.getPosicion(), this.getValorPropiedad());
     }
 
-    // MÉTODO de evaluación de casilla
+    // MÉTODO infoCasilla() IMPLEMENTADO
+    @Override
+    public void infoCasilla() {
+        System.out.println("{");
+        System.out.println("\tTipo: Transporte");
+        System.out.println("\tDueño: " + (this.getDuenho() != null ? this.getDuenho().getNombre() : "Banca"));
+        System.out.println(String.format("\tPrecio: %,.0f€", this.getValorPropiedad()));
+        System.out.println(String.format("\tPago por caer: %,.0f€ × número de transportes del dueño", Valor.ALQUILER_TRANSPORTE));
+
+        // Mostrar información adicional si tiene dueño
+        if (this.getDuenho() != null && !this.getDuenho().getNombre().equals("Banca")) {
+            int transportesDelDuenho = 0;
+            for (monopoly.casilla.Casilla propiedad : this.getDuenho().getPropiedades()) {
+                if (propiedad instanceof Transporte) {
+                    transportesDelDuenho++;
+                }
+            }
+            System.out.println("\tEl dueño tiene " + transportesDelDuenho + " transporte(s)");
+        }
+        System.out.println("}");
+    }
+
+    // MÉTODO de evaluación de casilla - Polimorfismo
     @Override
     public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
         if (actual.getAvatar().getLugar() == this) {
+            // Verificar si está disponible para compra
             if (this.getDuenho() == null || this.getDuenho() == banca || this.getDuenho().getNombre().equals("Banca")) {
                 System.out.println("¡Este transporte está disponible para compra! Usa el comando 'comprar " + this.getNombre() + "' para adquirirla.");
                 return true;
             }
 
+            // Si tiene dueño y no es el jugador actual, calcular alquiler
             if (this.getDuenho() != null && this.getDuenho() != banca && this.getDuenho() != actual) {
                 float aPagar = calcularAlquilerTransporte();
 
+                // Verificar solvencia
                 if (actual.getFortuna() < aPagar) {
                     System.out.printf("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n", aPagar, actual.getFortuna());
                     return false;
                 }
 
+                // Aplicar pago
                 actual.restarFortuna(aPagar);
                 actual.sumarPagoDeAlquileres(aPagar);
                 this.getDuenho().sumarFortuna(aPagar);
@@ -66,6 +91,7 @@ public class Transporte extends Propiedad {
     }
 
     private float calcularAlquilerTransporte() {
+        // Contar cuántos transportes tiene el dueño
         int transportesDelDuenho = 0;
         if (this.getDuenho() != null) {
             for (monopoly.casilla.Casilla propiedad : this.getDuenho().getPropiedades()) {
@@ -81,28 +107,7 @@ public class Transporte extends Propiedad {
         return alquiler;
     }
 
-    // MÉTODO de información
-    @Override
-    public void infoCasilla() {
-        System.out.println("{");
-        System.out.println("\tTipo: Transporte");
-        System.out.println("\tDueño: " + (this.getDuenho() != null ? this.getDuenho().getNombre() : "Banca"));
-        System.out.println(String.format("\tPrecio: %,.0f€", this.getValorPropiedad()));
-        System.out.println(String.format("\tPago por caer: %,.0f€ × número de transportes del dueño", Valor.ALQUILER_TRANSPORTE));
-
-        if (this.getDuenho() != null && !this.getDuenho().getNombre().equals("Banca")) {
-            int transportesDelDuenho = 0;
-            for (monopoly.casilla.Casilla propiedad : this.getDuenho().getPropiedades()) {
-                if (propiedad instanceof Transporte) {
-                    transportesDelDuenho++;
-                }
-            }
-            System.out.println("\tEl dueño tiene " + transportesDelDuenho + " transporte(s)");
-        }
-        System.out.println("}");
-    }
-
-    // Los transportes no se pueden hipotecar
+    // Los transportes no se pueden hipotecar - sobrescribir métodos relevantes
     @Override
     public boolean puedeHipotecar(Jugador jugador) {
         System.out.println("Los transportes no se pueden hipotecar.");
