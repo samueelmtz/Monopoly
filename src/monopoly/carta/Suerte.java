@@ -13,7 +13,7 @@ public class Suerte extends Carta {
         super(id, descripcion, accion);
     }
 
-    public static void inicializarMazo() {
+    public static void inicializarCartasSuerte() {
         if (!mazoInicializado) {
             mazoCartas = new ArrayList<>();
 
@@ -33,11 +33,11 @@ public class Suerte extends Carta {
 
     public static Suerte sacarCarta() {
         if (!mazoInicializado) {
-            inicializarMazo();
+            inicializarCartasSuerte();
         }
 
         if (mazoCartas.isEmpty()) {
-            inicializarMazo();
+            inicializarCartasSuerte();
         }
 
         Suerte carta = mazoCartas.remove(0);
