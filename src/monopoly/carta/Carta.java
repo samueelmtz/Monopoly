@@ -131,6 +131,18 @@ public abstract class Carta {
         System.out.printf("Fortuna actual de %s: %,.0f€\n", jugador.getNombre(), jugador.getFortuna());
     }
 
+    public static Carta obtenerSiguienteCarta(String tipo) {
+        if (tipo == null) throw new IllegalArgumentException("Tipo de carta nulo");
+        if (tipo.equalsIgnoreCase("Suerte")) {
+            Suerte.inicializarMazo(); // garantiza inicialización si es necesario
+            return Suerte.sacarCarta();
+        } else if (tipo.equalsIgnoreCase("Comunidad") || tipo.equalsIgnoreCase("CajaComunidad")) {
+            CajaComunidad.inicializarMazo();
+            return CajaComunidad.sacarCarta();
+        } else {
+            throw new IllegalArgumentException("Tipo de carta desconocido: " + tipo);
+        }
+    }
     // Getters
     public int getId() {
         return id;
