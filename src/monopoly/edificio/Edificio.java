@@ -1,6 +1,7 @@
 // monopoly/edificio/Edificio.java
 package monopoly.edificio;
 
+import monopoly.casilla.Casilla;
 import partida.Jugador;
 import monopoly.casilla.propiedad.Solar;
 

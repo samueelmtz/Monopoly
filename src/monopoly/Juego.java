@@ -10,6 +10,7 @@ import partida.Jugador;
 import partida.Avatar;
 import partida.Dado;
 import monopoly.casilla.Casilla;
+import monopoly.casilla.Propiedad;
 import monopoly.casilla.propiedad.Solar;
 import monopoly.casilla.propiedad.Transporte;
 import monopoly.casilla.propiedad.Servicio;
@@ -356,8 +357,11 @@ public class Juego {
                 for (int i = 0; i < propiedades.size(); i++) {
                     Casilla propiedad = propiedades.get(i);
                     consola.leer(propiedad.getNombre());
-                    if (propiedad.isHipotecada()) {
-                        consola.leer("(H)");
+                    if (propiedad instanceof Propiedad) {
+                        Propiedad prop = (Propiedad) propiedad;
+                        if (prop.isHipotecada()) {
+                            consola.leer("(H)");
+                        }
                     }
                     if (i < propiedades.size() - 1) {
                         consola.leer(", ");
@@ -370,7 +374,7 @@ public class Juego {
                 ArrayList<Edificio> edificiosJugador = jugador.getEdificios();
                 for (int i = 0; i < edificiosJugador.size(); i++) {
                     Edificio edificio = edificiosJugador.get(i);
-                    consola.leer(edificio.getId() + "(" + edificio.getCasilla().getNombre() + ")");
+                    consola.leer(edificio.getId() + "(" + edificio.getSolar().getNombre() + ")");
                     if (i < edificiosJugador.size() - 1) {
                         consola.leer(", ");
                     }
@@ -381,12 +385,13 @@ public class Juego {
                 consola.leer("    hipotecas: [");
                 boolean primeraHipoteca = true;
                 for (Casilla propiedad : propiedades) {
-                    if (propiedad.isHipotecada()) {
-                        if (!primeraHipoteca) {
-                            consola.leer(", ");
+                    if (propiedad instanceof Propiedad) {
+                        Propiedad prop = (Propiedad) propiedad;
+                        if (prop.isHipotecada()) {
+                            if (!primeraHipoteca) consola.leer(", ");
+                            consola.leer(prop.getNombre() + ":" + String.format("%,.0f", prop.getValorHipoteca()));
+                            primeraHipoteca = false;
                         }
-                        consola.leer(propiedad.getNombre() + ":" + String.format("%,.0f", propiedad.getValorHipoteca()) + "€");
-                        primeraHipoteca = false;
                     }
                 }
                 consola.imprimir("]");
