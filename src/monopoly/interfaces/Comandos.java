@@ -1,9 +1,6 @@
 package monopoly.interfaces;
 
-import partida.Jugador;
-import monopoly.casilla.Casilla;
-
-public interface comando{
+public interface Comandos {
     void crearJugador(String nombre, String tipoAvatar);
     void turnoJugador();
     void descJugador(String[] partes);
