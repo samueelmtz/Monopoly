@@ -2,6 +2,8 @@ package monopoly.casilla;
 import partida.Avatar;
 import partida.Jugador;
 import java.util.ArrayList;
+import monopoly.interfaces.Consola;
+import monopoly.interfaces.ConsolaNormal;
 
 public abstract class Casilla {
     // Atributos COMUNES a todas las casillas
@@ -10,6 +12,7 @@ public abstract class Casilla {
     private ArrayList<Avatar> avatares;
     private int contadorVisitas;
     private Jugador duenho;
+    private Consola consola;
 
     // Constructores
     public Casilla(String nombre, int posicion, Jugador duenho) {
@@ -18,11 +21,13 @@ public abstract class Casilla {
         this.duenho = duenho;
         this.avatares = new ArrayList<>();
         this.contadorVisitas = 0;
+        this.consola = new ConsolaNormal();
     }
 
     public Casilla() {
         this.avatares = new ArrayList<>();
         this.contadorVisitas = 0;
+        this.consola = new ConsolaNormal();
     }
 
     //Métodos abstractos comunes
@@ -41,6 +46,18 @@ public abstract class Casilla {
 
     public void registrarVisita() {
         this.contadorVisitas++;
+    }
+
+    public void casEnVenta() {
+        if(this.getDuenho() == null || this.getDuenho().getNombre().equals("Banca")){
+            consola.imprimir("{");
+            consola.imprimir("    tipo: " + this.getClass().getSimpleName() + ",");
+            consola.imprimir("    nombre: " + this.getNombre() + ",");
+            consola.imprimir("    valor: " + String.format("%,.0f", this.getValor()) + "€");
+            consola.imprimir("}");
+        } else {
+            consola.imprimir("La casilla " + this.getNombre() + " ya está vendida a " + this.getDuenho().getNombre());
+        }
     }
 
     public abstract boolean estaAvatar(Avatar avatar);

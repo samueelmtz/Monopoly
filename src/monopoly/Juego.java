@@ -585,11 +585,10 @@ public class Juego {
 
         for (ArrayList<Casilla> lado : tablero.getPosiciones()) {
             for (Casilla casilla : lado) {
-                // Verificar si la casilla es comprable y pertenece a la banca
-                if (casilla.esTipoComprable() && casilla.getDuenho() == banca) {
+                // Verificar si la casilla es una Propiedad y pertenece a la banca
+                if (casilla instanceof Propiedad && casilla.getDuenho() == banca) {
                     hayPropiedadesEnVenta = true;
-                    // Llamar casEnVenta sin println - ya imprime internamente
-                    casilla.casEnVenta();
+                    ((Propiedad) casilla).casEnVenta();
                 }
             }
         }
