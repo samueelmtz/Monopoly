@@ -623,7 +623,7 @@ public class Juego {
             ArrayList<Edificio> edificiosJugador = jugador.getEdificios();
             for (int i = 0; i < edificiosJugador.size(); i++) {
                 Edificio edificio = edificiosJugador.get(i);
-                System.out.print(edificio.getId() + "(" + edificio.getCasilla().getNombre() + ")");
+                System.out.print(edificio.getId() + "(" + edificio.getSolar().getNombre() + ")");
                 if (i < edificiosJugador.size() - 1) {
                     System.out.print(", ");
                 }
@@ -634,20 +634,21 @@ public class Juego {
             System.out.print("    hipotecas: [");
             boolean primeraHipoteca = true;
             for (Casilla propiedad : propiedades) {
-                if (propiedad.isHipotecada()) {
-                    if (!primeraHipoteca) {
-                        System.out.print(", ");
+                if (propiedad instanceof Propiedad) {
+                    Propiedad prop = (Propiedad) propiedad;
+                    if (prop.isHipotecada()) {
+                        if (!primeraHipoteca) {
+                            System.out.print(", ");
+                        }
+                        System.out.print(prop.getNombre());
+                        primeraHipoteca = false;
                     }
-                    System.out.print(propiedad.getNombre());
-                    primeraHipoteca = false;
                 }
             }
             if (primeraHipoteca) {
                 System.out.print("-");
             }
             System.out.println("]");
-
-            System.out.println("}");
         }
     }
 
@@ -663,10 +664,8 @@ public class Juego {
         }
         // Mostrar todos los edificios si no se especifica un grupo
         if(colorGrupo == null) {
-            for (int i = 0; i < edificios.size(); i++) {
-                Edificio edificio = edificios.get(i);
-                String info = edificio.infoEdificio();
-                System.out.println(info);
+            for(Edificio edificio : edificios) {
+                System.out.println(edificio.toString());
             }
         }
 
@@ -674,9 +673,11 @@ public class Juego {
         ArrayList<Edificio> edificiosFiltrados = new ArrayList<>();
         if (colorGrupo != null) {
             for (Edificio edificio : edificios) {
-                if (edificio.getGrupo() != null &&
-                        edificio.getGrupo().getColorGrupo().equalsIgnoreCase(colorGrupo)) {
-                    edificiosFiltrados.add(edificio);
+                if (edificio.getSolar() != null){
+                    Grupo grupo = edificio.getSolar().getGrupo();
+                    if(grupo!=null && grupo.getColorGrupo().equalsIgnoreCase(colorGrupo)) {
+                        edificiosFiltrados.add(edificio);
+                    }
                 }
             }
 
@@ -687,10 +688,8 @@ public class Juego {
 
             // Mostrar los edificios filtrados
             System.out.println("{");
-            for (int i = 0; i < edificiosFiltrados.size(); i++) {
-                Edificio edificio = edificiosFiltrados.get(i);
-                String info = edificio.infoEdificio();
-                System.out.println(info);
+            for(Edificio edificio : edificios) {
+                System.out.println(edificio.toString());
             }
         }
     }
@@ -1143,7 +1142,17 @@ public class Juego {
      */
 
     private void mostrarEstadoEdificios(Casilla casilla) {
-        System.out.printf("Edificios en %s: %d casas, %d hoteles, %d piscinas, %d pistas de deporte\n", casilla.getNombre(), casilla.getNumCasas(), casilla.getNumHoteles(), casilla.getNumPiscinas(), casilla.getNumPistasDeporte());
+        if (casilla instanceof Solar) {
+            Solar solar = (Solar) casilla;
+            System.out.printf("Edificios en %s: %d casas, %d hoteles, %d piscinas, %d pistas de deporte%n",
+                    solar.getNombre(),
+                    solar.getNumCasas(),
+                    solar.getNumHoteles(),
+                    solar.getNumPiscinas(),
+                    solar.getNumPistas());
+        } else {
+            System.out.printf("Edificios en %s: no es un solar (no aplicable)%n", casilla.getNombre());
+        }
     }
 
     /**
@@ -1202,9 +1211,10 @@ public class Juego {
 
         //Verificar si hay edificios en el resto de casillas del grupo, si hay no se puede edificar
         boolean hayEdificiosEnGrupo = false;
-        for (Casilla casilla : grupo.getMiembros()) {
-            if (casilla != casillaActual) {
-                int totalEdificios = casilla.getNumCasas() + casilla.getNumHoteles() + casilla.getNumPiscinas() + casilla.getNumPistasDeporte();
+        for (Casilla miembro : grupo.getMiembros()) {
+            if (miembro != casillaActual && miembro instanceof Solar) {
+                Solar s = (Solar) miembro;
+                int totalEdificios = s.getNumCasas() + s.getNumHoteles() + s.getNumPiscinas() + s.getNumPistas();
                 if (totalEdificios > 0) {
                     hayEdificiosEnGrupo = true;
                     break;
@@ -1245,10 +1255,12 @@ public class Juego {
         }
 
         // Debe ser un solar para tener edificios
-        if (!casilla.getTipo().equals("Solar")) {
+        if (!(casilla instanceof Solar)) {
             System.out.println("Solo se pueden vender edificios en solares.");
             return;
         }
+
+        Solar solar = (Solar) casilla;
 
         // Comprobar propiedad
         if (casilla.getDuenho() != jugadorActual) {
@@ -1261,25 +1273,25 @@ public class Juego {
         float precioUnitario;
         String tipoParaEliminar; // Tipo para eliminar de la lista de edificios
 
-        switch (tipoVenta) {
+        switch (tipoVenta.toLowerCase()) {
             case "casas":
-                disponibles = casilla.getNumCasas();
-                precioUnitario = casilla.getPrecioCasa();
+                disponibles = solar.getNumCasas();
+                precioUnitario = solar.getPrecioCasa();
                 tipoParaEliminar = "casa";
                 break;
             case "hoteles":
-                disponibles = casilla.getNumHoteles();
-                precioUnitario = casilla.getPrecioHotel();
+                disponibles = solar.getNumHoteles();
+                precioUnitario = solar.getPrecioHotel();
                 tipoParaEliminar = "hotel";
                 break;
             case "piscina":
-                disponibles = casilla.getNumPiscinas();
-                precioUnitario = casilla.getPrecioPiscina();
+                disponibles = solar.getNumPiscinas();
+                precioUnitario = solar.getPrecioPiscina();
                 tipoParaEliminar = "piscina";
                 break;
             case "pista_deporte":
-                disponibles = casilla.getNumPistasDeporte();
-                precioUnitario = casilla.getPrecioPistaDeporte();
+                disponibles = solar.getNumPistas();
+                precioUnitario = solar.getPrecioPistaDeporte();
                 tipoParaEliminar = "pista_deporte";
                 break;
             default:
@@ -1303,7 +1315,7 @@ public class Juego {
         // Buscar y eliminar los edificios de este tipo en esta casilla (recorrer en orden inverso para evitar problemas de indices al eliminar)
         for (int i = edificiosJugador.size() - 1; i >= 0 && eliminados < aVender; i--) {
             Edificio edificio = edificiosJugador.get(i);
-            if (edificio.getCasilla() == casilla && edificio.getTipo().equals(tipoParaEliminar)) {
+            if (edificio.getSolar() == casilla && edificio.getTipoEdificio().equals(tipoParaEliminar)) {
                 edificiosJugador.remove(i);
                 eliminados++;
             }
@@ -1313,25 +1325,25 @@ public class Juego {
         int eliminadosGlobal = 0;
         for (int i = edificios.size() - 1; i >= 0 && eliminadosGlobal < aVender; i--) {
             Edificio edificio = edificios.get(i);
-            if (edificio.getCasilla() == casilla && edificio.getTipo().equals(tipoParaEliminar)) {
+            if (edificio.getSolar() == casilla && edificio.getTipoEdificio().equals(tipoParaEliminar)) {
                 edificios.remove(i);
                 eliminadosGlobal++;
             }
         }
 
         // Actualizar contadores en la casilla
-        switch (tipoVenta) {
+        switch (tipoVenta.toLowerCase()) {
             case "casas":
-                casilla.setNumCasas(disponibles - aVender); //Actualizar (casas disponibles - minimo de (disponibles, solicitadas))
+                solar.setNumCasas(disponibles - aVender); //Actualizar (casas disponibles - minimo de (disponibles, solicitadas))
                 break;
             case "hoteles":
-                casilla.setNumHoteles(disponibles - aVender);
+                solar.setNumHoteles(disponibles - aVender);
                 break;
             case "piscina":
-                casilla.setNumPiscinas(disponibles - aVender);
+                solar.setNumPiscinas(disponibles - aVender);
                 break;
             case "pista_deporte":
-                casilla.setNumPistasDeporte(disponibles - aVender);
+                solar.setNumPistas(disponibles - aVender);
                 break;
         }
 
@@ -1343,18 +1355,18 @@ public class Juego {
 
         // Estado restante
         int quedan;
-        switch (tipoVenta) {
+        switch (tipoVenta.toLowerCase()) {
             case "casas":
-                quedan = casilla.getNumCasas();
+                quedan = solar.getNumCasas();
                 break;
             case "hoteles":
-                quedan = casilla.getNumHoteles();
+                quedan = solar.getNumHoteles();
                 break;
             case "piscina":
-                quedan = casilla.getNumPiscinas();
+                quedan = solar.getNumPiscinas();
                 break;
             default:
-                quedan = casilla.getNumPistasDeporte();
+                quedan = solar.getNumPistas();
                 break;
         }
         System.out.printf("En la propiedad queda %d %s.\n", quedan, tipoParaEliminar);
