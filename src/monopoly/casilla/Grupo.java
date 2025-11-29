@@ -50,7 +50,7 @@ public class Grupo {
     /**
      * Verifica si un jugador tiene todas las propiedades del grupo.
      */
-    public boolean jugadorTieneGrupoCompleto(Jugador jugador) {
+    public boolean tieneTodoElGrupo(Jugador jugador) {
         for (Propiedad propiedad : propiedades) {
             if (!propiedad.perteneceAJugador(jugador)) {
                 return false;

@@ -26,6 +26,7 @@ import monopoly.edificio.Hotel;
 import monopoly.edificio.Piscina;
 import monopoly.edificio.PistaDeporte;
 import monopoly.carta.Carta;
+import monopoly.casilla.Grupo;
 
 import java.util.Scanner;
 import java.util.HashMap;
@@ -974,7 +975,7 @@ public class Juego {
         Casilla casillaActual = jugadorActual.getAvatar().getLugar();
 
         // Verificar que la casilla es un solar
-        if (!casillaActual.getTipo().equals("Solar")) {
+        if (!(casillaActual instanceof Solar)) {
             System.out.println("Solo se pueden construir edificios en solares.");
             return;
         }
@@ -986,31 +987,32 @@ public class Juego {
         }
 
         // Verificar que el jugador tiene todas las casillas del grupo
-        Grupo grupo = casillaActual.getGrupo();
-        boolean tieneTodoElGrupo = true;
-        for (Casilla casillaGrupo : grupo.getMiembros()) { //Para cada casilla del grupo
-            if (casillaGrupo.getDuenho() != jugadorActual) { //Si no es dueño de alguna casilla del grupo
-                tieneTodoElGrupo = false;
-                break;
-            }
+        Grupo grupo = null;
+        if (casillaActual instanceof Propiedad) {
+            grupo = ((Propiedad) casillaActual).getGrupo();
+        }
+        if (grupo == null) {
+            consola.imprimir("Esta casilla no pertenece a ningún grupo.");
+            return;
         }
 
         // Verificar si la casilla está hipotecada
-        if (casillaActual.isHipotecada()) {
+        if (casillaActual instanceof Propiedad && ((Propiedad) casillaActual).isHipotecada()) {
             System.out.println("No se puede edificar en " + casillaActual.getNombre() + " porque está hipotecada.");
             return;
         }
 
-        if (!tieneTodoElGrupo) {
+        if (!grupo.tieneTodoElGrupo(jugadorActual)) {
             System.out.println("No puedes edificar hasta que no seas dueño de todas las casillas del grupo " + grupo.getColorGrupo() + ".");
             return;
         }
 
         // Obtener contadores de edificios actuales
-        int casasEnCasilla = casillaActual.getNumCasas();
-        int hotelesEnCasilla = casillaActual.getNumHoteles();
-        int piscinasEnCasilla = casillaActual.getNumPiscinas();
-        int pistasEnCasilla = casillaActual.getNumPistasDeporte();
+        Solar solar =(Solar) casillaActual;
+        int casasEnCasilla = solar.getNumCasas();
+        int hotelesEnCasilla = solar.getNumHoteles();
+        int piscinasEnCasilla = solar.getNumPiscinas();
+        int pistasEnCasilla = solar.getNumPistas();
 
         // Verificar límites de construcción
         if (!puedeConstruir(tipoEdificio, casasEnCasilla, hotelesEnCasilla, piscinasEnCasilla, pistasEnCasilla, grupo, casillaActual)) {
@@ -1018,7 +1020,24 @@ public class Juego {
         }
 
         // Calcular coste del edificio
-        float coste = Edificio.calcularCoste(tipoEdificio, casillaActual);
+        float coste;
+        switch (tipoEdificio.toLowerCase()) {
+            case "casa":
+                coste = solar.getPrecioCasa();
+                break;
+            case "hotel":
+                coste = solar.getPrecioHotel();
+                break;
+            case "piscina":
+                coste = solar.getPrecioPiscina();
+                break;
+            case "pista_deporte":
+                coste = solar.getPrecioPistaDeporte();
+                break;
+            default:
+                consola.imprimir("Tipo de edificio desconocido: " + tipoEdificio);
+                return;
+        }
 
 
         // Verificar si tiene suficiente dinero
