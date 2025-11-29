@@ -1052,41 +1052,47 @@ public class Juego {
      * Construye el edificio y actualiza la fortuna del jugador
      */
     private void construirEdificio(Jugador jugador, Casilla casilla, String tipoEdificio, float coste) {
-        boolean construido = false;
+        if (!(casilla instanceof Solar)) {
+            System.out.println("Solo se pueden construir edificios en solares.");
+            return;
+        }
 
-        switch (tipoEdificio) {
+        Solar solar = (Solar) casilla;
+        boolean construido = false;
+        String tipo = tipoEdificio.toLowerCase();
+
+        switch (tipo) {
             case "casa":
-                construido = casilla.anhadirCasa();
+                construido = solar.anhadirCasa();
                 break;
             case "hotel":
-                // PARA HOTEL: Primero eliminar las casas existentes antes de construir
-                if (casilla.getNumCasas() == 4) {
-                    // ELIMINAR TODAS LAS CASAS DE ESTA CASILLA
-                    // Eliminar de la lista global de edificios (recorrer en orden inverso para evitar problemas de indices al eliminar)
+                // Para hotel: requerimos 4 casas previas
+                if (solar.getNumCasas() == 4) {
+                    // Eliminar las casas asociadas a este solar de la lista global
                     for (int i = edificios.size() - 1; i >= 0; i--) {
-                        Edificio edificio = edificios.get(i);
-                        if (edificio.getCasilla() == casilla && edificio.getTipo().equals("casa")) {
+                        Edificio e = edificios.get(i);
+                        if (e.getSolar() == solar && "casa".equalsIgnoreCase(e.getTipoEdificio())) {
                             edificios.remove(i);
                         }
                     }
-
-                    // Eliminar de la lista del jugador (recorrer en orden inverso para evitar problemas de indices al eliminar)
+                    // Eliminar las casas asociadas de la lista del jugador
                     ArrayList<Edificio> edificiosJugador = jugador.getEdificios();
                     for (int i = edificiosJugador.size() - 1; i >= 0; i--) {
-                        Edificio edificio = edificiosJugador.get(i);
-                        if (edificio.getCasilla() == casilla && edificio.getTipo().equals("casa")) {
+                        Edificio e = edificiosJugador.get(i);
+                        if (e.getSolar() == solar && "casa".equalsIgnoreCase(e.getTipoEdificio())) {
                             edificiosJugador.remove(i);
                         }
                     }
-
-                    construido = casilla.anhadirHotel();
+                    construido = solar.anhadirHotel();
+                } else {
+                    construido = false;
                 }
                 break;
             case "piscina":
-                construido = casilla.anhadirPiscina();
+                construido = solar.anhadirPiscina();
                 break;
             case "pista_deporte":
-                construido = casilla.anhadirPistaDeporte();
+                construido = solar.anhadirPistaDeporte();
                 break;
             default:
                 System.out.println("Tipo de edificio no reconocido: " + tipoEdificio);
@@ -1094,19 +1100,32 @@ public class Juego {
         }
 
         if (construido) {
-            // Restar el coste de la fortuna del jugador
+            // Restar el coste
             jugador.restarFortuna(coste);
             jugador.sumarDineroInvertido(coste);
 
+            // Crear instancia concreta del edificio
+            Edificio nuevoEdificio = null;
+            switch (tipo) {
+                case "casa":
+                    nuevoEdificio = new Casa(solar);
+                    break;
+                case "hotel":
+                    nuevoEdificio = new Hotel(solar);
+                    break;
+                case "piscina":
+                    nuevoEdificio = new Piscina(solar);
+                    break;
+                case "pista_deporte":
+                    nuevoEdificio = new PistaDeporte(solar);
+                    break;
+            }
 
-            // CREAR EL NUEVO OBJETO EDIFICIO
-            Edificio nuevoEdificio = new Edificio(tipoEdificio, casilla);
-
-            // Añadir el edificio al jugador
-            jugador.anhadirEdificio(nuevoEdificio);
-
-            // Añadir el edificio a la lista global de edificios
-            edificios.add(nuevoEdificio);
+            if (nuevoEdificio != null) {
+                // Añadir a jugador y a lista global
+                jugador.anhadirEdificio(nuevoEdificio);
+                edificios.add(nuevoEdificio);
+            }
 
             System.out.printf("Se ha edificado un %s en %s.\n", tipoEdificio, casilla.getNombre());
             System.out.printf("La fortuna de %s se reduce en %,.0f€.\n", jugador.getNombre(), coste);
