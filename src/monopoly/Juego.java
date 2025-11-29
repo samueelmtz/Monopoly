@@ -21,6 +21,7 @@ import monopoly.edificio.Casa;
 import monopoly.edificio.Hotel;
 import monopoly.edificio.Piscina;
 import monopoly.edificio.PistaDeporte;
+import monopoly.carta.Carta;
 
 import java.util.Scanner;
 import java.util.HashMap;
@@ -77,7 +78,6 @@ public class Juego {
 
         // Inicializar tablero y cartas
         tablero = new Tablero(banca);
-        inicializarCartas();
 
         // Inicializar dados
         dado1 = new Dado();
@@ -778,7 +778,7 @@ public class Juego {
 
     public void ejecutarCarta(Jugador jugador, String tipoCarta) {
         Carta carta = Carta.obtenerSiguienteCarta(tipoCarta);
-        carta.ejecutarAccion(jugador, this, tablero, banca);
+        carta.ejecutarAccion(jugador, tablero, jugadores, banca);
     }
 
 

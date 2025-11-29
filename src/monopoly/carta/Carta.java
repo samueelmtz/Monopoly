@@ -134,10 +134,10 @@ public abstract class Carta {
     public static Carta obtenerSiguienteCarta(String tipo) {
         if (tipo == null) throw new IllegalArgumentException("Tipo de carta nulo");
         if (tipo.equalsIgnoreCase("Suerte")) {
-            Suerte.inicializarMazo(); // garantiza inicialización si es necesario
+            Suerte.inicializarCartasSuerte(); // garantiza inicialización si es necesario
             return Suerte.sacarCarta();
         } else if (tipo.equalsIgnoreCase("Comunidad") || tipo.equalsIgnoreCase("CajaComunidad")) {
-            CajaComunidad.inicializarMazo();
+            CajaComunidad.inicializarCartasComunidad();
             return CajaComunidad.sacarCarta();
         } else {
             throw new IllegalArgumentException("Tipo de carta desconocido: " + tipo);

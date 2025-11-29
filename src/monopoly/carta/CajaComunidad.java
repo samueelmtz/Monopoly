@@ -15,7 +15,7 @@ public class CajaComunidad extends Carta {
     }
 
     // Método para inicializar el mazo (debe llamarse una vez al inicio del juego)
-    public static void inicializarMazo() {
+    public static void inicializarCartasComunidad() {
         if (!mazoInicializado) {
             mazoCartas = new ArrayList<>();
 
@@ -36,12 +36,12 @@ public class CajaComunidad extends Carta {
     // Método para sacar una carta del mazo
     public static CajaComunidad sacarCarta() {
         if (!mazoInicializado) {
-            inicializarMazo();
+            inicializarCartasComunidad();
         }
 
         if (mazoCartas.isEmpty()) {
             // Si el mazo está vacío, reinicializar
-            inicializarMazo();
+            inicializarCartasComunidad();
         }
 
         CajaComunidad carta = mazoCartas.remove(0);
