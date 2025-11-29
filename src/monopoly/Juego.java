@@ -3,8 +3,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
-import monopoly.interfaces.comando;
-import monopoly.interfaces.consola;
+import monopoly.interfaces.Comandos;
+import monopoly.interfaces.Consola;
 import monopoly.interfaces.ConsolaNormal;
 import partida.Jugador;
 import partida.Avatar;
@@ -47,7 +47,7 @@ public class Juego {
     private ArrayList<Carta> cartasComunidad;
     private int contadorSuerte;
     private int contadorComunidad;
-    public consola consola;
+    public Consola consola;
 
     // Constructor
     public Juego() {
@@ -1310,8 +1310,8 @@ public class Juego {
     }
 
     /**
- * Método para hipotecar una propiedad
- */
+     * Método para hipotecar una propiedad
+     */
     private void hipotecarPropiedad(String nombreCasilla) {
         Jugador jugadorActual = jugadores.get(turno);
         Casilla casilla = tablero.encontrar_casilla(nombreCasilla);
@@ -1398,13 +1398,3 @@ public class Juego {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-

@@ -10,3 +10,4 @@ public interface Consola {
         imprimir(mensaje);
     }
 }
+
