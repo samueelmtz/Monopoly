@@ -11,6 +11,8 @@ import partida.Jugador;
 import partida.Avatar;
 import partida.Dado;
 import monopoly.casilla.Casilla;
+import monopoly.casilla.Accion;
+import monopoly.casilla.Impuesto;
 import monopoly.casilla.Propiedad;
 import monopoly.casilla.propiedad.Solar;
 import monopoly.casilla.propiedad.Transporte;
@@ -495,15 +497,17 @@ public class Juego {
         solvente = casillaActual.evaluarCasilla(actual, banca, suma);
 
 
-        // En el manejo de cartas:
-        if (casillaActual.getTipo().equals("Suerte") || casillaActual.getTipo().equals("Comunidad")) {
-            ejecutarCarta(actual, casillaActual.getTipo());
+        // Para verificar si es una casilla de Suerte o Comunidad
+        if (casillaActual instanceof Accion) {
+            Accion accion = (Accion) casillaActual;
+            if (accion.getTipoAccion().equals("Suerte") || accion.getTipoAccion().equals("Comunidad")) {
+                ejecutarCarta(actual, accion.getTipoAccion());
+            }
         }
 
-
-        // MANEJO ESPECIAL PARA CASILLAS DE IMPUESTOS
-        if (casillaActual.getTipo().equals("Impuesto") && solvente) {
-            float impuesto = casillaActual.getImpuesto();
+        // Para obtener el impuesto de una casilla
+        if (casillaActual instanceof Impuesto && solvente) {
+            float impuesto = ((Impuesto) casillaActual).getCantidadImpuesto();
 
             // El dinero ya se restó en evaluarCasilla, pero fue a la banca
             // Lo quitamos de la banca y lo ponemos en el bote
@@ -551,9 +555,13 @@ public class Juego {
         Casilla casilla = tablero.encontrar_casilla(nombre);
 
         if (casilla != null) {
-            casilla.comprarCasilla(jugadorActual, banca);
+            if (casilla instanceof Propiedad) {
+                ((Propiedad) casilla).comprarCasilla(jugadorActual, banca);
+            } else {
+                consola.imprimir("No se puede comprar esta casilla: " + nombre);
+            }
         } else {
-            System.out.println("No se pudo comprar la casilla " + nombre);
+            consola.imprimir("No se pudo encontrar la casilla: " + nombre);
         }
     }
 
