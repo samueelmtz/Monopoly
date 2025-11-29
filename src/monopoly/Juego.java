@@ -3,12 +3,27 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
+import monopoly.interfaces.comando;
+import monopoly.interfaces.consola;
+import partida.Jugador;
+import partida.Avatar;
+import partida.Dado;
 import monopoly.casilla.Casilla;
-import monopoly.carta.Carta;
+import monopoly.casilla.propiedad.Solar;
+import monopoly.casilla.propiedad.Transporte;
+import monopoly.casilla.propiedad.Servicio;
+import monopoly.casilla.accion.CajaComunidad;
+import monopoly.casilla.accion.Parking;
+import monopoly.casilla.accion.Suerte;
 import monopoly.edificio.Edificio;
-import partida.*;
+import monopoly.edificio.Casa;
+import monopoly.edificio.Hotel;
+import monopoly.edificio.Piscina;
+import monopoly.edificio.PistaDeporte;
+
 import java.util.Scanner;
 import java.util.HashMap;
+
 
 public class Juego {
 
