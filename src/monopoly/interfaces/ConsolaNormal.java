@@ -1,21 +1,23 @@
+// monopoly/interfaces/ConsolaNormal.java
 package monopoly.interfaces;
+
 import java.util.Scanner;
 
-public class ConsolaNormal implements consola{
+public class ConsolaNormal implements consola {
     private Scanner scanner;
 
-    public ConsolaNormal(){
+    public ConsolaNormal() {
         this.scanner = new Scanner(System.in);
     }
 
     @Override
-    public void imprimir(String mensaje){
+    public void imprimir(String mensaje) {
         System.out.println(mensaje);
     }
 
     @Override
-    public String leer(String mensaje){
-        System.out.println(mensaje);
+    public String leer(String descripcion) {
+        System.out.print(descripcion);
         return scanner.nextLine();
     }
 }

@@ -474,7 +474,7 @@ public class Juego {
 
         consola.imprimir("Has lanzado los dados: " + valorDado1 + " y " + valorDado2 + ". Total: " + suma);
 
-        System.out.println("El avatar " + actual.getAvatar().getId() + " avanza " + (valorDado1 + valorDado2) + " posiciones");
+        consola.imprimir("El avatar " + actual.getAvatar().getId() + " avanza " + (valorDado1 + valorDado2) + " posiciones");
         actual.getAvatar().moverAvatar(tablero.getPosiciones(), valorDado1 + valorDado2);
 
         // NO establecer tirado = true aquí cuando hay dados dobles
@@ -504,30 +504,30 @@ public class Juego {
             actual.restarFortuna(impuesto);
             tablero.añadirAlBote(impuesto);
 
-            System.out.printf("Se han transferido %,.0f€ del impuesto al bote del Parking\n", impuesto);
+            consola.imprimir("Se han transferido %,.0f€ del impuesto al bote del Parking\n", impuesto);
         }
 
         // MANEJO ESPECIAL PARA PARKING DESPUÉS DE EVALUAR
         if (casillaActual.getNombre().equals("Parking")) {
             float boteGanado = tablero.reclamarBote(actual);
             if (boteGanado > 0) {
-                System.out.printf("Fortuna actual de %s: %,.0f€\n", actual.getNombre(), actual.getFortuna());
+                consola.imprimir("Fortuna actual de %s: %,.0f€\n", actual.getNombre(), actual.getFortuna());
             }
         }
 
         // MANEJO ESPECIAL PARA IRCARCEL DESPUÉS DE EVALUAR
         if (casillaActual.getNombre().equals("IrCarcel")) {
-            System.out.println("¡Has caído en Ir a la Cárcel! Moviendo a la cárcel...");
+            consola.imprimir("¡Has caído en Ir a la Cárcel! Moviendo a la cárcel...");
             actual.encarcelar(tablero.getPosiciones());
         }
 
         if (valorDado1 == valorDado2) {
             if (lanzamientos == 3) {
-                System.out.println("Tercer doble consecutivo. El avatar va a la cárcel.");
+                consola.imprimir("Tercer doble consecutivo. El avatar va a la cárcel.");
                 actual.encarcelar(tablero.getPosiciones());
                 tirado = true; // Terminar turno después de ir a la cárcel
             } else {
-                System.out.println("Dados dobles. Puedes lanzar de nuevo.");
+                consola.imprimir("Dados dobles. Puedes lanzar de nuevo.");
                 // NO establecer tirado = true para permitir otro lanzamiento
             }
         } else {
@@ -547,7 +547,7 @@ public class Juego {
         if (casilla != null) {
             casilla.comprarCasilla(jugadorActual, banca);
         } else {
-            System.out.println("No se pudo comprar la casilla " + nombre);
+            consola.imprimir("No se pudo comprar la casilla " + nombre);
         }
     }
 
@@ -556,15 +556,15 @@ public class Juego {
     private void salirCarcel() {
         Jugador jugadorActual = jugadores.get(turno);
         if (jugadorActual.salirDeCarcel()) {
-            System.out.println(jugadorActual.getNombre() + " paga 500.000€ y sale de la cárcel. Puede lanzar los datos.");
+            consola.imprimir(jugadorActual.getNombre() + " paga 500.000€ y sale de la cárcel. Puede lanzar los datos.");
         } else {
-            System.out.println("No se pudo salir de la cárcel. Asegúrate de que estás en la cárcel y tienes suficiente dinero.");
+            consola.imprimir("No se pudo salir de la cárcel. Asegúrate de que estás en la cárcel y tienes suficiente dinero.");
         }
     }
 
     // Método que realiza las acciones asociadas al comando 'listar enventa'.
     private void listarVenta() {
-        System.out.println("Propiedades en venta:");
+        consola.imprimir("Propiedades en venta:");
 
         boolean hayPropiedadesEnVenta = false;
 
@@ -580,7 +580,7 @@ public class Juego {
         }
 
         if (!hayPropiedadesEnVenta) {
-            System.out.println("No hay propiedades en venta en este momento.");
+            consola.imprimir("No hay propiedades en venta en este momento.");
         }
     }
 
@@ -588,52 +588,52 @@ public class Juego {
     // Método que realiza las acciones asociadas al comando 'listar jugadores'.
     private void listarJugadores() {
         for (Jugador jugador : jugadores) {
-            System.out.println("{");
-            System.out.println("    nombre: " + jugador.getNombre() + ",");
-            System.out.println("    avatar: " + jugador.getAvatar().getId() + ",");
-            System.out.println("    fortuna: " + String.format("%,.0f", jugador.getFortuna()) + ",");
+            consola.imprimir("{");
+            consola.imprimir("    nombre: " + jugador.getNombre() + ",");
+            consola.imprimir("    avatar: " + jugador.getAvatar().getId() + ",");
+            consola.imprimir("    fortuna: " + String.format("%,.0f", jugador.getFortuna()) + ",");
 
             // Propiedades
-            System.out.print("    propiedades: [");
+            consola.leer("    propiedades: [");
             ArrayList<Casilla> propiedades = jugador.getPropiedades();
             for (int i = 0; i < propiedades.size(); i++) {
-                System.out.print(propiedades.get(i).getNombre());
+                consola.leer(propiedades.get(i).getNombre());
                 if (i < propiedades.size() - 1) {
-                    System.out.print(", ");
+                    consola.leer(", ");
                 }
             }
-            System.out.println("],");
+            consola.imprimir("],");
 
             // Edificios
-            System.out.print("    edificios: [");
+            consola.leer("    edificios: [");
             ArrayList<Edificio> edificiosJugador = jugador.getEdificios();
             for (int i = 0; i < edificiosJugador.size(); i++) {
                 Edificio edificio = edificiosJugador.get(i);
-                System.out.print(edificio.getId() + "(" + edificio.getCasilla().getNombre() + ")");
+                consola.leer(edificio.getId() + "(" + edificio.getCasilla().getNombre() + ")");
                 if (i < edificiosJugador.size() - 1) {
-                    System.out.print(", ");
+                    consola.leer(", ");
                 }
             }
-            System.out.println("],");
+            consola.imprimir("],");
 
             // Hipotecas
-            System.out.print("    hipotecas: [");
+            consola.leer("    hipotecas: [");
             boolean primeraHipoteca = true;
             for (Casilla propiedad : propiedades) {
                 if (propiedad.isHipotecada()) {
                     if (!primeraHipoteca) {
-                        System.out.print(", ");
+                        consola.leer(", ");
                     }
-                    System.out.print(propiedad.getNombre());
+                    consola.leer(propiedad.getNombre());
                     primeraHipoteca = false;
                 }
             }
             if (primeraHipoteca) {
-                System.out.print("-");
+                consola.leer("-");
             }
-            System.out.println("]");
+            consola.imprimir("]");
 
-            System.out.println("}");
+            consola.imprimir("}");
         }
     }
 
@@ -645,14 +645,14 @@ public class Juego {
     //Método que realiza las acciones asociadas al comando 'listar edificios'
     private void listarEdificios(String colorGrupo) {
         if(edificios.isEmpty()) {
-            System.out.println("No hay edificios en este momento.");
+            consola.imprimir("No hay edificios en este momento.");
         }
         // Mostrar todos los edificios si no se especifica un grupo
         if(colorGrupo == null) {
             for (int i = 0; i < edificios.size(); i++) {
                 Edificio edificio = edificios.get(i);
                 String info = edificio.infoEdificio();
-                System.out.println(info);
+                consola.imprimir(info);
             }
         }
 
@@ -667,16 +667,16 @@ public class Juego {
             }
 
             if (edificiosFiltrados.isEmpty()) {
-                System.out.println("No hay edificios en el grupo " + colorGrupo + ".");
+                consola.imprimir("No hay edificios en el grupo " + colorGrupo + ".");
                 return;
             }
 
             // Mostrar los edificios filtrados
-            System.out.println("{");
+            consola.imprimir("{");
             for (int i = 0; i < edificiosFiltrados.size(); i++) {
                 Edificio edificio = edificiosFiltrados.get(i);
                 String info = edificio.infoEdificio();
-                System.out.println(info);
+                consola.imprimir(info);
             }
         }
     }
@@ -693,22 +693,22 @@ public class Juego {
         turno = (turno + 1) % jugadores.size();
 
         Jugador siguienteJugador = jugadores.get(turno);
-        System.out.println("El jugador actual es " + siguienteJugador.getNombre() + ".");
+        consola.imprimir("El jugador actual es " + siguienteJugador.getNombre() + ".");
     }
 
     private void crearJugador(String nombre, String tipoAvatar) {
         // Validar primero el tipo de avatar
         String tipoValidado = validarTipoAvatar(tipoAvatar);
         if (tipoValidado == null) {
-            System.out.println("Error: '" + tipoAvatar + "' no es un avatar permitido.");
-            System.out.println("Avatares válidos: sombrero, esfinge, pelota, coche");
+            consola.imprimir("Error: '" + tipoAvatar + "' no es un avatar permitido.");
+            consola.imprimir("Avatares válidos: sombrero, esfinge, pelota, coche");
             return;
         }
 
         // Verificar si el jugador ya existe
         for (Jugador jugador : jugadores) {
             if (jugador.getNombre().equalsIgnoreCase(nombre)) {
-                System.out.println("Error: Ya existe un jugador con el nombre '" + nombre + "'");
+                consola.imprimir("Error: Ya existe un jugador con el nombre '" + nombre + "'");
                 return;
             }
         }
@@ -716,7 +716,7 @@ public class Juego {
         // Encontrar la casilla de salida
         Casilla salida = tablero.encontrar_casilla("Salida");
         if (salida == null) {
-            System.out.println("Error: No se pudo encontrar la casilla de Salida");
+            consola.imprimir("Error: No se pudo encontrar la casilla de Salida"
             return;
         }
 
@@ -726,16 +726,16 @@ public class Juego {
             jugadores.add(nuevoJugador);
 
             // Mostrar la información como en el PDF
-            System.out.println("{");
-            System.out.println("    nombre: " + nombre + ",");
-            System.out.println("    avatar: " + nuevoJugador.getAvatar().getId());
-            System.out.println("}");
+            consola.imprimir("{");
+            consola.imprimir("    nombre: " + nombre + ",");
+            consola.imprimir("    avatar: " + nuevoJugador.getAvatar().getId());
+            consola.imprimir("}");
 
             // Mostrar el tablero actualizado
             tablero.toString();
 
         } catch (Exception e) {
-            System.out.println("Error al crear el jugador: " + e.getMessage());
+            consola.imprimir("Error al crear el jugador: " + e.getMessage());
         }
     }
 
@@ -757,7 +757,7 @@ public class Juego {
     // Método auxiliar que permite ver de quien es turno
     public void turnoJugador() {
         if (jugadores == null || jugadores.isEmpty()) {
-            System.out.println("No hay jugadores creados.");
+            consola.imprimir("No hay jugadores creados.");
             return;
         }
 
@@ -767,11 +767,11 @@ public class Juego {
             avatarId = actual.getAvatar().getId();
         }
 
-        System.out.println("> jugador");
-        System.out.println("{");
-        System.out.println("nombre: " + actual.getNombre() + ",");
-        System.out.println("avatar: " + avatarId);
-        System.out.println("}");
+        consola.imprimir("> jugador");
+        consola.imprimir("{");
+        consola.imprimir("nombre: " + actual.getNombre() + ",");
+        consola.imprimir("avatar: " + avatarId);
+        consola.imprimir("}");
     }
 
 
@@ -786,43 +786,43 @@ public class Juego {
     private void mostrarEstadisticas(String nombreJugador) {
         for (Jugador jugador : jugadores) {
             if (jugador.getNombre().equalsIgnoreCase(nombreJugador)) {
-                System.out.println("$> estadisticas " + nombreJugador);
-                System.out.println("{");
-                System.out.println("  dineroInvertido: " + String.format("%,.0f", jugador.getDineroInvertido()) + ",");
-                System.out.println("  pagoTasasEImpuestos: " + String.format("%,.0f", jugador.getPagoTasasEImpuestos()) + ",");
-                System.out.println("  pagoDeAlquileres: " + String.format("%,.0f", jugador.getPagoDeAlquileres()) + ",");
-                System.out.println("  cobroDeAlquileres: " + String.format("%,.0f", jugador.getCobroDeAlquileres()) + ",");
-                System.out.println("  pasarPorCasillaDeSalida: " + String.format("%,.0f", jugador.getPasarPorCasillaDeSalida()) + ",");
-                System.out.println("  premiosInversionesOBote: " + String.format("%,.0f", jugador.getPremiosInversionesBote()) + ",");
-                System.out.println("  vecesEnLaCarcel: " + jugador.getVecesEnCarcel());
-                System.out.println("}");
+                consola.imprimir("$> estadisticas " + nombreJugador);
+                consola.imprimir("{");
+                consola.imprimir("  dineroInvertido: " + String.format("%,.0f", jugador.getDineroInvertido()) + ",");
+                consola.imprimir("  pagoTasasEImpuestos: " + String.format("%,.0f", jugador.getPagoTasasEImpuestos()) + ",");
+                consola.imprimir("  pagoDeAlquileres: " + String.format("%,.0f", jugador.getPagoDeAlquileres()) + ",");
+                consola.imprimir("  cobroDeAlquileres: " + String.format("%,.0f", jugador.getCobroDeAlquileres()) + ",");
+                consola.imprimir("  pasarPorCasillaDeSalida: " + String.format("%,.0f", jugador.getPasarPorCasillaDeSalida()) + ",");
+                consola.imprimir("  premiosInversionesOBote: " + String.format("%,.0f", jugador.getPremiosInversionesBote()) + ",");
+                consola.imprimir("  vecesEnLaCarcel: " + jugador.getVecesEnCarcel());
+                consola.imprimir("}");
                 return;
             }
         }
-        System.out.println("Jugador no encontrado: " + nombreJugador);
+        consola.imprimir("Jugador no encontrado: " + nombreJugador);
     }
 
     //Mostrar las estadísticas generales
     private void mostrarEstadisticasJuego() {
-        System.out.println("$> estadisticas");
-        System.out.println("{");
+        consola.imprimir("$> estadisticas");
+        consola.imprimir("{");
 
         String casillaMasRentable = calcularCasillaMasRentable();
-        System.out.println("casillaMasRentable: " + casillaMasRentable + ",");
+        consola.imprimir("casillaMasRentable: " + casillaMasRentable + ",");
 
         String grupoMasRentable = calcularGrupoMasRentable();
-        System.out.println("grupoMasRentable: " + grupoMasRentable + ",");
+        consola.imprimir("grupoMasRentable: " + grupoMasRentable + ",");
 
         String casillaMasFrecuentada = calcularCasillaMasFrecuentada();
-        System.out.println("casillaMasFrecuentada: " + casillaMasFrecuentada + ",");
+        consola.imprimir("casillaMasFrecuentada: " + casillaMasFrecuentada + ",");
 
         String jugadorMasVueltas = calcularJugadorMasVueltas();
-        System.out.println("jugadorMasVueltas: " + jugadorMasVueltas + ",");
+        consola.imprimir("jugadorMasVueltas: " + jugadorMasVueltas + ",");
 
         String jugadorEnCabeza = calcularJugadorEnCabeza();
-        System.out.println("jugadorEnCabeza: " + jugadorEnCabeza);
+        consola.imprimir("jugadorEnCabeza: " + jugadorEnCabeza);
 
-        System.out.println("}");
+        consola.imprimir("}");
     }
 
     private String calcularCasillaMasRentable() {
@@ -961,13 +961,13 @@ public class Juego {
 
         // Verificar que la casilla es un solar
         if (!casillaActual.getTipo().equals("Solar")) {
-            System.out.println("Solo se pueden construir edificios en solares.");
+            consola.imprimir("Solo se pueden construir edificios en solares.");
             return;
         }
 
         // Verificar que el jugador es dueño de la casilla
         if (casillaActual.getDuenho() != jugadorActual) {
-            System.out.println("No eres el dueño de esta casilla.");
+            consola.imprimir("No eres el dueño de esta casilla.");
             return;
         }
 
@@ -983,12 +983,12 @@ public class Juego {
 
         // Verificar si la casilla está hipotecada
         if (casillaActual.isHipotecada()) {
-            System.out.println("No se puede edificar en " + casillaActual.getNombre() + " porque está hipotecada.");
+            consola.imprimir("No se puede edificar en " + casillaActual.getNombre() + " porque está hipotecada.");
             return;
         }
 
         if (!tieneTodoElGrupo) {
-            System.out.println("No puedes edificar hasta que no seas dueño de todas las casillas del grupo " + grupo.getColorGrupo() + ".");
+            consola.imprimir("No puedes edificar hasta que no seas dueño de todas las casillas del grupo " + grupo.getColorGrupo() + ".");
             return;
         }
 
@@ -1009,7 +1009,7 @@ public class Juego {
 
         // Verificar si tiene suficiente dinero
         if (jugadorActual.getFortuna() < coste) {
-            System.out.printf("La fortuna de %s no es suficiente...\n", jugadorActual.getNombre(), tipoEdificio, casillaActual.getNombre());
+            consola.imprimir(String.format("La fortuna de %s no es suficiente...\n", jugadorActual.getNombre()));
             return;
         }
         // Construir (el Edificio calculará el mismo coste internamente)
@@ -1057,7 +1057,7 @@ public class Juego {
                 construido = casilla.anhadirPistaDeporte();
                 break;
             default:
-                System.out.println("Tipo de edificio no reconocido: " + tipoEdificio);
+                consola.imprimir("Tipo de edificio no reconocido: " + tipoEdificio);
                 return;
         }
 
@@ -1076,14 +1076,14 @@ public class Juego {
             // Añadir el edificio a la lista global de edificios
             edificios.add(nuevoEdificio);
 
-            System.out.printf("Se ha edificado un %s en %s.\n", tipoEdificio, casilla.getNombre());
-            System.out.printf("La fortuna de %s se reduce en %,.0f€.\n", jugador.getNombre(), coste);
-            System.out.printf("Fortuna actual: %,.0f€\n", jugador.getFortuna());
+            consola.imprimir(String.format("Se ha edificado un %s en %s.\n", tipoEdificio, casilla.getNombre()));
+            consola.imprimir(String.format("La fortuna de %s se reduce en %,.0f€.\n", jugador.getNombre(), coste));
+            consola.imprimir(String.format("Fortuna actual: %,.0f€\n", jugador.getFortuna()));
 
             // Mostrar estado actual de edificios en la casilla
             mostrarEstadoEdificios(casilla);
         } else {
-            System.out.println("Error: No se pudo construir el " + tipoEdificio + " en " + casilla.getNombre());
+            consola.imprimir("Error: No se pudo construir el " + tipoEdificio + " en " + casilla.getNombre());
         }
     }
 
@@ -1092,7 +1092,7 @@ public class Juego {
      */
 
     private void mostrarEstadoEdificios(Casilla casilla) {
-        System.out.printf("Edificios en %s: %d casas, %d hoteles, %d piscinas, %d pistas de deporte\n", casilla.getNombre(), casilla.getNumCasas(), casilla.getNumHoteles(), casilla.getNumPiscinas(), casilla.getNumPistasDeporte());
+        consola.imprimir(String.format("Edificios en %s: %d casas, %d hoteles, %d piscinas, %d pistas de deporte\n", casilla.getNombre(), casilla.getNumCasas(), casilla.getNumHoteles(), casilla.getNumPiscinas(), casilla.getNumPistasDeporte()));
     }
 
     /**
@@ -1102,50 +1102,50 @@ public class Juego {
         switch (tipoEdificio) {
             case "casa":
                 if (casas >= 4) {
-                    System.out.println("No se pueden construir más de 4 casas por casilla.");
+                    consola.imprimir("No se pueden construir más de 4 casas por casilla.");
                     return false;
                 }
                 if (hoteles > 0) {
-                    System.out.println("No se pueden construir casas cuando hay un hotel.");
+                    consola.imprimir("No se pueden construir casas cuando hay un hotel.");
                     return false;
                 }
                 break;
 
             case "hotel":
                 if (hoteles >= 1) {
-                    System.out.println("No se pueden construir más de 1 hotel por casilla.");
+                    consola.imprimir("No se pueden construir más de 1 hotel por casilla.");
                     return false;
                 }
                 if (casas < 4) {
-                    System.out.println("Se necesitan 4 casas para construir un hotel.");
+                    consola.imprimir("Se necesitan 4 casas para construir un hotel.");
                     return false;
                 }
                 break;
 
             case "piscina":
                 if (piscinas >= 1) {
-                    System.out.println("No se pueden construir más de 1 piscina por casilla.");
+                    consola.imprimir("No se pueden construir más de 1 piscina por casilla.");
                     return false;
                 }
                 if (hoteles < 1) {
-                    System.out.println("No se puede edificar una piscina, ya que no se dispone de un hotel.");
+                    consola.imprimir("No se puede edificar una piscina, ya que no se dispone de un hotel.");
                     return false;
                 }
                 break;
 
             case "pista_deporte":
                 if (pistas >= 1) {
-                    System.out.println("No se pueden construir más de 1 pista de deporte por casilla.");
+                    consola.imprimir("No se pueden construir más de 1 pista de deporte por casilla.");
                     return false;
                 }
                 if (hoteles < 1) {
-                    System.out.println("No se puede edificar una pista de deporte, ya que no se dispone de un hotel.");
+                    consola.imprimir("No se puede edificar una pista de deporte, ya que no se dispone de un hotel.");
                     return false;
                 }
                 break;
 
             default:
-                System.out.println("Tipo de edificio no reconocido: " + tipoEdificio);
+                consola.imprimir("Tipo de edificio no reconocido: " + tipoEdificio);
                 return false;
         }
 
@@ -1162,7 +1162,7 @@ public class Juego {
         }
 
         if (hayEdificiosEnGrupo) {
-            System.out.println("No se puede edificar ningún edificio más en esta casilla ni en el grupo al que la casilla pertenece porque ya hay un edificio en este grupo.");
+            consola.imprimir("No se puede edificar ningún edificio más en esta casilla ni en el grupo al que la casilla pertenece porque ya hay un edificio en este grupo.");
             return false;
         }
 
@@ -1176,32 +1176,32 @@ public class Juego {
 
         // La cantidad a vender debe ser positiva
         if (cantidadSolicitada <= 0) {
-            System.out.println("La cantidad a vender debe ser positiva.");
+            consola.imprimir("La cantidad a vender debe ser positiva.");
             return;
         }
 
         // Solo se aceptan tipos de edificio válidos
         if (!(tipoVenta.equals("casas") || tipoVenta.equals("hoteles") || tipoVenta.equals("piscina") || tipoVenta.equals("pista_deporte"))) {
-            System.out.println("Tipo de edificio no reconocido para vender: " + tipoVenta);
+            consola.imprimir("Tipo de edificio no reconocido para vender: " + tipoVenta);
             return;
         }
 
         // Encontrar la casilla por nombre
         Casilla casilla = tablero.encontrar_casilla(nombreCasilla);
         if (casilla == null) {
-            System.out.println("Casilla no encontrada: " + nombreCasilla);
+            consola.imprimir("Casilla no encontrada: " + nombreCasilla);
             return;
         }
 
         // Debe ser un solar para tener edificios
         if (!casilla.getTipo().equals("Solar")) {
-            System.out.println("Solo se pueden vender edificios en solares.");
+            consola.imprimir("Solo se pueden vender edificios en solares.");
             return;
         }
 
         // Comprobar propiedad
         if (casilla.getDuenho() != jugadorActual) {
-            System.out.println("Esta propiedad no pertenece a " + jugadorActual.getNombre() + ".");
+            consola.imprimir("Esta propiedad no pertenece a " + jugadorActual.getNombre() + ".");
             return;
         }
 
@@ -1237,7 +1237,7 @@ public class Juego {
 
         //Si no hay edificios disponibles
         if (disponibles == 0) {
-            System.out.println("No hay " + tipoParaEliminar + " para vender en " + casilla.getNombre() + ".");
+            consola.imprimir("No hay " + tipoParaEliminar + " para vender en " + casilla.getNombre() + ".");
             return;
         }
 
@@ -1288,7 +1288,7 @@ public class Juego {
         jugadorActual.sumarFortuna(ingreso);
 
         // Mostrar resultado de la venta
-        System.out.printf("%s ha recibido %,.0f€ por vender %d %s de %s.\n", jugadorActual.getNombre(), ingreso, aVender, tipoParaEliminar, casilla.getNombre());
+        consola.imprimir(String.format("%s ha recibido %,.0f€ por vender %d %s de %s.", jugadorActual.getNombre(), ingreso, aVender, tipoParaEliminar, casilla.getNombre()));
 
         // Estado restante
         int quedan;
@@ -1306,7 +1306,7 @@ public class Juego {
                 quedan = casilla.getNumPistasDeporte();
                 break;
         }
-        System.out.printf("En la propiedad queda %d %s.\n", quedan, tipoParaEliminar);
+        consola.imprimir(String.format("En la propiedad queda %d %s.", quedan, tipoParaEliminar));
     }
 
     /**
@@ -1317,7 +1317,7 @@ public class Juego {
         Casilla casilla = tablero.encontrar_casilla(nombreCasilla);
 
         if (casilla == null) {
-            System.out.println("Casilla no encontrada: " + nombreCasilla);
+            consola.imprimir("Casilla no encontrada: " + nombreCasilla);
             return;
         }
 
@@ -1333,21 +1333,21 @@ public class Juego {
             float valorHipoteca = casilla.getValorHipoteca();
             jugadorActual.sumarFortuna(valorHipoteca);
 
-            System.out.printf("%s recibe %,.0f€ por la hipoteca de %s. ",
-                    jugadorActual.getNombre(), valorHipoteca, nombreCasilla);
+            consola.imprimir(String.format("%s recibe %,.0f€ por la hipoteca de %s. ",
+                    jugadorActual.getNombre(), valorHipoteca, nombreCasilla));
 
             // Mostrar información adicional sobre restricciones
             if (casilla.getGrupo() != null) {
-                System.out.println("No puede recibir alquileres ni edificar en el grupo " +
+                consola.imprimir("No puede recibir alquileres ni edificar en el grupo " +
                         casilla.getGrupo().getColorGrupo() + ".");
             } else {
-                System.out.println("No puede recibir alquileres de esta propiedad.");
+                consola.imprimir("No puede recibir alquileres de esta propiedad.");
             }
 
-            System.out.printf("Fortuna actual de %s: %,.0f€\n",
+            consola.imprimir("Fortuna actual de %s: %,.0f€\n",
                     jugadorActual.getNombre(), jugadorActual.getFortuna());
         } else {
-            System.out.println("No se pudo hipotecar " + nombreCasilla);
+            consola.imprimir("No se pudo hipotecar " + nombreCasilla);
         }
     }
 
@@ -1356,19 +1356,19 @@ public class Juego {
         Casilla casilla = tablero.encontrar_casilla(nombreCasilla);
 
         if (casilla == null) {
-            System.out.println("Casilla no encontrada: " + nombreCasilla);
+            consola.imprimir("Casilla no encontrada: " + nombreCasilla);
             return;
         }
 
         // Verificar que el jugador es el dueño
         if (casilla.getDuenho() != jugadorActual) {
-            System.out.println("Esta propiedad no pertenece a " + jugadorActual.getNombre() + ".");
+            consola.imprimir("Esta propiedad no pertenece a " + jugadorActual.getNombre() + ".");
             return;
         }
 
         // Verificar que la propiedad está hipotecada
         if (!casilla.isHipotecada()) {
-            System.out.println("La propiedad " + nombreCasilla + " no está hipotecada.");
+            consola.imprimir("La propiedad " + nombreCasilla + " no está hipotecada.");
             return;
         }
 
@@ -1377,8 +1377,8 @@ public class Juego {
 
         // Verificar si tiene suficiente dinero
         if (jugadorActual.getFortuna() < costeDeshipoteca) {
-            System.out.printf("No tienes suficiente dinero para deshipotecar. Necesitas %,.0f€ pero tienes %,.0f€\n",
-                    costeDeshipoteca, jugadorActual.getFortuna());
+            consola.imprimir(String.format("No tienes suficiente dinero para deshipotecar. Necesitas %,.0f€ pero tienes %,.0f€",
+                    costeDeshipoteca, jugadorActual.getFortuna()));
             return;
         }
 
@@ -1387,14 +1387,14 @@ public class Juego {
             jugadorActual.restarFortuna(costeDeshipoteca);
             jugadorActual.sumarPagoTasasEImpuestos(costeDeshipoteca);
 
-            System.out.printf("%s ha deshipotecado %s por %,.0f€.\n",
-                    jugadorActual.getNombre(), nombreCasilla, costeDeshipoteca);
-            System.out.println("La propiedad puede volver a recibir alquileres y edificarse.");
+            consola.imprimir(String.format("%s ha deshipotecado %s por %,.0f€.",
+                    jugadorActual.getNombre(), nombreCasilla, costeDeshipoteca));
+            consola.imprimir("La propiedad puede volver a recibir alquileres y edificarse.");
 
-            System.out.printf("Fortuna actual de %s: %,.0f€\n",
+            consola.imprimir("Fortuna actual de %s: %,.0f€\n",
                     jugadorActual.getNombre(), jugadorActual.getFortuna());
         } else {
-            System.out.println("No se pudo deshipotecar " + nombreCasilla);
+            consola.imprimir("No se pudo deshipotecar " + nombreCasilla);
         }
     }
 }
