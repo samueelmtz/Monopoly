@@ -50,11 +50,19 @@ public abstract class Casilla {
 
     public void casEnVenta() {
         if(this.getDuenho() == null || this.getDuenho().getNombre().equals("Banca")){
-            consola.imprimir("{");
-            consola.imprimir("    tipo: " + this.getClass().getSimpleName() + ",");
-            consola.imprimir("    nombre: " + this.getNombre() + ",");
-            consola.imprimir("    valor: " + String.format("%,.0f", this.getValor()) + "€");
-            consola.imprimir("}");
+            try {
+                double valor = (double) this.getClass().getMethod("getValor").invoke(this);
+                consola.imprimir("{");
+                consola.imprimir("    tipo: " + this.getClass().getSimpleName() + ",");
+                consola.imprimir("    nombre: " + this.getNombre() + ",");
+                consola.imprimir("    valor: " + String.format("%,.0f", valor) + "€");
+                consola.imprimir("}");
+            } catch (Exception e) {
+                consola.imprimir("{");
+                consola.imprimir("    tipo: " + this.getClass().getSimpleName() + ",");
+                consola.imprimir("    nombre: " + this.getNombre());
+                consola.imprimir("}");
+            }
         } else {
             consola.imprimir("La casilla " + this.getNombre() + " ya está vendida a " + this.getDuenho().getNombre());
         }
