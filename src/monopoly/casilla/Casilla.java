@@ -2,17 +2,15 @@ package monopoly.casilla;
 import partida.Avatar;
 import partida.Jugador;
 import java.util.ArrayList;
-import monopoly.interfaces.Consola;
-import monopoly.interfaces.ConsolaNormal;
+import monopoly.Juego;
 
 public abstract class Casilla {
     // Atributos COMUNES a todas las casillas
     private String nombre;
     private int posicion;
-    private ArrayList<Avatar> avatares;
+    private final ArrayList<Avatar> avatares;
     private int contadorVisitas;
     private Jugador duenho;
-    private Consola consola;
 
     // Constructores
     public Casilla(String nombre, int posicion, Jugador duenho) {
@@ -21,13 +19,6 @@ public abstract class Casilla {
         this.duenho = duenho;
         this.avatares = new ArrayList<>();
         this.contadorVisitas = 0;
-        this.consola = new ConsolaNormal();
-    }
-
-    public Casilla() {
-        this.avatares = new ArrayList<>();
-        this.contadorVisitas = 0;
-        this.consola = new ConsolaNormal();
     }
 
     //Métodos abstractos comunes
@@ -52,22 +43,23 @@ public abstract class Casilla {
         if(this.getDuenho() == null || this.getDuenho().getNombre().equals("Banca")){
             try {
                 double valor = (double) this.getClass().getMethod("getValor").invoke(this);
-                consola.imprimir("{");
-                consola.imprimir("    tipo: " + this.getClass().getSimpleName() + ",");
-                consola.imprimir("    nombre: " + this.getNombre() + ",");
-                consola.imprimir("    valor: " + String.format("%,.0f", valor) + "€");
-                consola.imprimir("}");
+                Juego.consola.imprimir("{");
+                Juego.consola.imprimir("    tipo: " + this.getClass().getSimpleName() + ",");
+                Juego.consola.imprimir("    nombre: " + this.getNombre() + ",");
+                Juego.consola.imprimir("    valor: " + String.format("%,.0f", valor) + "€");
+                Juego.consola.imprimir("}");
             } catch (Exception e) {
-                consola.imprimir("{");
-                consola.imprimir("    tipo: " + this.getClass().getSimpleName() + ",");
-                consola.imprimir("    nombre: " + this.getNombre());
-                consola.imprimir("}");
+                Juego.consola.imprimir("{");
+                Juego.consola.imprimir("    tipo: " + this.getClass().getSimpleName() + ",");
+                Juego.consola.imprimir("    nombre: " + this.getNombre());
+                Juego.consola.imprimir("}");
             }
         } else {
-            consola.imprimir("La casilla " + this.getNombre() + " ya está vendida a " + this.getDuenho().getNombre());
+            Juego.consola.imprimir("La casilla " + this.getNombre() + " ya está vendida a " + this.getDuenho().getNombre());
         }
     }
 
+    /////MÉTODOS ABSTRACTOS
     public abstract boolean estaAvatar(Avatar avatar);
     public abstract int frecuenciaVisita();
 

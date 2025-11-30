@@ -44,7 +44,7 @@ public class CajaComunidad extends Carta {
             inicializarCartasComunidad();
         }
 
-        CajaComunidad carta = mazoCartas.remove(0);
+        CajaComunidad carta = mazoCartas.removeFirst();
         // Poner la carta usada al final del mazo
         mazoCartas.add(carta);
 

@@ -2,7 +2,7 @@
 package monopoly.edificio;
 
 import monopoly.casilla.propiedad.Solar;
-import partida.Jugador;
+import monopoly.Juego;
 
 public class Piscina extends Edificio {
     // Contador estático para IDs únicos
@@ -14,14 +14,10 @@ public class Piscina extends Edificio {
         contadorPiscinas++;
     }
 
-    public Piscina() {
-        super();
-    }
-
     // Implementación del método abstracto
     @Override
     public void accion() {
-        System.out.println("Piscina construída en " + this.getSolar().getNombre() +
+        Juego.consola.imprimir("Piscina construída en " + this.getSolar().getNombre() +
                 ". Aumenta el alquiler en " +
                 String.format("%,.0f", this.getSolar().getAlquilerPiscina()) + "€");
     }

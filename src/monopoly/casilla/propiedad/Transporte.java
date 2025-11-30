@@ -2,9 +2,9 @@ package monopoly.casilla.propiedad;
 
 import monopoly.casilla.Propiedad;
 import partida.Jugador;
-import partida.Avatar;
 import monopoly.Valor;
-import java.util.ArrayList;
+import monopoly.Juego;
+
 
 public class Transporte extends Propiedad {
 
@@ -38,11 +38,11 @@ public class Transporte extends Propiedad {
     // MÉTODO infoCasilla() IMPLEMENTADO
     @Override
     public void infoCasilla() {
-        System.out.println("{");
-        System.out.println("\tTipo: Transporte");
-        System.out.println("\tDueño: " + (this.getDuenho() != null ? this.getDuenho().getNombre() : "Banca"));
-        System.out.println(String.format("\tPrecio: %,.0f€", this.getValorPropiedad()));
-        System.out.println(String.format("\tPago por caer: %,.0f€ × número de transportes del dueño", Valor.ALQUILER_TRANSPORTE));
+        Juego.consola.imprimir("{");
+        Juego.consola.imprimir("\tTipo: Transporte");
+        Juego.consola.imprimir("\tDueño: " + (this.getDuenho() != null ? this.getDuenho().getNombre() : "Banca"));
+        Juego.consola.imprimir(String.format("\tPrecio: %,.0f€", this.getValorPropiedad()));
+        Juego.consola.imprimir(String.format("\tPago por caer: %,.0f€ × número de transportes del dueño", Valor.ALQUILER_TRANSPORTE));
 
         // Mostrar información adicional si tiene dueño
         if (this.getDuenho() != null && !this.getDuenho().getNombre().equals("Banca")) {
@@ -52,9 +52,9 @@ public class Transporte extends Propiedad {
                     transportesDelDuenho++;
                 }
             }
-            System.out.println("\tEl dueño tiene " + transportesDelDuenho + " transporte(s)");
+            Juego.consola.imprimir("\tEl dueño tiene " + transportesDelDuenho + " transporte(s)");
         }
-        System.out.println("}");
+        Juego.consola.imprimir("}");
     }
 
     // MÉTODO de evaluación de casilla - Polimorfismo
@@ -63,7 +63,7 @@ public class Transporte extends Propiedad {
         if (actual.getAvatar().getLugar() == this) {
             // Verificar si está disponible para compra
             if (this.getDuenho() == null || this.getDuenho() == banca || this.getDuenho().getNombre().equals("Banca")) {
-                System.out.println("¡Este transporte está disponible para compra! Usa el comando 'comprar " + this.getNombre() + "' para adquirirla.");
+                Juego.consola.imprimir("¡Este transporte está disponible para compra! Usa el comando 'comprar " + this.getNombre() + "' para adquirirla.");
                 return true;
             }
 
@@ -73,7 +73,7 @@ public class Transporte extends Propiedad {
 
                 // Verificar solvencia
                 if (actual.getFortuna() < aPagar) {
-                    System.out.printf("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n", aPagar, actual.getFortuna());
+                    Juego.consola.imprimir("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n", aPagar, actual.getFortuna());
                     return false;
                 }
 
@@ -83,7 +83,7 @@ public class Transporte extends Propiedad {
                 this.getDuenho().sumarFortuna(aPagar);
                 this.getDuenho().sumarCobroDeAlquileres(aPagar);
 
-                System.out.printf("%s ha pagado %,.0f€ de alquiler a %s\n", actual.getNombre(), aPagar, this.getDuenho().getNombre());
+                Juego.consola.imprimir("%s ha pagado %,.0f€ de alquiler a %s\n", actual.getNombre(), aPagar, this.getDuenho().getNombre());
             }
             return true;
         }
@@ -102,7 +102,7 @@ public class Transporte extends Propiedad {
         }
 
         float alquiler = Valor.ALQUILER_TRANSPORTE * transportesDelDuenho;
-        System.out.printf("Alquiler de transporte: %,.0f€ (el dueño tiene %d transporte%s)\n",
+        Juego.consola.imprimir("Alquiler de transporte: %,.0f€ (el dueño tiene %d transporte%s)\n",
                 alquiler, transportesDelDuenho, transportesDelDuenho != 1 ? "s" : "");
         return alquiler;
     }
@@ -110,13 +110,13 @@ public class Transporte extends Propiedad {
     // Los transportes no se pueden hipotecar - sobrescribir métodos relevantes
     @Override
     public boolean puedeHipotecar(Jugador jugador) {
-        System.out.println("Los transportes no se pueden hipotecar.");
+        Juego.consola.imprimir("Los transportes no se pueden hipotecar.");
         return false;
     }
 
     @Override
     public boolean hipotecar() {
-        System.out.println("Los transportes no se pueden hipotecar.");
+        Juego.consola.imprimir("Los transportes no se pueden hipotecar.");
         return false;
     }
 }

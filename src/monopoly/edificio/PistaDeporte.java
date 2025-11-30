@@ -2,7 +2,7 @@
 package monopoly.edificio;
 
 import monopoly.casilla.propiedad.Solar;
-import partida.Jugador;
+import monopoly.Juego;
 
 public class PistaDeporte extends Edificio {
     // Contador estático para IDs únicos
@@ -14,14 +14,10 @@ public class PistaDeporte extends Edificio {
         contadorPistas++;
     }
 
-    public PistaDeporte() {
-        super();
-    }
-
     // Implementación del método abstracto
     @Override
     public void accion() {
-        System.out.println("Pista de deporte construída en " + this.getSolar().getNombre() +
+        Juego.consola.imprimir("Pista de deporte construída en " + this.getSolar().getNombre() +
                 ". Aumenta el alquiler en " +
                 String.format("%,.0f", this.getSolar().getAlquilerPistaDeporte()) + "€");
     }

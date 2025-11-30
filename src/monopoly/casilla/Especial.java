@@ -3,9 +3,10 @@ package monopoly.casilla;
 import partida.Jugador;
 import partida.Avatar;
 import monopoly.Valor;
+import monopoly.Juego;
 
 public class Especial extends Casilla {
-    private String tipoEspecial; // "Salida", "Carcel", "IrCarcel"
+    private final String tipoEspecial; // "Salida", "Carcel", "IrCarcel"
 
     // Constructor
     public Especial(String nombre, int posicion, Jugador duenho, String tipoEspecial) {
@@ -13,7 +14,7 @@ public class Especial extends Casilla {
         this.tipoEspecial = tipoEspecial;
     }
 
-    // MÉTODOS REQUERIDOS por el PDF - IMPLEMENTACIÓN
+    // MÉTODOS REQUERIDOS por el PDF
     @Override
     public boolean estaAvatar(Avatar avatar) {
         return this.getAvatares().contains(avatar);
@@ -36,17 +37,17 @@ public class Especial extends Casilla {
         if (actual.getAvatar().getLugar() == this) {
             switch (this.tipoEspecial) {
                 case "Salida":
-                    System.out.println("Estás en la casilla de Salida.");
+                    Juego.consola.imprimir("Estás en la casilla de Salida.");
                     break;
                 case "Carcel":
-                    System.out.println("Estás de visita en la Cárcel.");
+                    Juego.consola.imprimir("Estás de visita en la Cárcel.");
                     break;
                 case "IrCarcel":
-                    System.out.println("¡Has caído en Ir a la Cárcel! Serás enviado a la cárcel.");
+                    Juego.consola.imprimir("¡Has caído en Ir a la Cárcel! Serás enviado a la cárcel.");
                     actual.encarcelar(null); // El tablero se pasará después
                     break;
                 default:
-                    System.out.println("Has caído en " + this.getNombre());
+                    Juego.consola.imprimir("Has caído en " + this.getNombre());
             }
             return true;
         }
@@ -56,35 +57,35 @@ public class Especial extends Casilla {
     // MÉTODO de información
     @Override
     public void infoCasilla() {
-        System.out.println("{");
-        System.out.println("\tTipo: Especial");
-        System.out.println("\tSubtipo: " + this.tipoEspecial);
-        System.out.println("\tNombre: " + this.getNombre());
+        Juego.consola.imprimir("{");
+        Juego.consola.imprimir("\tTipo: Especial");
+        Juego.consola.imprimir("\tSubtipo: " + this.tipoEspecial);
+        Juego.consola.imprimir("\tNombre: " + this.getNombre());
 
         // Información específica según el tipo
         switch (this.tipoEspecial) {
             case "Salida":
-                System.out.println(String.format("\tRecompensa al pasar: %,.0f€", Valor.SUMA_VUELTA));
+                Juego.consola.imprimir(String.format("\tRecompensa al pasar: %,.0f€", Valor.SUMA_VUELTA));
                 break;
             case "Carcel":
-                System.out.println(String.format("\tSalir pagando: %,.0f€", Valor.SALIR_CARCEL));
-                System.out.print("\tJugadores: [");
+                Juego.consola.imprimir(String.format("\tSalir pagando: %,.0f€", Valor.SALIR_CARCEL));
+                Juego.consola.imprimir("\tJugadores: [");
                 if (this.getAvatares() != null && !this.getAvatares().isEmpty()) {
                     for (int i = 0; i < this.getAvatares().size(); i++) {
                         Jugador j = this.getAvatares().get(i).getJugador();
-                        System.out.print(j.getNombre() + "," + j.getTiradasCarcel());
-                        if (i < this.getAvatares().size() - 1) System.out.print(" ");
+                        Juego.consola.imprimir(j.getNombre() + "," + j.getTiradasCarcel());
+                        if (i < this.getAvatares().size() - 1)Juego.consola.imprimir(" ");
                     }
                 } else {
-                    System.out.print("-");
+                    Juego.consola.imprimir("-");
                 }
-                System.out.println("]");
+                Juego.consola.imprimir("]");
                 break;
             case "IrCarcel":
-                System.out.println("\tAcción: Enviar al jugador a la Cárcel");
+                Juego.consola.imprimir("\tAcción: Enviar al jugador a la Cárcel");
                 break;
         }
-        System.out.println("}");
+        Juego.consola.imprimir("}");
     }
 
     // Las casillas especiales no tienen valor monetario

@@ -1,8 +1,8 @@
 // monopoly/edificio/Hotel.java
 package monopoly.edificio;
 
+import monopoly.Juego;
 import monopoly.casilla.propiedad.Solar;
-import partida.Jugador;
 
 public class Hotel extends Edificio {
     // Contador estático para IDs únicos
@@ -14,19 +14,15 @@ public class Hotel extends Edificio {
         contadorHoteles++;
     }
 
-    public Hotel() {
-        super();
-    }
-
     // Implementación del método abstracto
     @Override
     public void accion() {
-        System.out.println("Hotel construído en " + this.getSolar().getNombre() +
+        Juego.consola.imprimir("Hotel construído en " + this.getSolar().getNombre() +
                 ". Aumenta el alquiler en " +
                 String.format("%,.0f", this.getSolar().getAlquilerHotel()) + "€");
 
         // El hotel reemplaza las casas
-        System.out.println("Nota: El hotel reemplaza las 4 casas existentes.");
+        Juego.consola.imprimir("Nota: El hotel reemplaza las 4 casas existentes.");
     }
 
     // Método estático para obtener el contador

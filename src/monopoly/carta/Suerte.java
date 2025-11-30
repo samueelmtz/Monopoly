@@ -20,7 +20,7 @@ public class Suerte extends Carta {
             // Cartas de Suerte
             mazoCartas.add(new Suerte(1,"Decides hacer un viaje de placer. Avanza hasta Solar19. Si pasas por la casilla de Salida, cobra 2.000.000€.", "avanzar:33"));
             mazoCartas.add(new Suerte(2, "Los acreedores te persiguen por impago. Ve a la Cárcel.", "irCarcel"));
-            mazoCartas.add(new Suerte(3, "¡Has ganado el bote de la loteria! Recibe 1.000.000€.", "recibir:1000000"));
+            mazoCartas.add(new Suerte(3, "¡Has ganado el bote de la lotería! Recibe 1.000.000€.", "recibir:1000000"));
             mazoCartas.add(new Suerte(4, "Has sido elegido presidente. Paga a cada jugador 250.000€.", "pagarTodos:250000"));
             mazoCartas.add(new Suerte(5, "¡Hora punta de trafico! Retrocede tres casillas.", "retroceder:3"));
             mazoCartas.add(new Suerte(6, "Te multan por usar el móvil mientras conduces. Paga 150.000€.", "pagar:150000"));
@@ -40,7 +40,7 @@ public class Suerte extends Carta {
             inicializarCartasSuerte();
         }
 
-        Suerte carta = mazoCartas.remove(0);
+        Suerte carta = mazoCartas.removeFirst();
         mazoCartas.add(carta);
 
         return carta;

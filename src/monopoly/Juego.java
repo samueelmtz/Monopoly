@@ -2,37 +2,21 @@ package monopoly;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-
-import monopoly.casilla.Propiedad;
-import monopoly.interfaces.Comandos;
-import monopoly.interfaces.Consola;
-import monopoly.interfaces.ConsolaNormal;
-import partida.Jugador;
-import partida.Avatar;
-import partida.Dado;
-import monopoly.casilla.Casilla;
-import monopoly.casilla.Accion;
-import monopoly.casilla.Impuesto;
-import monopoly.casilla.Propiedad;
-import monopoly.casilla.propiedad.Solar;
-import monopoly.casilla.propiedad.Transporte;
-import monopoly.casilla.propiedad.Servicio;
-import monopoly.casilla.accion.CajaComunidad;
-import monopoly.casilla.accion.Parking;
-import monopoly.casilla.accion.Suerte;
-import monopoly.edificio.Edificio;
-import monopoly.edificio.Casa;
-import monopoly.edificio.Hotel;
-import monopoly.edificio.Piscina;
-import monopoly.edificio.PistaDeporte;
-import monopoly.carta.Carta;
-import monopoly.casilla.Grupo;
-
 import java.util.Scanner;
 import java.util.HashMap;
 
+import monopoly.interfaces.*;
+import monopoly.casilla.*;
+import monopoly.casilla.accion.*;
+import monopoly.casilla.propiedad.*;
+import monopoly.casilla.Accion;
+import monopoly.casilla.Impuesto;
+import monopoly.edificio.*;
+import monopoly.carta.*;
+import partida.*;
 
-public class Juego {
+
+public class Juego implements Comandos{
 
     //Atributos
     private ArrayList<Jugador> jugadores; //Jugadores de la partida.
@@ -47,12 +31,13 @@ public class Juego {
     private Jugador banca; //El jugador banca.
     private boolean tirado; //Booleano para comprobar si el jugador que tiene el turno ha tirado o no.
     private boolean solvente; //Booleano para comprobar si el jugador que tiene el turno es solvente, es decir, si ha pagado sus deudas.
+    public final static Consola consola = new ConsolaNormal(); //Atributo estático para imprimir y leer mensajes por consola
     //Gestion de cartas
     private ArrayList<Carta> cartasSuerte;
     private ArrayList<Carta> cartasComunidad;
     private int contadorSuerte;
     private int contadorComunidad;
-    public Consola consola;
+
 
     // Constructor
     public Juego() {
@@ -67,7 +52,6 @@ public class Juego {
         this.lanzamientos = 0;
         this.tirado = false;
         this.solvente = true;
-        this.consola = new ConsolaNormal();
     }
 
     // Metodo para inciar una partida: crea los jugadores y avatares.
@@ -142,7 +126,7 @@ public class Juego {
         }
 
         scanner.close();
-        consola.imprimir("Juego terminado");
+        consola.imprimir("El juego ha terminado. Esperamos que hayáis disfrutado la experiencia!!!");
     }
 
     /*Metodo que lee un fichero de texto con comandos y los ejecuta.
@@ -340,6 +324,7 @@ public class Juego {
 
     /*Metodo que realiza las acciones asociadas al comando 'describir jugador'.
      * Parámetro: comando introducido*/
+    @Override
     public void descJugador(String[] partes) {
         // Verificar que hay suficientes partes en el comando
         if (partes.length < 3) {
@@ -418,7 +403,8 @@ public class Juego {
     /* Método que realiza las acciones asociadas al comando 'describir nombre_casilla'.
      * Parámetros: nombre de la casilla a describir.
      */
-    private void descCasilla(String nombre) {
+    @Override
+    public void descCasilla(String nombre) {
         Casilla casilla = tablero.encontrar_casilla(nombre);
 
         if (casilla == null) {
@@ -432,7 +418,8 @@ public class Juego {
     }
 
     //Método que ejecuta todas las acciones relacionadas con el comando 'lanzar dados'.
-    private void lanzarDados(String valoresForzados) {
+    @Override
+    public void lanzarDados(String valoresForzados) {
         Jugador actual = jugadores.get(turno);
         if (actual.isEnCarcel()) {
             consola.imprimir("No puedes lanzar los dados, estás en la cárcel.");
@@ -551,7 +538,8 @@ public class Juego {
     /*Método que ejecuta todas las acciones realizadas con el comando 'comprar nombre_casilla'.
      * Parámetro: cadena de caracteres con el nombre de la casilla.
      */
-    private void comprar(String nombre) {
+    @Override
+    public void comprar(String nombre) {
         Jugador jugadorActual = jugadores.get(turno);
         Casilla casilla = tablero.encontrar_casilla(nombre);
 
@@ -568,7 +556,8 @@ public class Juego {
 
 
     //Método que ejecuta todas las acciones relacionadas con el comando 'salir carcel'.
-    private void salirCarcel() {
+    @Override
+    public void salirCarcel() {
         Jugador jugadorActual = jugadores.get(turno);
         if (jugadorActual.salirDeCarcel()) {
             System.out.println(jugadorActual.getNombre() + " paga 500.000€ y sale de la cárcel. Puede lanzar los datos.");
@@ -578,7 +567,8 @@ public class Juego {
     }
 
     // Método que realiza las acciones asociadas al comando 'listar enventa'.
-    private void listarVenta() {
+    @Override
+    public void listarVenta() {
         System.out.println("Propiedades en venta:");
 
         boolean hayPropiedadesEnVenta = false;
@@ -600,7 +590,8 @@ public class Juego {
 
 
     // Método que realiza las acciones asociadas al comando 'listar jugadores'.
-    private void listarJugadores() {
+    @Override
+    public void listarJugadores() {
         for (Jugador jugador : jugadores) {
             System.out.println("{");
             System.out.println("    nombre: " + jugador.getNombre() + ",");
@@ -658,7 +649,8 @@ public class Juego {
     }
 
     //Método que realiza las acciones asociadas al comando 'listar edificios'
-    private void listarEdificios(String colorGrupo) {
+    @Override
+    public void listarEdificios(String colorGrupo) {
         if(edificios.isEmpty()) {
             System.out.println("No hay edificios en este momento.");
         }
@@ -695,7 +687,8 @@ public class Juego {
     }
 
     // Método que realiza las acciones asociadas al comando 'acabar turno'.
-    private void acabarTurno() {
+    @Override
+    public void acabarTurno() {
         Jugador jugadorActual = jugadores.get(turno);
 
         // Resetear todas las variables de control del turno
@@ -709,7 +702,8 @@ public class Juego {
         System.out.println("El jugador actual es " + siguienteJugador.getNombre() + ".");
     }
 
-    private void crearJugador(String nombre, String tipoAvatar) {
+    @Override
+    public void crearJugador(String nombre, String tipoAvatar) {
         // Validar primero el tipo de avatar
         String tipoValidado = validarTipoAvatar(tipoAvatar);
         if (tipoValidado == null) {
@@ -768,9 +762,10 @@ public class Juego {
     }
 
     // Método auxiliar que permite ver de quien es turno
+    @Override
     public void turnoJugador() {
         if (jugadores == null || jugadores.isEmpty()) {
-            System.out.println("No hay jugadores creados.");
+            consola.imprimir("No hay jugadores creados.");
             return;
         }
 
@@ -780,23 +775,22 @@ public class Juego {
             avatarId = actual.getAvatar().getId();
         }
 
-        System.out.println("> jugador");
-        System.out.println("{");
-        System.out.println("nombre: " + actual.getNombre() + ",");
-        System.out.println("avatar: " + avatarId);
-        System.out.println("}");
+        consola.imprimir("> jugador");
+        consola.imprimir("{");
+        consola.imprimir("nombre: " + actual.getNombre() + ",");
+        consola.imprimir("avatar: " + avatarId);
+        consola.imprimir("}");
     }
 
-
-
-    public void ejecutarCarta(Jugador jugador, String tipoCarta) {
+    private void ejecutarCarta(Jugador jugador, String tipoCarta) {
         Carta carta = Carta.obtenerSiguienteCarta(tipoCarta);
         carta.ejecutarAccion(jugador, tablero, jugadores, banca);
     }
 
 
     //Mostrar las estadísticas de un jugador
-    private void mostrarEstadisticas(String nombreJugador) {
+    @Override
+    public void mostrarEstadisticas(String nombreJugador) {
         for (Jugador jugador : jugadores) {
             if (jugador.getNombre().equalsIgnoreCase(nombreJugador)) {
                 System.out.println("$> estadisticas " + nombreJugador);
@@ -816,7 +810,8 @@ public class Juego {
     }
 
     //Mostrar las estadísticas generales
-    private void mostrarEstadisticasJuego() {
+    @Override
+    public void mostrarEstadisticasJuego() {
         System.out.println("$> estadisticas");
         System.out.println("{");
 
@@ -968,7 +963,8 @@ public class Juego {
     }
 
     //Metodo que verifica si se puede construir el edificio y llama a la función de construcción
-    private void edificar(String tipoEdificio) {
+    @Override
+    public void edificar(String tipoEdificio) {
         Jugador jugadorActual = jugadores.get(turno);
         Casilla casillaActual = jugadorActual.getAvatar().getLugar();
 
@@ -1232,7 +1228,8 @@ public class Juego {
 
 
     //Metodo para vender un edificio
-    private void venderEdificios(String tipoVenta, String nombreCasilla, int cantidadSolicitada) {
+    @Override
+    public void venderEdificios(String tipoVenta, String nombreCasilla, int cantidadSolicitada) {
         Jugador jugadorActual = jugadores.get(turno);
 
         // La cantidad a vender debe ser positiva
@@ -1375,46 +1372,57 @@ public class Juego {
     /**
  * Método para hipotecar una propiedad
  */
-    private void hipotecarPropiedad(String nombreCasilla) {
+    @Override
+    public void hipotecarPropiedad(String nombreCasilla) {
         Jugador jugadorActual = jugadores.get(turno);
         Casilla casilla = tablero.encontrar_casilla(nombreCasilla);
 
+        //Comprobamos que existe la casilla
         if (casilla == null) {
             System.out.println("Casilla no encontrada: " + nombreCasilla);
             return;
         }
 
-        // Validar con puedeHipotecar()
-        if (!casilla.puedeHipotecar(jugadorActual)) {
-            // El mensaje de error ya se muestra en puedeHipotecar()
+        //Comprobamos que es una propiedad
+        if (!(casilla instanceof Propiedad)) {
+            consola.imprimir("La casilla\" + casilla.getNombre() + \"no es una propiedad.\");");
             return;
         }
 
+        Propiedad propiedad = (Propiedad) casilla;
+
+        // Verificar que el jugador es el dueño
+        if (propiedad.getDuenho() != jugadorActual) {
+            consola.imprimir("Esta propiedad no pertenece a " + jugadorActual.getNombre() + ".");
+            return;
+        }
 
         // Solo si pasa la validación, proceder con la hipoteca
-        if (casilla.hipotecar()) {  //Valor de hipotecada cambia a true
-            float valorHipoteca = casilla.getValorHipoteca();
+        if (propiedad.esHipotecable()){ //Valor de hipotecada cambia a true
+
+            float valorHipoteca = propiedad.getValorHipoteca();
             jugadorActual.sumarFortuna(valorHipoteca);
 
-            System.out.printf("%s recibe %,.0f€ por la hipoteca de %s. ",
+            consola.imprimir("%s recibe %,.0f€ por la hipoteca de %s. ",
                     jugadorActual.getNombre(), valorHipoteca, nombreCasilla);
 
             // Mostrar información adicional sobre restricciones
-            if (casilla.getGrupo() != null) {
-                System.out.println("No puede recibir alquileres ni edificar en el grupo " +
-                        casilla.getGrupo().getColorGrupo() + ".");
+            if (propiedad.getGrupo() != null) {
+                consola.imprimir("No puede recibir alquileres ni edificar en el grupo " +
+                        propiedad.getGrupo().getColorGrupo() + ".");
             } else {
-                System.out.println("No puede recibir alquileres de esta propiedad.");
+                consola.imprimir("No puede recibir alquileres de esta propiedad.");
             }
 
-            System.out.printf("Fortuna actual de %s: %,.0f€\n",
+            consola.imprimir("Fortuna actual de %s: %,.0f€\n",
                     jugadorActual.getNombre(), jugadorActual.getFortuna());
         } else {
-            System.out.println("No se pudo hipotecar " + nombreCasilla);
+            consola.imprimir("No se pudo hipotecar " + nombreCasilla);
         }
     }
 
-    private void deshipotecarPropiedad(String nombreCasilla) {
+    @Override
+    public void deshipotecarPropiedad(String nombreCasilla) {
         Jugador jugadorActual = jugadores.get(turno);
         Casilla casilla = tablero.encontrar_casilla(nombreCasilla);
 
@@ -1423,13 +1431,16 @@ public class Juego {
             return;
         }
 
-        // Verificar que la propiedad está hipotecada
-        if (!(casilla instanceof Propiedad)){
-            consola.imprimir("La propiedad " + nombreCasilla + " no está hipotecada.");
+        // Verificar que la casilla es una propiedad
+        if (!(casilla instanceof Propiedad)) {
+            consola.imprimir("La casilla" + casilla.getNombre() + "no es una propiedad.");
             return;
         }
 
-        Propiedad propiedad = (Propiedad)  casilla;
+        Propiedad propiedad = (Propiedad) casilla;
+
+        // Calcular coste de deshipoteca (valor de hipoteca)
+        float costeDeshipoteca = propiedad.getValorHipoteca();
 
         // Verificar que el jugador es el dueño
         if (propiedad.getDuenho() != jugadorActual) {
@@ -1437,8 +1448,7 @@ public class Juego {
             return;
         }
 
-        // Calcular coste de deshipoteca (valor de hipoteca)
-        float costeDeshipoteca = propiedad.getValorHipoteca();
+
 
         // Verificar si tiene suficiente dinero
         if (jugadorActual.getFortuna() < costeDeshipoteca) {
@@ -1448,7 +1458,7 @@ public class Juego {
         }
 
         // Realizar la deshipoteca
-        if(propiedad.deshipotecar()) {
+        if(propiedad.puedeDeshipotecar(jugadorActual)) {
             jugadorActual.restarFortuna(costeDeshipoteca);
             jugadorActual.sumarPagoTasasEImpuestos(costeDeshipoteca);
 

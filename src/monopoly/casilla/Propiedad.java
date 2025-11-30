@@ -2,6 +2,11 @@ package monopoly.casilla;
 
 import partida.Jugador;
 import partida.Avatar;
+import java.util.ArrayList;
+import monopoly.interfaces.*;
+import monopoly.edificio.*;
+import monopoly.casilla.propiedad.*;
+import monopoly.Juego;
 
 public class Propiedad extends Casilla {
     // Atributos específicos de propiedades - PRIVADOS
@@ -19,10 +24,6 @@ public class Propiedad extends Casilla {
         this.hipotecada = false;
         this.grupo = null;
         this.valorHipoteca = valor / 2;
-    }
-
-    public Propiedad(String nombre, int posicion, float valor, Jugador duenho) {
-        this(nombre, posicion, valor, 0, duenho);
     }
 
     // MÉTODOS REQUERIDOS - IMPLEMENTACIÓN POR DEFECTO
@@ -50,10 +51,10 @@ public class Propiedad extends Casilla {
             jugador.anhadirPropiedad(this);
             this.setDuenho(jugador);
 
-            System.out.printf("%s ha comprado la propiedad %s por el precio de %,.0f€\n",
+            Juego.consola.imprimir("%s ha comprado la propiedad %s por el precio de %,.0f€\n",
                     jugador.getNombre(), this.getNombre(), this.valor);
         } else {
-            System.out.printf("No tienes dinero para comprar esta propiedad. Necesitas %,.0f€ pero tienes %,.0f€\n",
+            Juego.consola.imprimir("No tienes dinero para comprar esta propiedad. Necesitas %,.0f€ pero tienes %,.0f€\n",
                     this.valor, jugador.getFortuna());
         }
     }
@@ -83,28 +84,56 @@ public class Propiedad extends Casilla {
             if (this.getDuenho() == null || this.getDuenho() == banca || this.getDuenho().getNombre().equals("Banca")) {
                 this.comprar(solicitante);
             } else {
-                System.out.println("Esta propiedad no está en venta. Pertenece a: " + this.getDuenho().getNombre());
+                Juego.consola.imprimir("Esta propiedad no está en venta. Pertenece a: " + this.getDuenho().getNombre());
             }
         } else {
-            System.out.println("¡Tienes que caer en la propiedad para poder comprarla!\n");
+            Juego.consola.imprimir("¡Tienes que caer en la propiedad para poder comprarla!\n");
         }
-    }
-
-    // Métodos de hipoteca
-    public boolean puedeHipotecar(Jugador jugador) {
-        if (this.getDuenho() == null || !this.getDuenho().equals(jugador)) {
-            System.out.println(jugador.getNombre() + " no puede hipotecar " + this.getNombre() + ". No es una propiedad que le pertenece.");
-            return false;
-        }
-        if (this.hipotecada) {
-            System.out.println(jugador.getNombre() + " no puede hipotecar " + this.getNombre() + ". Ya está hipotecada.");
-            return false;
-        }
-        return true;
     }
 
     public boolean isHipotecada() {
         return this.hipotecada;
+    }
+
+    public boolean esHipotecable() {
+        if (!hipotecada) { // Verifica si la propiedad no está hipotecada
+            boolean sinEdificios = true; // Inicializa como que no hay edificaciones
+
+            // Verifica si la propiedad es una instancia de Solar
+            if (this instanceof Solar) {
+                Solar solar = (Solar) this;  // Hacemos un cast a Solar para acceder a los atributos específicos de Solar
+                for (ArrayList<Edificio> tipoEdificio : solar.getEdificios()) {  // Accede a la lista de edificios
+                    if (!tipoEdificio.isEmpty()) {  // Si alguna lista de edificios no está vacía
+                        sinEdificios = false;  // Marca que no está vacío, por lo tanto, no puede hipotecarse
+                        break;
+                    }
+                }
+            }
+
+            // Si hay edificaciones, no se puede hipotecar
+            if (!sinEdificios) {
+                Juego.consola.imprimir("No puedes hipotecar la casilla " + this.getNombre() + " porque tienes que vender todas tus edificaciones.");
+                return false;  // Retorna false indicando que no puede hipotecarse
+            } else {
+                hipotecada = true;  // Marca como hipotecada
+                return true;  // Retorna true indicando que sí se puede hipotecar
+            }
+        } else {
+            Juego.consola.imprimir("No puedes hipotecar esta propiedad porque ya está hipotecada.");
+            return false;  // Retorna false si ya está hipotecada
+        }
+    }
+
+    public boolean puedeDeshipotecar(Jugador jugador) {
+        if (this.getDuenho() == null || !this.getDuenho().equals(jugador)) {
+            Juego.consola.imprimir(jugador.getNombre() + " no puede hipotecar " + this.getNombre() + ". No es una propiedad que le pertenece.");
+            return false;
+        }
+        if(!this.hipotecada) {
+            Juego.consola.imprimir(jugador.getNombre() + " no puede deshipotecar " + this.getNombre() + ". No está hipotecada.");
+            return false;
+       }
+        return true;
     }
 
     // GETTERS Y SETTERS
@@ -148,7 +177,7 @@ public class Propiedad extends Casilla {
         // Implementación por defecto - será sobrescrita en subclases
         if (actual.getAvatar().getLugar() == this) {
             if (this.getDuenho() == null || this.getDuenho() == banca || this.getDuenho().getNombre().equals("Banca")) {
-                System.out.println("¡Esta propiedad está disponible para compra! Usa el comando 'comprar " + this.getNombre() + "' para adquirirla.");
+                Juego.consola.imprimir("¡Esta propiedad está disponible para compra! Usa el comando 'comprar " + this.getNombre() + "' para adquirirla.");
             }
             return true;
         }
@@ -158,11 +187,11 @@ public class Propiedad extends Casilla {
     @Override
     public void infoCasilla() {
         // Implementación por defecto - será sobrescrita en subclases
-        System.out.println("{");
-        System.out.println("\tTipo: Propiedad");
-        System.out.println("\tDueño: " + (this.getDuenho() != null ? this.getDuenho().getNombre() : "Banca"));
-        System.out.println(String.format("\tPrecio: %,.0f€", this.valor));
-        System.out.println("}");
+        Juego.consola.imprimir("{");
+        Juego.consola.imprimir("\tTipo: Propiedad");
+        Juego.consola.imprimir("\tDueño: " + (this.getDuenho() != null ? this.getDuenho().getNombre() : "Banca"));
+        Juego.consola.imprimir(String.format("\tPrecio: %,.0f€", this.valor));
+        Juego.consola.imprimir("}");
     }
 
     public Grupo getGrupo() {

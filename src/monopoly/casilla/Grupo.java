@@ -1,14 +1,15 @@
 package monopoly.casilla;
 
-import monopoly.casilla.Propiedad;
 import partida.Jugador;
 import java.util.ArrayList;
+import monopoly.Juego;
 
 public class Grupo {
-    private ArrayList<Propiedad> propiedades;
+    private final ArrayList<Propiedad> propiedades;
     private String colorGrupo;
     private int numCasillas;
     private ArrayList<Casilla> miembros;
+
     /**
      * Constructor para un grupo con dos propiedades.
      */
@@ -63,16 +64,16 @@ public class Grupo {
      * Muestra información del grupo.
      */
     public void mostrarInfo() {
-        System.out.println("{");
-        System.out.println("    Grupo: " + colorGrupo);
-        System.out.println("    Número de propiedades: " + numCasillas);
-        System.out.println("    Propiedades: [");
+        Juego.consola.imprimir("{");
+        Juego.consola.imprimir("    Grupo: " + colorGrupo);
+        Juego.consola.imprimir("    Número de propiedades: " + numCasillas);
+        Juego.consola.imprimir("    Propiedades: [");
         for (Propiedad prop : propiedades) {
-            System.out.println("        " + prop.getNombre() +
+            Juego.consola.imprimir("        " + prop.getNombre() +
                     " (Dueño: " + (prop.getDuenho() != null ? prop.getDuenho().getNombre() : "Banca") + ")");
         }
-        System.out.println("    ]");
-        System.out.println("}");
+        Juego.consola.imprimir("    ]");
+        Juego.consola.imprimir("}");
     }
 
     // GETTERS Y SETTERS

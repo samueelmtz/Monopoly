@@ -1,7 +1,6 @@
 // monopoly/edificio/Edificio.java
 package monopoly.edificio;
 
-import monopoly.casilla.Casilla;
 import partida.Jugador;
 import monopoly.casilla.propiedad.Solar;
 
@@ -32,7 +31,7 @@ public abstract class Edificio {
     // MÉTODOS COMUNES
     protected String generarID(String tipo) {
         // Contadores estáticos para IDs únicos
-        switch (tipo) {
+        switch(tipo){
             case "casa":
                 return "casa-" + (Casa.getContadorCasas() + 1);
             case "hotel":

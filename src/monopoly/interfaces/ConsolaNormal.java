@@ -4,7 +4,7 @@ package monopoly.interfaces;
 import java.util.Scanner;
 
 public class ConsolaNormal implements Consola {
-    private Scanner scanner;
+    private final Scanner scanner;
 
     public ConsolaNormal() {
         this.scanner = new Scanner(System.in);

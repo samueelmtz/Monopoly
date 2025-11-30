@@ -2,7 +2,7 @@ package monopoly.casilla.accion;
 
 import monopoly.casilla.Accion;
 import partida.Jugador;
-import partida.Avatar;
+import monopoly.Juego;
 
 public class Suerte extends Accion {
 
@@ -15,7 +15,7 @@ public class Suerte extends Accion {
     @Override
     public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
         if (actual.getAvatar().getLugar() == this) {
-            System.out.println("¡Has caído en Suerte! Se elegirá una carta de suerte.");
+            Juego.consola.imprimir("¡Has caído en Suerte! Se elegirá una carta de suerte.");
             // La ejecución de la carta se manejará en el juego principal
             return true;
         }
@@ -25,11 +25,11 @@ public class Suerte extends Accion {
     // MÉTODO de información - Específico para Suerte
     @Override
     public void infoCasilla() {
-        System.out.println("{");
-        System.out.println("\tTipo: Acción");
-        System.out.println("\tSubtipo: Suerte");
-        System.out.println("\tNombre: " + this.getNombre());
-        System.out.println("\tAcción: Robar carta de Suerte");
-        System.out.println("}");
+        Juego.consola.imprimir("{");
+        Juego.consola.imprimir("\tTipo: Acción");
+        Juego.consola.imprimir("\tSubtipo: Suerte");
+        Juego.consola.imprimir("\tNombre: " + this.getNombre());
+        Juego.consola.imprimir("\tAcción: Robar carta de Suerte");
+        Juego.consola.imprimir("}");
     }
 }

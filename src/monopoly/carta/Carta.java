@@ -2,16 +2,15 @@ package monopoly.carta;
 
 import monopoly.casilla.Casilla;
 import partida.Jugador;
-import monopoly.Valor;
-import monopoly.Tablero;
+import monopoly.*;
 
 import java.util.ArrayList;
 
 public abstract class Carta {
     // Atributos comunes
-    private int id;
-    private String descripcion;
-    private String accion;
+    private final int id;
+    private final String descripcion;
+    private final String accion;
 
     public Carta(int id, String descripcion, String accion) {
         this.id = id;
@@ -29,8 +28,8 @@ public abstract class Carta {
 
     // Método protegido para ejecutar acciones comunes (las subclases pueden usarlo)
     protected void ejecutarAccionComun(Jugador jugador, Tablero tablero, ArrayList<Jugador> jugadores, Jugador banca) {
-        System.out.println("Carta elegida: " + this.id);
-        System.out.println("Descripción: " + this.descripcion);
+        Juego.consola.imprimir("Carta elegida: " + this.id);
+        Juego.consola.imprimir("Descripción: " + this.descripcion);
 
         String accion = this.accion;
 
@@ -41,7 +40,7 @@ public abstract class Carta {
             if (pasaPorSalida(posicionActual, posicionDestino)) {
                 jugador.sumarFortuna(Valor.SUMA_VUELTA);
                 jugador.sumarPasarPorCasillaDeSalida(Valor.SUMA_VUELTA);
-                System.out.printf("¡Has pasado por Salida y cobrado %,.0f€!\n", Valor.SUMA_VUELTA);
+                Juego.consola.imprimir("¡Has pasado por Salida y cobrado %,.0f€!\n", Valor.SUMA_VUELTA);
             }
 
             jugador.getAvatar().colocar(tablero.getPosiciones(), posicionDestino);
@@ -53,7 +52,7 @@ public abstract class Carta {
             float cantidad = Float.parseFloat(accion.split(":")[1]);
             jugador.sumarFortuna(cantidad);
             jugador.sumarPremiosInversionesOBote(cantidad);
-            System.out.printf("¡Has recibido %,.0f€!\n", cantidad);
+            Juego.consola.imprimir("¡Has recibido %,.0f€!\n", cantidad);
 
         } else if (accion.startsWith("pagarTodos:")) {
             float cantidad = Float.parseFloat(accion.split(":")[1]);
@@ -61,19 +60,19 @@ public abstract class Carta {
 
             float totalAPagar = cantidad * (jugadores.size() - 1);
             if (jugador.getFortuna() < totalAPagar) {
-                System.out.printf("No tienes suficiente dinero para pagar a todos los jugadores. Necesitas %,.0f€ pero tienes %,.0f€\n",
+                Juego.consola.imprimir("No tienes suficiente dinero para pagar a todos los jugadores. Necesitas %,.0f€ pero tienes %,.0f€\n",
                         totalAPagar, jugador.getFortuna());
                 puedePagar = false;
             }
 
             if (puedePagar) {
-                System.out.printf("%s paga %,.0f€ a cada jugador:\n", jugador.getNombre(), cantidad);
+                Juego.consola.imprimir("%s paga %,.0f€ a cada jugador:\n", jugador.getNombre(), cantidad);
                 for (Jugador otro : jugadores) {
                     if (otro != jugador && otro != banca) {
                         jugador.restarFortuna(cantidad);
                         jugador.sumarPagoTasasEImpuestos(cantidad);
                         otro.sumarFortuna(cantidad);
-                        System.out.printf("  - Paga %,.0f€ a %s\n", cantidad, otro.getNombre());
+                        Juego.consola.imprimir("  - Paga %,.0f€ a %s\n", cantidad, otro.getNombre());
                     }
                 }
             }
@@ -83,7 +82,7 @@ public abstract class Carta {
             int posicionActual = jugador.getAvatar().getLugar().getPosicion();
             int nuevaPosicion = (posicionActual - casillas + 40) % 40;
             jugador.getAvatar().colocar(tablero.getPosiciones(), nuevaPosicion);
-            System.out.println("Has retrocedido " + casillas + " casillas.");
+            Juego.consola.imprimir("Has retrocedido " + casillas + " casillas.");
 
         } else if (accion.startsWith("pagar:")) {
             float cantidadPago = Float.parseFloat(accion.split(":")[1]);
@@ -91,9 +90,9 @@ public abstract class Carta {
                 jugador.restarFortuna(cantidadPago);
                 jugador.sumarPagoTasasEImpuestos(cantidadPago);
                 // tablero.añadirAlBote(cantidadPago); // Descomenta si existe este método
-                System.out.printf("Has pagado %,.0f€\n", cantidadPago);
+                Juego.consola.imprimir("Has pagado %,.0f€\n", cantidadPago);
             } else {
-                System.out.println("No tienes suficiente dinero para pagar.");
+                Juego.consola.imprimir("No tienes suficiente dinero para pagar.");
             }
 
         } else if (accion.equals("transporteCercano")) {
@@ -116,7 +115,7 @@ public abstract class Carta {
                 Casilla destino = tablero.encontrar_casilla(transporteCercano);
                 if (destino != null) {
                     jugador.getAvatar().colocar(tablero.getPosiciones(), destino.getPosicion());
-                    System.out.println("Te has movido a " + destino.getNombre());
+                    Juego.consola.imprimir("Te has movido a " + destino.getNombre());
                     destino.evaluarCasilla(jugador, banca, 0);
                 }
             }
@@ -125,10 +124,10 @@ public abstract class Carta {
             jugador.getAvatar().colocar(tablero.getPosiciones(), 1);
             jugador.sumarFortuna(Valor.SUMA_VUELTA);
             jugador.sumarPasarPorCasillaDeSalida(Valor.SUMA_VUELTA);
-            System.out.printf("¡Has cobrado %,.0f€ por pasar por salida!\n", Valor.SUMA_VUELTA);
+            Juego.consola.imprimir("¡Has cobrado %,.0f€ por pasar por salida!\n", Valor.SUMA_VUELTA);
         }
 
-        System.out.printf("Fortuna actual de %s: %,.0f€\n", jugador.getNombre(), jugador.getFortuna());
+        Juego.consola.imprimir("Fortuna actual de %s: %,.0f€\n", jugador.getNombre(), jugador.getFortuna());
     }
 
     public static Carta obtenerSiguienteCarta(String tipo) {

@@ -1,6 +1,7 @@
 package monopoly;
 
 import monopoly.casilla.*;
+import monopoly.casilla.accion.Parking;
 import partida.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +31,7 @@ public class Tablero {
         // Usar sumarValor en la casilla de Parking
         Casilla parking = encontrar_casilla("Parking");
         if (parking != null) {
-            parking.sumarValor(cantidad);
+            ((Parking) parking).añadirAlBote(cantidad);
         }
         System.out.printf("Se han añadido %,.0f€ al bote del Parking. Bote actual: %,.0f€\n", cantidad, this.boteParking);
     }
@@ -46,7 +47,7 @@ public class Tablero {
             Casilla parking = encontrar_casilla("Parking");
             if (parking != null) {
                 // Restar el valor actual para ponerlo a 0
-                parking.sumarValor(-parking.getValor());
+                ((Parking) parking).añadirAlBote(-boteActual);
             }
             System.out.printf("¡%s ha ganado el bote del Parking: %,.0f€!\n", jugador.getNombre(), boteActual);
             this.boteParking = 0f; // Resetear el bote
@@ -183,7 +184,7 @@ public class Tablero {
         ArrayList<Casilla> ladoEste = this.posiciones.get(3);
 
         // Posiciones 31-40 con alquileres según PDF
-        ladoEste.add(new Casilla("IrCarcel", "IrCarcel", 31, banca));
+        ladoEste.add(new Casilla("IrCarcel", 31, banca));
         ladoEste.add(new Casilla("Solar18", "Solar", 32, 3000000, 260000, banca));
         ladoEste.add(new Casilla("Solar19", "Solar", 33, 3000000, 260000, banca));
         ladoEste.add(new Casilla("Caja3", "Comunidad", 34, banca));

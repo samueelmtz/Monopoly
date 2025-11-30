@@ -3,7 +3,7 @@ package monopoly.casilla;
 
 import partida.Jugador;
 import partida.Avatar;
-import monopoly.Valor;
+import monopoly.Juego;
 
 public class Impuesto extends Casilla {
     private float cantidadImpuesto;
@@ -35,11 +35,11 @@ public class Impuesto extends Casilla {
     @Override
     public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
         if (actual.getAvatar().getLugar() == this) {
-            System.out.printf("Impuesto a pagar: %,.0f€\n", this.cantidadImpuesto);
+            Juego.consola.imprimir("Impuesto a pagar: %,.0f€\n", this.cantidadImpuesto);
 
             // Verificar solvencia
             if (actual.getFortuna() < this.cantidadImpuesto) {
-                System.out.printf("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n",
+                Juego.consola.imprimir("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n",
                         this.cantidadImpuesto, actual.getFortuna());
                 return false;
             }
@@ -50,7 +50,7 @@ public class Impuesto extends Casilla {
 
             // El dinero va al bote del Parking
             // Esto se manejará desde el Tablero/Juego
-            System.out.printf("%s ha pagado %,.0f€ de impuestos\n",
+            Juego.consola.imprimir("%s ha pagado %,.0f€ de impuestos\n",
                     actual.getNombre(), this.cantidadImpuesto);
             return true;
         }
@@ -60,11 +60,11 @@ public class Impuesto extends Casilla {
     // MÉTODO de información
     @Override
     public void infoCasilla() {
-        System.out.println("{");
-        System.out.println("\tTipo: Impuesto");
-        System.out.println("\tNombre: " + this.getNombre());
-        System.out.println(String.format("\tA pagar: %,.0f€", this.cantidadImpuesto));
-        System.out.println("}");
+        Juego.consola.imprimir("{");
+        Juego.consola.imprimir("\tTipo: Impuesto");
+        Juego.consola.imprimir("\tNombre: " + this.getNombre());
+        Juego.consola.imprimir(String.format("\tA pagar: %,.0f€", this.cantidadImpuesto));
+        Juego.consola.imprimir("}");
     }
 
     // Las casillas de impuesto no tienen valor de compra

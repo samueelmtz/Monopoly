@@ -2,7 +2,7 @@ package monopoly.casilla.accion;
 
 import monopoly.casilla.Accion;
 import partida.Jugador;
-import partida.Avatar;
+import monopoly.Juego;
 
 public class CajaComunidad extends Accion {
 
@@ -15,7 +15,7 @@ public class CajaComunidad extends Accion {
     @Override
     public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
         if (actual.getAvatar().getLugar() == this) {
-            System.out.println("¡Has caído en Caja de Comunidad! Se elegirá una carta de comunidad.");
+            Juego.consola.imprimir("¡Has caído en Caja de Comunidad! Se elegirá una carta de comunidad.");
             // La ejecución de la carta se manejará en el juego principal
             return true;
         }
@@ -25,11 +25,11 @@ public class CajaComunidad extends Accion {
     // MÉTODO de información - Específico para CajaComunidad
     @Override
     public void infoCasilla() {
-        System.out.println("{");
-        System.out.println("\tTipo: Acción");
-        System.out.println("\tSubtipo: Caja de Comunidad");
-        System.out.println("\tNombre: " + this.getNombre());
-        System.out.println("\tAcción: Robar carta de Caja de Comunidad");
-        System.out.println("}");
+        Juego.consola.imprimir("{");
+        Juego.consola.imprimir("\tTipo: Acción");
+        Juego.consola.imprimir("\tSubtipo: Caja de Comunidad");
+        Juego.consola.imprimir("\tNombre: " + this.getNombre());
+        Juego.consola.imprimir("\tAcción: Robar carta de Caja de Comunidad");
+        Juego.consola.imprimir("}");
     }
 }

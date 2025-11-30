@@ -1,15 +1,14 @@
-// monopoly/casilla/propiedad/Solar.java
 package monopoly.casilla.propiedad;
 
 import monopoly.casilla.Propiedad;
+import monopoly.edificio.Edificio;
 import partida.Jugador;
-import partida.Avatar;
-import monopoly.Valor;
 import monopoly.casilla.Grupo;
 import java.util.ArrayList;
+import monopoly.Juego;
 
 public class Solar extends Propiedad {
-    // Atributos específicos de Solar - PRIVADOS
+    private final ArrayList<ArrayList<Edificio>> edificios;
     private Grupo grupo;
     private int numCasas;
     private int numHoteles;
@@ -20,6 +19,10 @@ public class Solar extends Propiedad {
     public Solar(String nombre, int posicion, float valor, float alquiler, Jugador duenho, Grupo grupo) {
         super(nombre, posicion, valor, alquiler, duenho);
         this.grupo = grupo;
+        this.edificios = new ArrayList<>();
+        for(int i = 0; i < 4; i++){
+            this.edificios.add(new ArrayList<>()); //Array de casas, hoteles, piscinas, pistas de deporte
+        }
         this.numCasas = 0;
         this.numHoteles = 0;
         this.numPiscinas = 0;
@@ -50,28 +53,28 @@ public class Solar extends Propiedad {
                 grupo != null ? grupo.getColorGrupo() : "null");
     }
 
-    // MÉTODO infoCasilla() IMPLEMENTADO
+    // MÉTODO infoCasilla()
     @Override
     public void infoCasilla() {
-        System.out.println("{");
-        System.out.println("\tTipo: Solar");
+        Juego.consola.imprimir("{");
+        Juego.consola.imprimir("\tTipo: Solar");
         if (this.grupo != null) {
-            System.out.println("\tColor del grupo: " + this.grupo.getColorGrupo());
+            Juego.consola.imprimir("\tColor del grupo: " + this.grupo.getColorGrupo());
         }
-        System.out.println("\tDueño: " + (this.getDuenho() != null ? this.getDuenho().getNombre() : "Banca"));
-        System.out.println(String.format("\tPrecio: %,.0f€", this.getValorPropiedad()));
-        System.out.println(String.format("\tAlquiler: %,.0f€", this.getImpuesto()));
-        System.out.println(String.format("\tPrecio casa: %,.0f€", getPrecioCasa()));
-        System.out.println(String.format("\tPrecio hotel: %,.0f€", getPrecioHotel()));
-        System.out.println(String.format("\tPrecio piscina: %,.0f€", getPrecioPiscina()));
-        System.out.println(String.format("\tPrecio pista de deporte: %,.0f€", getPrecioPistaDeporte()));
-        System.out.println(String.format("\tAlquiler casa: %,.0f€", getAlquilerCasa()));
-        System.out.println(String.format("\tAlquiler hotel: %,.0f€", getAlquilerHotel()));
-        System.out.println(String.format("\tAlquiler piscina: %,.0f€", getAlquilerPiscina()));
-        System.out.println(String.format("\tAlquiler pista de deporte: %,.0f€", getAlquilerPistaDeporte()));
-        System.out.println("\tEdificios: " + this.numCasas + " casas, " + this.numHoteles + " hoteles, " +
+        Juego.consola.imprimir("\tDueño: " + (this.getDuenho() != null ? this.getDuenho().getNombre() : "Banca"));
+        Juego.consola.imprimir(String.format("\tPrecio: %,.0f€", this.getValorPropiedad()));
+        Juego.consola.imprimir(String.format("\tAlquiler: %,.0f€", this.getImpuesto()));
+        Juego.consola.imprimir(String.format("\tPrecio casa: %,.0f€", getPrecioCasa()));
+        Juego.consola.imprimir(String.format("\tPrecio hotel: %,.0f€", getPrecioHotel()));
+        Juego.consola.imprimir(String.format("\tPrecio piscina: %,.0f€", getPrecioPiscina()));
+        Juego.consola.imprimir(String.format("\tPrecio pista de deporte: %,.0f€", getPrecioPistaDeporte()));
+        Juego.consola.imprimir(String.format("\tAlquiler casa: %,.0f€", getAlquilerCasa()));
+        Juego.consola.imprimir(String.format("\tAlquiler hotel: %,.0f€", getAlquilerHotel()));
+        Juego.consola.imprimir(String.format("\tAlquiler piscina: %,.0f€", getAlquilerPiscina()));
+        Juego.consola.imprimir(String.format("\tAlquiler pista de deporte: %,.0f€", getAlquilerPistaDeporte()));
+        Juego.consola.imprimir("\tEdificios: " + this.numCasas + " casas, " + this.numHoteles + " hoteles, " +
                 this.numPiscinas + " piscinas, " + this.numPistas + " pistas");
-        System.out.println("}");
+        Juego.consola.imprimir("}");
     }
 
     // MÉTODOS ESPECÍFICOS
@@ -79,32 +82,24 @@ public class Solar extends Propiedad {
         switch (tipoEdificio.toLowerCase()) {
             case "casa":
                 if (anhadirCasa()) {
-                    System.out.println("Casa construída en " + this.getNombre());
+                    Juego.consola.imprimir("Casa construída en " + this.getNombre());
                 }
                 break;
             case "hotel":
                 if (anhadirHotel()) {
-                    System.out.println("Hotel construído en " + this.getNombre());
+                    Juego.consola.imprimir("Hotel construído en " + this.getNombre());
                 }
                 break;
             case "piscina":
                 if (anhadirPiscina()) {
-                    System.out.println("Piscina construída en " + this.getNombre());
+                    Juego.consola.imprimir("Piscina construída en " + this.getNombre());
                 }
                 break;
             case "pista_deporte":
                 if (anhadirPistaDeporte()) {
-                    System.out.println("Pista de deporte construída en " + this.getNombre());
+                    Juego.consola.imprimir("Pista de deporte construída en " + this.getNombre());
                 }
                 break;
-        }
-    }
-
-    public void hipotecar() {
-        if (puedeHipotecar(this.getDuenho())) {
-            this.setHipotecada(true);
-            System.out.println(this.getDuenho().getNombre() + " ha hipotecado " + this.getNombre() + " por " +
-                    String.format("%,.0f", this.getValorHipoteca()) + "€");
         }
     }
 
@@ -117,20 +112,20 @@ public class Solar extends Propiedad {
     public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
         if (actual.getAvatar().getLugar() == this) {
             if (this.getDuenho() == null || this.getDuenho() == banca || this.getDuenho().getNombre().equals("Banca")) {
-                System.out.println("¡Este solar está disponible para compra! Usa el comando 'comprar " + this.getNombre() + "' para adquirirla.");
+                Juego.consola.imprimir("¡Este solar está disponible para compra! Usa el comando 'comprar " + this.getNombre() + "' para adquirirla.");
                 return true;
             }
 
             if (this.getDuenho() != null && this.getDuenho() != banca && this.getDuenho() != actual) {
                 if (this.isHipotecada()) {
-                    System.out.println("El solar " + this.getNombre() + " está hipotecado. No se cobra alquiler.");
+                    Juego.consola.imprimir("El solar " + this.getNombre() + " está hipotecado. No se cobra alquiler.");
                     return true;
                 }
 
                 float aPagar = calcularAlquilerTotal();
 
                 if (actual.getFortuna() < aPagar) {
-                    System.out.printf("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n", aPagar, actual.getFortuna());
+                    Juego.consola.imprimir("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n", aPagar, actual.getFortuna());
                     return false;
                 }
 
@@ -140,7 +135,7 @@ public class Solar extends Propiedad {
                 this.getDuenho().sumarCobroDeAlquileres(aPagar);
 
 
-                System.out.printf("%s ha pagado %,.0f€ de alquiler a %s\n", actual.getNombre(), aPagar, this.getDuenho().getNombre());
+                Juego.consola.imprimir("%s ha pagado %,.0f€ de alquiler a %s\n", actual.getNombre(), aPagar, this.getDuenho().getNombre());
             }
             return true;
         }
@@ -173,11 +168,11 @@ public class Solar extends Propiedad {
             }
             if (tieneTodoElGrupo) {
                 alquilerTotal *= 2;
-                System.out.println("¡Grupo completo! Alquiler doble.");
+                Juego.consola.imprimir("¡Grupo completo! Alquiler doble.");
             }
         }
 
-        System.out.printf("Alquiler de solar: %,.0f€\n", alquilerTotal);
+        Juego.consola.imprimir("Alquiler de solar: %,.0f€\n", alquilerTotal);
         return alquilerTotal;
     }
 
@@ -343,4 +338,15 @@ public class Solar extends Propiedad {
     public void setNumPiscinas(int numPiscinas) { this.numPiscinas = numPiscinas; }
     public int getNumPistas() { return numPistas; }
     public void setNumPistas(int numPistas) { this.numPistas = numPistas; }
+    public ArrayList<ArrayList<Edificio>> getEdificios(){
+        return edificios;
+    }
+    public int getNumeroEdificios(){
+        int contador=0;
+
+        for(ArrayList<Edificio> eds: edificios){
+            contador += eds.size();
+        }
+        return contador;
+    }
 }
