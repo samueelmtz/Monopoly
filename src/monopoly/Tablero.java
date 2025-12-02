@@ -362,80 +362,54 @@ public class Tablero {
             avataresStr.append(")");
         }
 
-        // Asignar colores según tipo
-        switch (casilla.getTipo()) {
-            case "Solar":
-                if (casilla.getGrupo() != null) {
-                    String colorGrupo = casilla.getGrupo().getColorGrupo();
-                    switch (colorGrupo) {
-                        case "Naranja":
-                            color = Valor.BG_ORANGE + Valor.BLACK;
-                            break;
-                        case "Celeste":
-                            color = Valor.BG_CYAN + Valor.BLACK;
-                            break;
-                        case "Purpura":
-                            color = Valor.BG_PURPLE + Valor.BLACK;
-                            break;
-                        case "Negro":
-                            color = Valor.BG_BLACK + Valor.WHITE;
-                            break;
-                        case "Rojo":
-                            color = Valor.BG_RED + Valor.BLACK;
-                            break;
-                        case "Amarillo":
-                            color = Valor.BG_YELLOW + Valor.BLACK;
-                            break;
-                        case "Verde":
-                            color = Valor.BG_GREEN + Valor.BLACK;
-                            break;
-                        case "Azul":
-                            color = Valor.BG_BLUE + Valor.BLACK;
-                            break;
-                        default:
-                            color = Valor.RESET;
-                    }
+        // Determinar el color según el tipo de casilla
+        if (casilla instanceof Propiedad) {
+            Propiedad propiedad = (Propiedad) casilla;
+            if (propiedad.getGrupo() != null) {
+                String colorGrupo = propiedad.getGrupo().getColorGrupo();
+                switch (colorGrupo) {
+                    case "Naranja":
+                        color = Valor.BG_ORANGE + Valor.BLACK;
+                        break;
+                    case "Celeste":
+                        color = Valor.BG_CYAN + Valor.BLACK;
+                        break;
+                    case "Purpura":
+                        color = Valor.BG_PURPLE + Valor.BLACK;
+                        break;
+                    case "Negro":
+                        color = Valor.BG_BLACK + Valor.WHITE;
+                        break;
+                    case "Rojo":
+                        color = Valor.BG_RED + Valor.BLACK;
+                        break;
+                    case "Amarillo":
+                        color = Valor.BG_YELLOW + Valor.BLACK;
+                        break;
+                    case "Verde":
+                        color = Valor.BG_GREEN + Valor.BLACK;
+                        break;
+                    case "Azul":
+                        color = Valor.BG_BLUE + Valor.BLACK;
+                        break;
+                    default:
+                        color = Valor.RESET;
                 }
-                break;
-            case "Transporte":
+            }
+        } else if (casilla instanceof Accion) {
+            Accion accion = (Accion) casilla;
+            if (accion.getTipoAccion().equals("Suerte") || accion.getTipoAccion().equals("CajaComunidad")) {
                 color = Valor.BG_GRAY + Valor.BLACK;
-                break;
-            case "Servicios":
-                color = Valor.BG_GRAY + Valor.BLACK;
-                break;
-            case "Impuesto":
-                color = Valor.BG_GRAY + Valor.BLACK;
-                break;
-            case "Suerte":
-                color = Valor.BG_GRAY + Valor.BLACK;
-                break;
-            case "Comunidad":
-                color = Valor.BG_GRAY + Valor.BLACK;
-                break;
-            case "Carcel":
-                color = Valor.BG_GRAY + Valor.BLACK;
-                break;
-            case "Parking":
-                color = Valor.BG_GRAY + Valor.BLACK;
-                break;
-            case "Salida":
-                color = Valor.BG_GRAY + Valor.BLACK;
-                break;
-            case "IrCarcel":
-                color = Valor.BG_GRAY + Valor.BLACK;
-                break;
+            } else if (accion.getTipoAccion().equals("Parking")) {
+                color = Valor.BG_WHITE + Valor.BLACK;
+            }
+        } else if (casilla instanceof Impuesto) {
+            color = Valor.BG_GRAY + Valor.BLACK;
+        } else if (casilla instanceof Especial) {
+            color = Valor.BG_WHITE + Valor.BLACK;
         }
-
-        // Mostrar nombre completo con avatares
-        String nombreConAvatares = nombre + avataresStr.toString();
-        return color + String.format("%-11s", nombreConAvatares) + Valor.RESET;
-    }
-
-    // Getters
-    public ArrayList<ArrayList<Casilla>> getPosiciones() { return posiciones; }
-    public HashMap<String, Grupo> getGrupos() { return grupos; }
-    public Jugador getBanca() { return banca; }
-    public float getBoteParking() {
-        return boteParking;
+        
+        // Construir la cadena de salida con el color y el nombre de la casilla
+        return color + nombre + Valor.RESET + avataresStr.toString();
     }
 }
