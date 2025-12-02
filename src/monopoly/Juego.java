@@ -106,6 +106,10 @@ public class Juego implements Comandos{
                 consola.imprimir("> listar edificios");
                 consola.imprimir("> hipotecar propiedad");
                 consola.imprimir("> deshipotecar propiedad");
+                consola.imprimir("> proponer trato");
+                consola.imprimir("> aceptar trato");
+                consola.imprimir("> tratos");
+                consola.imprimir("> eliminar trato");
                 consola.imprimir("> ver tablero");
                 consola.imprimir("> salir");
                 consola.imprimir("Acción a ejecutar: ");
@@ -316,6 +320,25 @@ public class Juego implements Comandos{
                     consola.imprimir("Comando incorrecto. Uso: deshipotecar <nombre_casilla>");
                 }
                 break;
+
+            case "aceptar":
+                if (comandos.length == 2) {
+                    aceptarTrato(comandos[1]);
+                } else{
+                    consola.imprimir("Comando incorrecto. Uso: aceptar <idTrato>");
+                }
+
+            case "tratos":
+                if (comandos.length == 1) {
+                    listarTratos();
+                }
+
+            case "eliminar":
+                if (comandos.length == 2) {
+                    eliminarTrato(comandos[1]);
+                } else{
+                    consola.imprimir("Comando incorrecto. Uso: eliminar <idTrato>");
+                }
 
             default:
                 consola.imprimir("Comando no reconocido: " + comando);
