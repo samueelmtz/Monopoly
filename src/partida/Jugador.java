@@ -6,6 +6,7 @@ import monopoly.Valor;
 import monopoly.edificio.Edificio;
 import monopoly.casilla.Casilla;
 import monopoly.Juego;
+import monopoly.Tratos;
 
 
 public class Jugador {
@@ -26,6 +27,7 @@ public class Jugador {
     private float cobroDeAlquileres;
     private float pasarPorCasillaDeSalida;
     private float premiosInversionesBote;
+    private ArrayList<Tratos> tratosPendientes;
 
     //Constructor vacío. Se usará para crear la banca.
     public Jugador() {
@@ -139,6 +141,33 @@ public class Jugador {
             return false;
         }
     }
+
+    //Métodos de tratos
+    public ArrayList<Tratos> getTratosPendientes() {
+        return this.tratosPendientes;
+    }
+
+    public void agregarTrato(Tratos trato) {
+        this.tratosPendientes.add(trato);
+
+    }
+
+    public void eliminarTrato(Tratos trato) {
+        if (this.tratosPendientes.remove(trato)) {
+            return;
+        } else {
+            Juego.consola.imprimir(String.format("No se encontró el trato %s en los pendientes.\n", trato.getId()));
+        }
+    }
+    public Tratos buscarTratoPorId(String id) {
+        for (Tratos trato : tratosPendientes) {
+            if (trato.getId().equals(id)) {
+                return trato;
+            }
+        }
+        return null; // Devuelve null si no encuentra el trato
+    }
+
 
 
     public boolean isEnCarcel() {
