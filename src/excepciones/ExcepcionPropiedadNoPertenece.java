@@ -1,6 +1,6 @@
 package excepciones;
 
-//Nivel 3 de jerarquía
+//Nivel 3 de jerarquía - Acción sobre propiedad que no pertenece al jugador
 public class ExcepcionPropiedadNoPertenece extends ExcepcionPropiedad {
 
     private final String nombreJugador;

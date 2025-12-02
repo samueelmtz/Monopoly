@@ -1,6 +1,6 @@
 package excepciones;
 
-//Nivel 3 de jerarquía
+//Nivel 3 de jerarquía - Casilla de propiedad ya comprada por otro jugador
 public class ExcepcionPropiedadYaComprada extends ExcepcionPropiedad {
 
     private final String nombrePropiedad;
