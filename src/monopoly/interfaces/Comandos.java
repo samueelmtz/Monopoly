@@ -18,4 +18,7 @@ public interface Comandos {
     void venderEdificios(String tipoVenta, String nombreCasilla, int cantidadSolicitada);
     void hipotecarPropiedad(String nombreCasilla);
     void deshipotecarPropiedad(String nombreCasilla);
+    void aceptarTrato(String idTrato);
+    void listarTratos();
+    void eliminarTrato(String idTrato);
 }
