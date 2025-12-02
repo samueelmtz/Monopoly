@@ -1622,7 +1622,202 @@ public class Juego implements Comandos{
             trato.getReceptor().eliminarTrato(trato);
         }
     }
-}
+
+    public void proponerTrato(String comando) {
+        // Formato: proponer trato <jugador>: cambiar (<oferta>, <solicitud>)
+        // Ejemplo: proponer trato Juan: cambiar (Solar1, Solar2)
+        // Ejemplo: proponer trato Maria: cambiar (Solar1, 200000)
+        // Ejemplo: proponer trato Pedro: cambiar (Solar1 y 100000, Solar2)
+
+        try {
+            // Obtener el jugador actual (ofertante)
+            Jugador ofertante = jugadores.get(turno);
+
+            // Parsear el comando
+            String[] partes = comando.split(":", 2);
+            if (partes.length != 2) {
+                consola.imprimir("Formato incorrecto. Uso: proponer trato <jugador>: cambiar (<oferta>, <solicitud>)");
+                return;
+            }
+
+            // Obtener el nombre del receptor y validar
+            String nombreReceptor = partes[0].trim();
+            Jugador receptor = null;
+            for (Jugador j : jugadores) {
+                if (j.getNombre().equalsIgnoreCase(nombreReceptor)) {
+                    receptor = j;
+                    break;
+                }
+            }
+
+            if (receptor == null) {
+                consola.imprimir("Jugador no encontrado: " + nombreReceptor);
+                return;
+            }
+
+            if (receptor.equals(ofertante)) {
+                consola.imprimir("No puedes hacerte un trato a ti mismo.");
+                return;
+            }
+
+            // Parsear la oferta y la solicitud
+            String ofertaSolicitud = partes[1].trim();
+            if (!ofertaSolicitud.startsWith("cambiar (") || !ofertaSolicitud.endsWith(")")) {
+                consola.imprimir("Formato incorrecto. Debe ser: cambiar (<oferta>, <solicitud>)");
+                return;
+            }
+
+            String contenido = ofertaSolicitud.substring(9, ofertaSolicitud.length() - 1).trim();
+            String[] ofertaYSolicitud = contenido.split(",", 2);
+
+            if (ofertaYSolicitud.length != 2) {
+                consola.imprimir("Formato incorrecto. Debe ser: cambiar (<oferta>, <solicitud>)");
+                return;
+            }
+
+            String ofertaStr = ofertaYSolicitud[0].trim();
+            String solicitudStr = ofertaYSolicitud[1].trim();
+
+            // Procesar oferta (lo que el ofertante da)
+            Propiedad propiedadOfrecida = null;
+            float dineroOfrecido = 0;
+
+            if (!ofertaStr.equalsIgnoreCase("nada")) {
+                // Verificar si hay dinero en la oferta
+                if (ofertaStr.matches(".*\\d+.*")) {
+                    // Extraer el número de la oferta
+                    String[] partesOferta = ofertaStr.split(" y ");
+                    for (String parte : partesOferta) {
+                        parte = parte.trim();
+                        if (parte.matches("\\d+")) {
+                            dineroOfrecido = Float.parseFloat(parte);
+                        } else {
+                            // Es una propiedad
+                            propiedadOfrecida = (Propiedad) tablero.encontrar_casilla(parte);
+                            if (propiedadOfrecida == null) {
+                                consola.imprimir("Propiedad no encontrada: " + parte);
+                                return;
+                            }
+                            if (!propiedadOfrecida.perteneceAJugador(ofertante)) {
+                                consola.imprimir("No eres dueño de la propiedad: " + propiedadOfrecida.getNombre());
+                                return;
+                            }
+                        }
+                    }
+                } else {
+                    // Solo propiedad
+                    propiedadOfrecida = (Propiedad) tablero.encontrar_casilla(ofertaStr);
+                    if (propiedadOfrecida == null) {
+                        consola.imprimir("Propiedad no encontrada: " + ofertaStr);
+                        return;
+                    }
+                    if (!propiedadOfrecida.perteneceAJugador(ofertante)) {
+                        consola.imprimir("No eres dueño de la propiedad: " + propiedadOfrecida.getNombre());
+                        return;
+                    }
+                }
+            }
+
+            // Procesar solicitud (lo que el ofertante pide)
+            Propiedad propiedadDemandada = null;
+            float dineroDemandado = 0;
+
+            if (!solicitudStr.equalsIgnoreCase("nada")) {
+                // Verificar si hay dinero en la solicitud
+                if (solicitudStr.matches(".*\\d+.*")) {
+                    // Extraer el número de la solicitud
+                    String[] partesSolicitud = solicitudStr.split(" y ");
+                    for (String parte : partesSolicitud) {
+                        parte = parte.trim();
+                        if (parte.matches("\\d+")) {
+                            dineroDemandado = Float.parseFloat(parte);
+                        } else {
+                            // Es una propiedad
+                            propiedadDemandada = (Propiedad) tablero.encontrar_casilla(parte);
+                            if (propiedadDemandada == null) {
+                                consola.imprimir("Propiedad no encontrada: " + parte);
+                                return;
+                            }
+                            if (!propiedadDemandada.perteneceAJugador(receptor)) {
+                                consola.imprimir("El jugador " + receptor.getNombre() + " no es dueño de la propiedad: " + propiedadDemandada.getNombre());
+                                return;
+                            }
+                        }
+                    }
+                } else {
+                    // Solo propiedad
+                    propiedadDemandada = (Propiedad) tablero.encontrar_casilla(solicitudStr);
+                    if (propiedadDemandada == null) {
+                        consola.imprimir("Propiedad no encontrada: " + solicitudStr);
+                        return;
+                    }
+                    if (!propiedadDemandada.perteneceAJugador(receptor)) {
+                        consola.imprimir("El jugador " + receptor.getNombre() + " no es dueño de la propiedad: " + propiedadDemandada.getNombre());
+                        return;
+                    }
+                }
+            }
+
+            // Verificar que al menos hay algo en oferta o en solicitud
+            if (propiedadOfrecida == null && dineroOfrecido <= 0 &&
+                    propiedadDemandada == null && dineroDemandado <= 0) {
+                consola.imprimir("El trato debe incluir al menos una propiedad o cantidad de dinero.");
+                return;
+            }
+
+            // Crear el trato
+            Tratos nuevoTrato = new Tratos(ofertante, receptor, propiedadOfrecida, propiedadDemandada, dineroOfrecido, dineroDemandado);
+
+            // Verificar que el trato es válido
+            if (!nuevoTrato.esTratoValido()) {
+                consola.imprimir("El trato no es válido.");
+                return;
+            }
+
+            // Añadir el trato a ambos jugadores
+            ofertante.agregarTrato(nuevoTrato);
+            receptor.agregarTrato(nuevoTrato);
+
+            // Mostrar confirmación
+            StringBuilder mensaje = new StringBuilder();
+            mensaje.append("Has propuesto el siguiente trato a ").append(receptor.getNombre()).append(":\n");
+            mensaje.append("Ofreces: ");
+
+            if (propiedadOfrecida != null) {
+                mensaje.append(propiedadOfrecida.getNombre());
+                if (dineroOfrecido > 0) {
+                    mensaje.append(" y ").append(String.format("%,.0f", dineroOfrecido)).append("€");
+                }
+            } else if (dineroOfrecido > 0) {
+                mensaje.append(String.format("%,.0f", dineroOfrecido)).append("€");
+            } else {
+                mensaje.append("nada");
+            }
+
+            mensaje.append("\nA cambio de: ");
+
+            if (propiedadDemandada != null) {
+                mensaje.append(propiedadDemandada.getNombre());
+                if (dineroDemandado > 0) {
+                    mensaje.append(" y ").append(String.format("%,.0f", dineroDemandado)).append("€");
+                }
+            } else if (dineroDemandado > 0) {
+                mensaje.append(String.format("%,.0f", dineroDemandado)).append("€");
+            } else {
+                mensaje.append("nada");
+            }
+
+            mensaje.append("\nEl jugador ").append(receptor.getNombre())
+                    .append(" puede aceptar el trato con el comando: aceptarTrato ").append(nuevoTrato.getId());
+
+            consola.imprimir(mensaje.toString());
+
+        } catch (Exception e) {
+            consola.imprimir("Error al procesar el trato: " + e.getMessage());
+            e.printStackTrace();
+        }
+        }
+    }
 
 
 
