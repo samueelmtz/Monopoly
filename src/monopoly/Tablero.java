@@ -154,16 +154,16 @@ public class Tablero {
         ArrayList<Casilla> ladoOeste = this.posiciones.get(1);
 
         // Posiciones 11-20 con alquileres según PDF
-        ladoOeste.add(new Especial("Carcel", "Carcel", 11, banca));
-        ladoOeste.add(new Casilla("Solar6", "Solar", 12, 1400000, 100000, banca));
-        ladoOeste.add(new Casilla("Serv1", "Servicios", 13, 500000, banca));
-        ladoOeste.add(new Casilla("Solar7", "Solar", 14, 1400000, 100000, banca));
-        ladoOeste.add(new Casilla("Solar8", "Solar", 15, 1600000, 120000, banca));
-        ladoOeste.add(new Casilla("Trans2", "Transporte", 16, 500000, banca));
-        ladoOeste.add(new Casilla("Solar9", "Solar", 17, 1800000, 140000, banca));
-        ladoOeste.add(new Casilla("Caja2", "Comunidad", 18, banca));
-        ladoOeste.add(new Casilla("Solar10", "Solar", 19, 1800000, 140000, banca));
-        ladoOeste.add(new Casilla("Solar11", "Solar", 20, 2200000, 160000, banca));
+        ladoOeste.add(new Especial("Carcel", 11, banca, "Carcel"));
+        ladoOeste.add(new Propiedad("Solar6",12, 1400000, 100000, banca));
+        ladoOeste.add(new Propiedad("Serv1", 13, 500000,0, banca));
+        ladoOeste.add(new Propiedad("Solar7", 14, 1400000, 100000, banca));
+        ladoOeste.add(new Propiedad("Solar8", 15, 1600000, 120000, banca));
+        ladoOeste.add(new Propiedad("Trans2", 16, 500000,0, banca));
+        ladoOeste.add(new Propiedad("Solar9", 17, 1800000, 140000, banca));
+        ladoOeste.add(new Accion("Caja2", 18, banca, "CajaComunidad"));
+        ladoOeste.add(new Propiedad("Solar10", 19, 1800000, 140000, banca));
+        ladoOeste.add(new Propiedad("Solar11", 20, 2200000, 160000, banca));
     }
 
     //Método que inserta las casillas del lado norte.
@@ -171,20 +171,16 @@ public class Tablero {
         ArrayList<Casilla> ladoNorte = this.posiciones.get(2);
 
         // Posiciones 21-30 con alquileres según PDF
-        ladoNorte.add(new Casilla("Parking", "Parking", 21, banca));
-        Casilla parking = encontrar_casilla("Parking");
-        if (parking != null) {
-            parking.setValor(0f);
-        }
-        ladoNorte.add(new Casilla("Solar12", "Solar", 22, 2200000, 180000, banca));
-        ladoNorte.add(new Casilla("Suerte3", "Suerte", 23, banca));
-        ladoNorte.add(new Casilla("Solar13", "Solar", 24, 2200000, 180000, banca));
-        ladoNorte.add(new Casilla("Solar14", "Solar", 25, 2400000, 200000, banca));
-        ladoNorte.add(new Casilla("Trans3", "Transporte", 26, 500000, banca));
-        ladoNorte.add(new Casilla("Solar15", "Solar", 27, 2600000, 220000, banca));
-        ladoNorte.add(new Casilla("Solar16", "Solar", 28, 2600000, 220000, banca));
-        ladoNorte.add(new Casilla("Serv2", "Servicios", 29, 500000, banca));
-        ladoNorte.add(new Casilla("Solar17", "Solar", 30, 2800000, 240000, banca));
+        ladoNorte.add(new Accion("Parking", 21, banca, "Parking"));
+        ladoNorte.add(new Propiedad("Solar12", 22, 2200000, 180000, banca));
+        ladoNorte.add(new Accion("Suerte3", 23, banca, "Suerte"));
+        ladoNorte.add(new Propiedad("Solar13", 24, 2200000, 180000, banca));
+        ladoNorte.add(new Propiedad("Solar14", 25, 2400000, 200000, banca));
+        ladoNorte.add(new Propiedad("Trans3", 26, 500000,0, banca));
+        ladoNorte.add(new Propiedad("Solar15", 27, 2600000, 220000, banca));
+        ladoNorte.add(new Propiedad("Solar16", 28, 2600000, 220000, banca));
+        ladoNorte.add(new Propiedad("Serv2", 29, 500000,0, banca));
+        ladoNorte.add(new Propiedad("Solar17", 30, 2800000, 240000, banca));
     }
 
 
@@ -193,16 +189,16 @@ public class Tablero {
         ArrayList<Casilla> ladoEste = this.posiciones.get(3);
 
         // Posiciones 31-40 con alquileres según PDF
-        ladoEste.add(new Casilla("IrCarcel", 31, banca));
-        ladoEste.add(new Casilla("Solar18", "Solar", 32, 3000000, 260000, banca));
-        ladoEste.add(new Casilla("Solar19", "Solar", 33, 3000000, 260000, banca));
-        ladoEste.add(new Casilla("Caja3", "Comunidad", 34, banca));
-        ladoEste.add(new Casilla("Solar20", "Solar", 35, 3200000, 280000, banca));
-        ladoEste.add(new Casilla("Trans4", "Transporte", 36, 500000, banca));
-        ladoEste.add(new Casilla("Suerte2", "Suerte", 37, banca));
-        ladoEste.add(new Casilla("Solar21", "Solar", 38, 3500000, 350000, banca));
-        ladoEste.add(new Casilla("Imp2", 39, 2000000, banca));
-        ladoEste.add(new Casilla("Solar22", "Solar", 40, 4000000, 500000, banca));
+        ladoEste.add(new Especial("IrCarcel", 31, banca, "IrCarcel"));
+        ladoEste.add(new Propiedad("Solar18", 32, 3000000, 260000, banca));
+        ladoEste.add(new Propiedad("Solar19", 33, 3000000, 260000, banca));
+        ladoEste.add(new Accion("Caja3", 34, banca, "CajaComunidad"));
+        ladoEste.add(new Propiedad("Solar20", 35, 3200000, 280000, banca));
+        ladoEste.add(new Propiedad("Trans4", 36, 500000,0, banca));
+        ladoEste.add(new Accion("Suerte2", 37, banca, "Suerte"));
+        ladoEste.add(new Propiedad("Solar21", 38, 3500000, 350000, banca));
+        ladoEste.add(new Impuesto("Imp2", 39, banca,2000000));
+        ladoEste.add(new Propiedad("Solar22", 40, 4000000, 500000, banca));
     }
 
     //Para imprimir el tablero, modificamos el método toString().
