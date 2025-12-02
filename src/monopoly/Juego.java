@@ -1587,7 +1587,18 @@ public class Juego implements Comandos{
     }
 
     @Override
-    public
+    public void eliminarTrato(String idTrato){
+        Jugador jugadorActual = jugadores.get(turno);
+
+        Tratos trato = jugadorActual.buscarTratoPorId(idTrato);
+        if (trato != null) {
+            // Si no lo encuentra en el jugador actual, buscar en el otro jugador involucrado
+            consola.imprimir("El trato entre "+ trato.getReceptor().getNombre()+
+                    " y "+  trato.getOfertante().getNombre() + " se elimino \n");
+            trato.getOfertante().eliminarTrato(trato);
+            trato.getReceptor().eliminarTrato(trato);
+        }
+    }
 }
 
 
