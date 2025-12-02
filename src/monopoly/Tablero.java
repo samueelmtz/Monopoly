@@ -7,10 +7,9 @@ import monopoly.interfaces.ConsolaNormal;
 import partida.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-public final static Consola consola = new ConsolaNormal();
-
 
 public class Tablero {
+    private static final Consola consola = new ConsolaNormal();
     //Atributos.
     private ArrayList<ArrayList<Casilla>> posiciones; //Posiciones del tablero: se define como un arraylist de arraylists de casillas (uno por cada lado del tablero).
     private HashMap<String, Grupo> grupos; //Grupos del tablero, almacenados como un HashMap con clave String (será el color del grupo).
