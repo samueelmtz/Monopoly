@@ -7,14 +7,14 @@ import monopoly.Juego;
 public class Tratos {
 
     //Atributos
-    private String id; //Identificador del atributo
+    private final String id; //Identificador del atributo
     private static int contadorTratos = 0; //Atributo para añadirle al id un número identificativo
-    private Jugador ofertante; //Jugador que propone el trato
-    private Jugador receptor; //Jugador que recibe la oferta
-    private Propiedad propiedadOfrecida; // Propiedad que ofrece el jugador que propone
-    private Propiedad propiedadDemandada; // Propiedad que solicita el jugador que propone
-    private float dineroOfrecido; // Dinero que ofrece el jugador que propone
-    private float dineroDemandado; // Dinero que solicita el jugador que propone
+    private final Jugador ofertante; //Jugador que propone el trato
+    private final Jugador receptor; //Jugador que recibe la oferta
+    private final Propiedad propiedadOfrecida; // Propiedad que ofrece el jugador que propone
+    private final Propiedad propiedadDemandada; // Propiedad que solicita el jugador que propone
+    private final float dineroOfrecido; // Dinero que ofrece el jugador que propone
+    private final float dineroDemandado; // Dinero que solicita el jugador que propone
 
     //Constructor
     public Tratos(Jugador ofertante, Jugador receptor, Propiedad propiedadOfrecida, Propiedad propiedadDemandada, float dineroOfrecido, float dineroDemandado) {
@@ -58,7 +58,7 @@ public class Tratos {
         }
 
         //No se puede intercambiar la misma propiedad
-        if (propiedadOfrecida != null && propiedadDemandada != null && propiedadOfrecida.equals(propiedadDemandada)) {
+        if (propiedadOfrecida != null && propiedadOfrecida.equals(propiedadDemandada)) {
             return false;
         }
 
@@ -102,11 +102,11 @@ public class Tratos {
 
         //Verificar fortune
         if(dineroDemandado > 0 && receptor.getFortuna() < dineroDemandado){
-            Juego.consola.imprimir("El trato no se puede aceptar, el jugador " + receptor.getNombre() + "no tiene sufiente dinero!\n");
+            Juego.consola.imprimir("El trato no se puede aceptar, el jugador " + receptor.getNombre() + "no tiene suficiente dinero!\n");
             return false;
         }
         if(dineroOfrecido > 0 && ofertante.getFortuna() > dineroOfrecido){
-            Juego.consola.imprimir("El trato no se puede aceptar, el jugador " + ofertante.getNombre() + "no tiene sufiente dinero!\n");
+            Juego.consola.imprimir("El trato no se puede aceptar, el jugador " + ofertante.getNombre() + "no tiene suficiente dinero!\n");
         }
         // Verificar propiedades
         if (propiedadOfrecida != null && !propiedadOfrecida.getDuenho().equals(ofertante)) {
