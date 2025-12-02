@@ -106,17 +106,4 @@ public class Transporte extends Propiedad {
                 alquiler, transportesDelDuenho, transportesDelDuenho != 1 ? "s" : "");
         return alquiler;
     }
-
-    // Los transportes no se pueden hipotecar - sobrescribir métodos relevantes
-    @Override
-    public boolean puedeHipotecar(Jugador jugador) {
-        Juego.consola.imprimir("Los transportes no se pueden hipotecar.");
-        return false;
-    }
-
-    @Override
-    public boolean hipotecar() {
-        Juego.consola.imprimir("Los transportes no se pueden hipotecar.");
-        return false;
-    }
 }

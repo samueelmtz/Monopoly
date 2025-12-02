@@ -277,7 +277,7 @@ public class Tablero {
             sb.append("| ");
             sb.append(obtenerCasillaFormateada(izquierda[i]));
             sb.append(" |");
-            sb.append(" ".repeat(125)); // Espacio central
+            sb.append(" ".repeat(116)); // Espacio central
             sb.append("| ");
             sb.append(obtenerCasillaFormateada(derecha[i]));
             sb.append(" |\n");
@@ -342,24 +342,24 @@ public class Tablero {
     // Método auxiliar para mostrar una casilla con color
     private String obtenerCasillaFormateada(Casilla casilla) {
         if (casilla == null) {
-            System.out.print("NULL     ");
-            return "NULL";
+            return String.format("%-10s", "NULL");
         }
 
         String color = Valor.RESET;
         String nombre = casilla.getNombre();
+        
+        // Limitar el nombre a 8 caracteres para dejar espacio para los avatares
+        String nombreRecortado = nombre.length() > 8 ? nombre.substring(0, 8) : nombre;
 
-        // Obtener avatares en esta casilla
-        StringBuilder avataresStr = new StringBuilder();
+        // Obtener avatares en esta casilla (máximo 2 caracteres)
+        String avataresStr = "";
         if (!casilla.getAvatares().isEmpty()) {
-            avataresStr.append(" (");
-            for (int i = 0; i < casilla.getAvatares().size(); i++) {
-                avataresStr.append(casilla.getAvatares().get(i).getId());
-                if (i < casilla.getAvatares().size() - 1) {
-                    avataresStr.append(",");
-                }
+            StringBuilder avataresBuilder = new StringBuilder();
+            int maxAvatares = Math.min(2, casilla.getAvatares().size());
+            for (int i = 0; i < maxAvatares; i++) {
+                avataresBuilder.append(casilla.getAvatares().get(i).getId());
             }
-            avataresStr.append(")");
+            avataresStr = avataresBuilder.toString();
         }
 
         // Determinar el color según el tipo de casilla
@@ -409,8 +409,9 @@ public class Tablero {
             color = Valor.BG_WHITE + Valor.BLACK;
         }
         
-        // Construir la cadena de salida con el color y el nombre de la casilla
-        return color + nombre + Valor.RESET + avataresStr.toString();
+        // Construir la cadena de salida con el color, nombre y avatares, todo en 10 caracteres
+        String contenido = String.format("%-8s%-2s", nombreRecortado, avataresStr);
+        return color + contenido.substring(0, Math.min(10, contenido.length())) + Valor.RESET;
     }
     
     // Getters

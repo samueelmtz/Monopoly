@@ -6,4 +6,5 @@ public class MonopolyETSE {
         Juego juego = new Juego();
         juego.iniciarPartida();
     }
+
 }
