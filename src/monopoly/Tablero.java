@@ -412,4 +412,21 @@ public class Tablero {
         // Construir la cadena de salida con el color y el nombre de la casilla
         return color + nombre + Valor.RESET + avataresStr.toString();
     }
+    
+    // Getters
+    public ArrayList<ArrayList<Casilla>> getPosiciones() {
+        return posiciones;
+    }
+    
+    public HashMap<String, Grupo> getGrupos() {
+        return grupos;
+    }
+    
+    public Jugador getBanca() {
+        return banca;
+    }
+    
+    public float getBoteParking() {
+        return boteParking;
+    }
 }
