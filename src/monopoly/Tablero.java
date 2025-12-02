@@ -2,9 +2,12 @@ package monopoly;
 
 import monopoly.casilla.*;
 import monopoly.casilla.accion.Parking;
+import monopoly.interfaces.Consola;
+import monopoly.interfaces.ConsolaNormal;
 import partida.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+public final static Consola consola = new ConsolaNormal();
 
 
 public class Tablero {
@@ -58,53 +61,58 @@ public class Tablero {
     }
 
     private void crearGrupos() {
-        // Crear los grupos y añadirlos al HashMap
-        grupos.put("Naranja", new Grupo(
-                encontrar_casilla("Solar1"),
-                encontrar_casilla("Solar2"),
-                "Naranja"
-        ));
-        grupos.put("Celeste", new Grupo(
-                encontrar_casilla("Solar3"),
-                encontrar_casilla("Solar4"),
-                encontrar_casilla("Solar5"),
-                "Celeste"
-        ));
-        grupos.put("Purpura", new Grupo(
-                encontrar_casilla("Solar6"),
-                encontrar_casilla("Solar7"),
-                encontrar_casilla("Solar8"),
-                "Purpura"
-        ));
-        grupos.put("Negro", new Grupo(
-                encontrar_casilla("Solar9"),
-                encontrar_casilla("Solar10"),
-                encontrar_casilla("Solar11"),
-                "Negro"
-        ));
-        grupos.put("Rojo", new Grupo(
-                encontrar_casilla("Solar12"),
-                encontrar_casilla("Solar13"),
-                encontrar_casilla("Solar14"),
-                "Rojo"
-        ));
-        grupos.put("Amarillo", new Grupo(
-                encontrar_casilla("Solar15"),
-                encontrar_casilla("Solar16"),
-                encontrar_casilla("Solar17"),
-                "Amarillo"
-        ));
-        grupos.put("Verde", new Grupo(
-                encontrar_casilla("Solar18"),
-                encontrar_casilla("Solar19"),
-                encontrar_casilla("Solar20"),
-                "Verde"
-        ));
-        grupos.put("Azul", new Grupo(
-                encontrar_casilla("Solar21"),
-                encontrar_casilla("Solar22"),
-                "Azul"
-        ));
+        try {
+            // Crear los grupos y añadirlos al HashMap
+            crearGrupo("Naranja", "Solar1", "Solar2");
+            crearGrupo("Celeste", "Solar3", "Solar4", "Solar5");
+            crearGrupo("Purpura", "Solar6", "Solar7", "Solar8");
+            crearGrupo("Negro", "Solar9", "Solar10", "Solar11");
+            crearGrupo("Rojo", "Solar12", "Solar13", "Solar14");
+            crearGrupo("Amarillo", "Solar15", "Solar16", "Solar17");
+            crearGrupo("Verde", "Solar18", "Solar19", "Solar20");
+            crearGrupo("Azul", "Solar21", "Solar22");
+        } catch (ClassCastException e) {
+            throw new RuntimeException("Error de tipo: Asegúrate de que las casillas son de tipo Propiedad", e);
+        } catch (RuntimeException e) {
+            System.err.println("Error al crear los grupos: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    private void crearGrupo(String color, String... nombresCasillas) {
+        ArrayList<Propiedad> propiedadesGrupo = new ArrayList<>();
+        
+        for (String nombre : nombresCasillas) {
+            Casilla casilla = encontrar_casilla(nombre);
+            if (casilla == null) {
+                consola.imprimir("No se encontró la casilla: " + nombre);
+            }
+            if (!(casilla instanceof Propiedad)) {
+                consola.imprimir("La casilla " + nombre + " no es una propiedad");
+            }
+            propiedadesGrupo.add((Propiedad) casilla);
+        }
+        
+        // Crear el grupo con el número correcto de propiedades
+        switch (propiedadesGrupo.size()) {
+            case 2:
+                grupos.put(color, new Grupo(
+                    propiedadesGrupo.get(0),
+                    propiedadesGrupo.get(1),
+                    color
+                ));
+                break;
+            case 3:
+                grupos.put(color, new Grupo(
+                    propiedadesGrupo.get(0),
+                    propiedadesGrupo.get(1),
+                    propiedadesGrupo.get(2),
+                    color
+                ));
+                break;
+            default:
+                throw new RuntimeException("Número incorrecto de propiedades para el grupo " + color);
+        }
     }
 
 
@@ -128,16 +136,17 @@ public class Tablero {
         ArrayList<Casilla> ladoSur = this.posiciones.get(0);
 
         // Posiciones 1-10 con alquileres según PDF
-        ladoSur.add(new Casilla("Salida", "Salida", 1, banca));
-        ladoSur.add(new Casilla("Solar1", "Solar", 2, 600000, 20000, banca));
-        ladoSur.add(new Casilla("Caja1", "Comunidad", 3, banca));
-        ladoSur.add(new Casilla("Solar2", "Solar", 4, 600000, 40000, banca));
-        ladoSur.add(new Casilla("Imp1", 5, 2000000, banca));
-        ladoSur.add(new Casilla("Trans1", "Transporte", 6, 500000, banca));
-        ladoSur.add(new Casilla("Solar3", "Solar", 7, 1000000, 60000, banca));
-        ladoSur.add(new Casilla("Suerte1", "Suerte", 8, banca));
-        ladoSur.add(new Casilla("Solar4", "Solar", 9, 1000000, 60000, banca));
-        ladoSur.add(new Casilla("Solar5", "Solar", 10, 1200000, 80000, banca));
+        ladoSur.add(new Especial("Salida", 1, banca, "Salida"));
+        // Propiedades (solares)
+        ladoSur.add(new Propiedad("Solar1", 2, 600000, 20000, banca));
+        ladoSur.add(new Accion("Caja1", 3, banca, "Comunidad"));
+        ladoSur.add(new Propiedad("Solar2", 4, 600000, 40000, banca));
+        ladoSur.add(new Impuesto("Imp1", 5, banca, 2000000));
+        ladoSur.add(new Propiedad("Trans1", 6, 500000, 0, banca)); // Transporte
+        ladoSur.add(new Propiedad("Solar3", 7, 1000000, 60000, banca));
+        ladoSur.add(new Accion("Suerte1", 8, banca, "Suerte"));
+        ladoSur.add(new Propiedad("Solar4", 9, 1000000, 60000, banca));
+        ladoSur.add(new Propiedad("Solar5", 10, 1200000, 80000, banca));
     }
 
     //Método que inserta las casillas del lado oeste.
@@ -145,7 +154,7 @@ public class Tablero {
         ArrayList<Casilla> ladoOeste = this.posiciones.get(1);
 
         // Posiciones 11-20 con alquileres según PDF
-        ladoOeste.add(new Casilla("Carcel", "Carcel", 11, banca));
+        ladoOeste.add(new Especial("Carcel", "Carcel", 11, banca));
         ladoOeste.add(new Casilla("Solar6", "Solar", 12, 1400000, 100000, banca));
         ladoOeste.add(new Casilla("Serv1", "Servicios", 13, 500000, banca));
         ladoOeste.add(new Casilla("Solar7", "Solar", 14, 1400000, 100000, banca));
