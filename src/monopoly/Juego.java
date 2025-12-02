@@ -845,11 +845,12 @@ public class Juego implements Comandos{
                         casilla.getDuenho() != banca) {
 
                     // Solo considerar tipos que pueden generar renta
-                    if (casilla.getTipo().equals("Solar") || casilla.getTipo().equals("Transporte") || casilla.getTipo().equals("Servicios")) {
+                    if (!(casilla instanceof  Propiedad)) {
                         // Calcular rentabilidad: alquiler / valor de la casilla
+                        Propiedad propiedad = (Propiedad) casilla;
                         float rentabilidad = 0;
-                        if (casilla.getValor() > 0) {
-                            rentabilidad = casilla.getImpuesto() / casilla.getValor();
+                        if (propiedad.getValor() > 0) {
+                            rentabilidad = propiedad.getImpuesto() / propiedad.getValor();
                         }
 
                         if (rentabilidad > maxRentabilidad) {
@@ -878,11 +879,13 @@ public class Juego implements Comandos{
                 // SOLO considerar casillas compradas
                 if (casilla.getDuenho() != null && !casilla.getDuenho().getNombre().equals("Banca") &&
                         casilla.getDuenho() != banca) {
-
-                    if (casilla.getValor() > 0) {
-                        float rentabilidad = casilla.getImpuesto() / casilla.getValor();
-                        rentabilidadTotal += rentabilidad;
-                        casillasValiosas++;
+                    if(!(casilla instanceof Propiedad)) {
+                        Propiedad propiedad = (Propiedad) casilla;
+                        if (propiedad.getValor() > 0) {
+                            float rentabilidad = propiedad.getImpuesto() / propiedad.getValor();
+                            rentabilidadTotal += rentabilidad;
+                            casillasValiosas++;
+                        }
                     }
                 }
             }
@@ -949,8 +952,11 @@ public class Juego implements Comandos{
         for (Jugador jugador : jugadores) {
             // Calcular fortuna total: dinero + valor de propiedades
             float fortunaTotal = jugador.getFortuna();
-            for (Casilla propiedad : jugador.getPropiedades()) {
-                fortunaTotal += propiedad.getValor();
+            for (Casilla casilla : jugador.getPropiedades()) {
+                if(!(casilla instanceof Propiedad)) {
+                    Propiedad prop = (Propiedad) casilla;
+                    fortunaTotal += prop.getValor();
+                }
             }
 
             if (fortunaTotal > maxFortuna) {
@@ -962,7 +968,7 @@ public class Juego implements Comandos{
         return jugadorEnCabeza != null ? jugadorEnCabeza.getNombre() : "Ninguno";
     }
 
-    //Metodo que verifica si se puede construir el edificio y llama a la función de construcción
+    //Método que verifica si se puede construir el edificio y llama a la función de construcción
     @Override
     public void edificar(String tipoEdificio) {
         Jugador jugadorActual = jugadores.get(turno);
