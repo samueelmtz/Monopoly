@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.HashMap;
 
+import monopoly.Tratos;
 import monopoly.interfaces.*;
 import monopoly.casilla.*;
 import monopoly.casilla.accion.*;
@@ -625,7 +626,7 @@ public class Juego implements Comandos{
             System.out.print("    hipotecas: [");
             boolean primeraHipoteca = true;
             for (Casilla propiedad : propiedades) {
-                if (propiedad instanceof Propiedad) {
+                if (!(propiedad instanceof Propiedad)){
                     Propiedad prop = (Propiedad) propiedad;
                     if (prop.isHipotecada()) {
                         if (!primeraHipoteca) {
@@ -1478,6 +1479,115 @@ public class Juego implements Comandos{
             consola.imprimir("No se pudo deshipotecar " + nombreCasilla);
         }
     }
+
+    //MÉTODOS PARA LOS TRATOS
+    @Override
+    public void aceptarTrato(String idTrato){
+        //Obtener jugador actual
+        Jugador jugadorActual = jugadores.get(turno);
+
+        // Buscar el trato por ID en los tratos pendientes del jugador
+        Tratos trato = jugadorActual.buscarTratoPorId(idTrato);
+        if (trato == null) {
+            consola.imprimir("Trato inexistente o no estás involucrado.");
+        }
+
+        Jugador jugador2 = trato.getOfertante();
+
+        if (jugadorActual.getNombre().equals(jugador2.getNombre())) {
+            consola.imprimir("No puedes aceptar un trato que tú mismo propusiste!");
+        }
+
+        // Intentar aceptar el trato
+        if (trato.aceptar()) {
+            // Eliminar el trato tras ser aceptado
+            jugadorActual.eliminarTrato(trato);
+            trato.getOfertante().eliminarTrato(trato);
+
+            // Construir el mensaje detallado
+            StringBuilder mensaje = new StringBuilder();
+            mensaje.append("Se ha aceptado el siguiente trato con ")
+                    .append(jugador2.getNombre()).append(": ");
+
+            if (trato.getPropiedadOfrecida() != null) {
+                mensaje.append("le doy ").append(trato.getPropiedadOfrecida().getNombre());
+            }
+
+            if (trato.getDineroOfrecido() > 0) {
+                if (trato.getPropiedadOfrecida() != null) {
+                    mensaje.append(" y ");
+                }
+                mensaje.append(trato.getDineroOfrecido()).append("€");
+            }
+
+            mensaje.append(" y ").append(jugador2.getNombre()).append(" me da ");
+
+            if (trato.getPropiedadDemandada() != null) {
+                mensaje.append(trato.getPropiedadDemandada().getNombre());
+            }
+
+            if (trato.getDineroDemandado() > 0) {
+                if (trato.getPropiedadDemandada() != null) {
+                    mensaje.append(" y ");
+                }
+                mensaje.append(trato.getDineroDemandado()).append("€");
+            }
+
+            mensaje.append(".");
+            consola.imprimir(mensaje.toString());
+        } else {
+            consola.imprimir("No se pudo aceptar el trato.");
+        }
+    }
+
+    @Override
+    public void listarTratos(){
+        //Obtener el jugador
+        Jugador jugadorActual = jugadores.get(turno);
+
+        ArrayList<Tratos> tratosPendientes = jugadorActual.getTratosPendientes();
+
+        // Imprimir los tratos pendientes
+        if (tratosPendientes.isEmpty()) {
+            consola.imprimir("No tienes tratos pendientes.");
+        } else {
+            consola.imprimir("Tus tratos pendientes:");
+            for (Tratos trato : tratosPendientes) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("{\n");
+                sb.append(" id: ").append(trato.getId()).append(",\n");
+                sb.append(" jugadorPropone: ").append(trato.getOfertante().getNombre()).append(",\n");
+                sb.append(" trato: cambiar ");
+
+                if (trato.getPropiedadOfrecida() != null) {
+                    sb.append(trato.getPropiedadOfrecida().getNombre());
+                }
+                if (trato.getDineroOfrecido() > 0) {
+                    if (trato.getPropiedadOfrecida() != null) {
+                        sb.append(" y ");
+                    }
+                    sb.append(String.format("%,.2f€", trato.getDineroDemandado()));
+                }
+
+                sb.append(" por ");
+
+                if (trato.getPropiedadDemandada() != null) {
+                    sb.append(trato.getPropiedadDemandada().getNombre());
+                }
+                if(trato.getDineroDemandado() > 0) {
+                    if (trato.getPropiedadDemandada() != null) {
+                        sb.append(" y ");
+                    }
+                    sb.append(String.format("%,.2f€", trato.getDineroDemandado()));
+                }
+
+                sb.append("\n}");
+            }
+        }
+    }
+
+    @Override
+    public
 }
 
 
