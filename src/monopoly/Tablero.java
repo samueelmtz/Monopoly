@@ -348,7 +348,8 @@ public class Tablero {
             return String.format("%-10s", "NULL");
         }
 
-        String color = Valor.RESET;
+        // Color por defecto para todas las casillas no propiedad
+        String color = Valor.BG_GRAY + Valor.BLACK;
         String nombre = casilla.getNombre();
         
         // Limitar el nombre a 8 caracteres para dejar espacio para los avatares
@@ -366,6 +367,7 @@ public class Tablero {
         }
 
         // Determinar el color según el tipo de casilla
+        // Solo las propiedades tienen colores específicos, el resto se quedan en gris
         if (casilla instanceof Propiedad) {
             Propiedad propiedad = (Propiedad) casilla;
             if (propiedad.getGrupo() != null) {
@@ -396,20 +398,10 @@ public class Tablero {
                         color = Valor.BG_BLUE + Valor.BLACK;
                         break;
                     default:
-                        color = Valor.RESET;
+                        // Si no coincide con ningún color conocido, se queda en gris
+                        break;
                 }
             }
-        } else if (casilla instanceof Accion) {
-            Accion accion = (Accion) casilla;
-            if (accion.getTipoAccion().equals("Suerte") || accion.getTipoAccion().equals("CajaComunidad")) {
-                color = Valor.BG_GRAY + Valor.BLACK;
-            } else if (accion.getTipoAccion().equals("Parking")) {
-                color = Valor.BG_WHITE + Valor.BLACK;
-            }
-        } else if (casilla instanceof Impuesto) {
-            color = Valor.BG_GRAY + Valor.BLACK;
-        } else if (casilla instanceof Especial) {
-            color = Valor.BG_WHITE + Valor.BLACK;
         }
         
         // Construir la cadena de salida con el color, nombre y avatares, todo en 10 caracteres
