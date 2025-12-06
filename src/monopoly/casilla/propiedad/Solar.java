@@ -111,6 +111,7 @@ public class Solar extends Propiedad {
                 actual.sumarPagoDeAlquileres(aPagar);
                 this.getDuenho().sumarFortuna(aPagar);
                 this.getDuenho().sumarCobroDeAlquileres(aPagar);
+                this.anhadirDineroGenerado(aPagar);
 
 
                 Juego.consola.imprimir("%s ha pagado %,.0f€ de alquiler a %s\n", actual.getNombre(), aPagar, this.getDuenho().getNombre());
@@ -193,13 +194,11 @@ public class Solar extends Propiedad {
         validarEdificacion(tipoEdificio, jugador);
 
         // 2. Obtener coste
-        float coste = obtenerCosteEdificio(tipoEdificio);
+        float coste = obtenerCosteEdificio(tipoEdificio, "edificar");
 
         // 3. Verificar fondos
         if (jugador.getFortuna() < coste) {
-            throw new ExcepcionFondosInsuficientes(
-                    jugador.getNombre(), coste, jugador.getFortuna(),
-                    "edificar " + tipoEdificio + " en " + this.getNombre()
+            throw new ExcepcionFondosInsuficientes(jugador.getNombre(), coste, jugador.getFortuna(), "edificar " + tipoEdificio + " en " + this.getNombre()
             );
         }
 
@@ -213,8 +212,7 @@ public class Solar extends Propiedad {
         }
 
         if (!construido) {
-            throw new ExcepcionReglasEdificacion(
-                    tipoEdificio, this.getNombre(), "error al construir"
+            throw new ExcepcionReglasEdificacion(tipoEdificio, this.getNombre(), "error al construir"
             );
         }
 
@@ -223,22 +221,25 @@ public class Solar extends Propiedad {
         jugador.sumarDineroInvertido(coste);
 
         // 6. Crear instancia
-        return crearInstanciaEdificio(tipoEdificio);
+        return crearInstanciaEdificio(tipoEdificio, jugador);
     }
 
     public int venderEdificios(String tipoEdificio, int cantidad, Jugador jugador) throws ExcepcionMonopoly {
-        // 1. Verificar propiedad
+        // 1. Normalizar tipo primero
+        String tipoNormalizado = normalizarTipoEdificio(tipoEdificio);
+
+        // 2. Verificar propiedad
         if (!this.perteneceAJugador(jugador)) {
             throw new ExcepcionPropiedadNoPertenece(jugador.getNombre(), this.getNombre());
         }
 
-        // 2. Obtener cantidad disponible
-        int disponibles = obtenerCantidadEdificios(tipoEdificio);
+        // 3. Obtener cantidad disponible (usar tipo normalizado)
+        int disponibles = obtenerCantidadEdificios(tipoNormalizado);
 
-        // 3. Validar
+        // 4. Validar
         if (disponibles == 0) {
             throw new ExcepcionEdificioNoExistente(
-                    tipoEdificio + "(s) en " + this.getNombre(),
+                    "No hay " + tipoNormalizado + "(s) en " + this.getNombre(),
                     this.getNombre()
             );
         }
@@ -249,8 +250,23 @@ public class Solar extends Propiedad {
             );
         }
 
-        // 4. Eliminar edificios
-        eliminarEdificios(tipoEdificio, cantidad);
+        switch (tipoNormalizado) {
+            case "casa":
+                numCasas = Math.max(0, numCasas - cantidad);
+                break;
+            case "hotel":
+                numHoteles = Math.max(0, numHoteles - cantidad);
+                break;
+            case "piscina":
+                numPiscinas = Math.max(0, numPiscinas - cantidad);
+                break;
+            case "pista_deporte":
+                numPistas = Math.max(0, numPistas - cantidad);
+                break;
+        }
+
+        // 6. Eliminar edificios de listas internas
+        eliminarEdificios(tipoNormalizado, cantidad);
 
         return cantidad;
     }
@@ -266,80 +282,138 @@ public class Solar extends Propiedad {
     }
 
     private void eliminarEdificios(String tipoEdificio, int cantidad) {
-        switch (tipoEdificio.toLowerCase()) {
+        String tipo = tipoEdificio.toLowerCase();
+
+        switch (tipo) {
             case "casa":
-                numCasas = Math.max(0, numCasas - cantidad);
+                // Ya actualizamos numCasas arriba, solo eliminar físicamente
+                if (edificios.size() > 0) {
+                    // Eliminar 'cantidad' casas de la lista
+                    int eliminadas = 0;
+                    for (int i = 0; i < edificios.get(0).size() && eliminadas < cantidad; i++) {
+                        edificios.get(0).remove(i);
+                        i--; // Ajustar índice después de eliminar
+                        eliminadas++;
+                    }
+                }
                 break;
+
             case "hotel":
-                numHoteles = Math.max(0, numHoteles - cantidad);
+                if (edificios.size() > 1) {
+                    int eliminados = 0;
+                    for (int i = 0; i < edificios.get(1).size() && eliminados < cantidad; i++) {
+                        edificios.get(1).remove(i);
+                        i--;
+                        eliminados++;
+                    }
+                }
                 break;
+
             case "piscina":
-                numPiscinas = Math.max(0, numPiscinas - cantidad);
+                if (edificios.size() > 2) {
+                    int eliminadas = 0;
+                    for (int i = 0; i < edificios.get(2).size() && eliminadas < cantidad; i++) {
+                        edificios.get(2).remove(i);
+                        i--;
+                        eliminadas++;
+                    }
+                }
                 break;
+
             case "pista_deporte":
-                numPistas = Math.max(0, numPistas - cantidad);
+                if (edificios.size() > 3) {
+                    int eliminadas = 0;
+                    for (int i = 0; i < edificios.get(3).size() && eliminadas < cantidad; i++) {
+                        edificios.get(3).remove(i);
+                        i--;
+                        eliminadas++;
+                    }
+                }
                 break;
         }
     }
 
-    public float obtenerPrecioVentaEdificio(String tipoEdificio) throws ExcepcionMonopoly{
-        // Según las reglas: se vende al mismo precio de compra
-        return obtenerCosteEdificio(tipoEdificio);
-    }
+    public float obtenerPrecioVentaEdificio(String tipoEdificio) throws ExcepcionMonopoly {
+        String tipoNormalizado = normalizarTipoEdificio(tipoEdificio);
 
-    public float obtenerCosteEdificio(String tipoEdificio) throws ExcepcionMonopoly {
-        // Validamos el tipo de edificio
-        if (tipoEdificio == null || tipoEdificio.trim().isEmpty()) {
-            throw new ExcepcionAccionNoPermitida(
-                    "edificar",
-                    "tipo de edificio no especificado"
-            );
-        }
-
-        // Usamos switch con los tipos exactos que esperas
-        switch (tipoEdificio) {
-            case "casa":
-                return getPrecioCasa();
-
-            case "hotel":
-                return getPrecioHotel();
-
-            case "piscina":
-                return getPrecioPiscina();
-
-            case "pista_deporte":
-                return getPrecioPistaDeporte();
-
+        switch (tipoNormalizado) {
+            case "casa": return getPrecioCasa();
+            case "hotel": return getPrecioHotel();
+            case "piscina": return getPrecioPiscina();
+            case "pista_deporte": return getPrecioPistaDeporte();
             default:
-                // Si el tipo no coincide, lanzamos excepción
                 throw new ExcepcionAccionNoPermitida(
-                        "edificar",
-                        "tipo de edificio '" + tipoEdificio + "' no válido. " +
-                                "Tipos válidos: casa, hotel, piscina, pista_deporte"
+                        "vender edificio",
+                        "tipo '" + tipoEdificio + "' no válido"
                 );
         }
     }
 
-    public Edificio crearInstanciaEdificio(String tipoEdificio) throws ExcepcionMonopoly {
-        switch (tipoEdificio.toLowerCase()) {
+    public float obtenerCosteEdificio(String tipoEdificio, String contexto) throws ExcepcionMonopoly {
+        String tipoNormalizado = normalizarTipoEdificio(tipoEdificio);
+
+        if (!esTipoEdificioValido(tipoNormalizado)) {
+            throw new ExcepcionAccionNoPermitida(
+                    contexto,  // ← "edificar" o "vender"
+                    "tipo '" + tipoEdificio + "' no válido"
+            );
+        }
+
+        switch (tipoNormalizado) {
+            case "casa": return getPrecioCasa();
+            case "hotel": return getPrecioHotel();
+            case "piscina": return getPrecioPiscina();
+            case "pista_deporte": return getPrecioPistaDeporte();
+            default: return 0;
+        }
+    }
+
+    public static boolean esTipoEdificioValido(String tipo) {
+        if (tipo == null) return false;
+        String tipoNorm = normalizarTipoEdificio(tipo);
+        return tipoNorm.equals("casa") || tipoNorm.equals("hotel") ||
+                tipoNorm.equals("piscina") || tipoNorm.equals("pista_deporte");
+    }
+
+    public Edificio crearInstanciaEdificio(String tipoEdificio, Jugador jugador) throws ExcepcionMonopoly {
+        String tipoNormalizado = normalizarTipoEdificio(tipoEdificio);
+        switch (tipoNormalizado) {
             case "casa":
                 Casa casa = new Casa(this);
                 añadirEdificioALista(casa, 0); // Índice 0 = casas
+                jugador.anhadirEdificio(casa);
                 return casa;
 
             case "hotel":
+                // Antes de crear el hotel, eliminar todas las casas existentes en este solar
+                ArrayList<Casa> casasEliminadas = eliminarTodasLasCasas();
+                // Quitar las casas también del jugador propietario
+                for (Casa c : casasEliminadas) {
+                    jugador.getEdificios().remove(c);
+                }
+
+                for (int i = jugador.getEdificios().size() - 1; i >= 0; i--) {
+                    Edificio ed = jugador.getEdificios().get(i);
+                    if (ed instanceof Casa && ed.getSolar() == this) {
+                        jugador.getEdificios().remove(i);
+                    }
+                }
+
                 Hotel hotel = new Hotel(this);
                 añadirEdificioALista(hotel, 1); // Índice 1 = hoteles
+                jugador.anhadirEdificio(hotel);
                 return hotel;
 
             case "piscina":
                 Piscina piscina = new Piscina(this);
                 añadirEdificioALista(piscina, 2); // Índice 2 = piscinas
+                jugador.anhadirEdificio(piscina);
                 return piscina;
 
             case "pista_deporte":
                 PistaDeporte pista = new PistaDeporte(this);
                 añadirEdificioALista(pista, 3); // Índice 3 = pistas
+                jugador.anhadirEdificio(pista);
                 return pista;
 
             default:
@@ -375,7 +449,7 @@ public class Solar extends Propiedad {
 
     // UN SOLO MÉTODO PARA TODAS LAS VALIDACIONES
     private void validarTipoYLimites(String tipoEdificio) throws ExcepcionMonopoly {
-        String tipo = tipoEdificio.toLowerCase();
+        String tipo = normalizarTipoEdificio(tipoEdificio);
 
         switch (tipo) {
             case "casa":
@@ -450,6 +524,117 @@ public class Solar extends Propiedad {
     private void añadirEdificioALista(Edificio edificio, int indice) {
         if (indice >= 0 && indice < edificios.size()) {
             edificios.get(indice).add(edificio);
+        }
+    }
+
+    /**
+     * Elimina todas las casas de este solar (para cuando se construye un hotel).
+     * Retorna la lista de casas eliminadas para que puedan ser removidas de otras listas.
+     */
+    public ArrayList<Casa> eliminarTodasLasCasas() {
+        ArrayList<Casa> casasEliminadas = new ArrayList<>();
+
+        // 1. Obtener todas las casas de este solar
+        if (!edificios.isEmpty() && edificios.get(0) != null) {
+            for (Edificio edificio : edificios.get(0)) {
+                if (edificio instanceof Casa) {
+                    casasEliminadas.add((Casa) edificio);
+                }
+            }
+
+            // 2. Limpiar la lista de casas en el solar
+            edificios.get(0).clear();
+        }
+
+        // 3. Resetear contador
+        numCasas = 0;
+
+        return casasEliminadas;
+    }
+
+    public int eliminarEdificiosDeListasGlobales(
+            ArrayList<Edificio> listaEdificiosGlobal,
+            Jugador jugadorActual,
+            String tipoEdificio,
+            int cantidad) {
+
+        // 1. Normalizar tipo
+        String tipoNormalizado = normalizarTipoEdificio(tipoEdificio);
+        int eliminados = 0;
+
+        // 2. Eliminar de lista global del juego
+        for (int i = listaEdificiosGlobal.size() - 1; i >= 0 && eliminados < cantidad; i--) {
+            Edificio e = listaEdificiosGlobal.get(i);
+
+            // Verificar: ¿Pertenece a este solar y es del tipo correcto?
+            boolean mismoSolar = (e.getSolar() == this);
+            boolean mismoTipo = false;
+
+            if (e.getTipoEdificio() != null) {
+                String tipoEdifNormalizado = normalizarTipoEdificio(e.getTipoEdificio());
+                mismoTipo = tipoEdifNormalizado.equals(tipoNormalizado);
+            }
+
+            if (mismoSolar && mismoTipo) {
+                listaEdificiosGlobal.remove(i);
+                eliminados++;
+            }
+        }
+
+        // 3. Eliminar de la lista del jugador
+        if (jugadorActual != null) {
+            ArrayList<Edificio> edificiosJugador = jugadorActual.getEdificios();
+            for (int i = edificiosJugador.size() - 1; i >= 0; i--) {
+                Edificio e = edificiosJugador.get(i);
+                if (e.getSolar() == this &&
+                        normalizarTipoEdificio(e.getTipoEdificio()).equals(tipoNormalizado)) {
+                    edificiosJugador.remove(i);
+                }
+            }
+        }
+
+        return eliminados;
+    }
+    /**
+     * Normaliza el tipo de edificio aceptando tanto singular como plural.
+     * Ejemplos: "casas" → "casa", "hoteles" → "hotel"
+     */
+    public static String normalizarTipoEdificio(String tipo) {
+        if (tipo == null) return null;
+
+        String tipoLower = tipo.toLowerCase().trim();
+
+        // Mapeo completo de formas aceptadas
+        switch (tipoLower) {
+            // Casas - acepta singular y plural
+            case "casas":
+            case "casa":
+                return "casa";
+
+            // Hoteles - acepta singular y plural
+            case "hoteles":
+            case "hotel":
+                return "hotel";
+
+            // Piscinas - acepta singular y plural
+            case "piscinas":
+            case "piscina":
+                return "piscina";
+
+            // Pistas de deporte - múltiples formas
+            case "pistas_deporte":
+            case "pista_deporte":
+            case "pistas":
+            case "pista":
+            case "pistas-deporte":
+            case "pista-deporte":
+            case "pista de deporte":
+            case "pistas de deporte":
+                return "pista_deporte";
+
+            default:
+                // Si no coincide, devolver original (para manejar errores después)
+                return tipoLower;
         }
     }
 

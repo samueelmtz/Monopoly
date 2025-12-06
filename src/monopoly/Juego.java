@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.HashMap;
 
+import partida.Jugador;
 import monopoly.interfaces.*;
 import monopoly.casilla.*;
 import monopoly.casilla.accion.*;
@@ -555,11 +556,7 @@ public class Juego implements Comandos{
     @Override
     public void salirCarcel() {
         Jugador jugadorActual = jugadores.get(turno);
-        if (jugadorActual.salirDeCarcel()) {
-            consola.imprimir(jugadorActual.getNombre() + " paga 500.000€ y sale de la cárcel. Puede lanzar los datos.");
-        } else {
-            consola.imprimir("No se pudo salir de la cárcel. Asegúrate de que estás en la cárcel y tienes suficiente dinero.");
-        }
+        jugadorActual.salirDeCarcel();
     }
 
     // Método que realiza las acciones asociadas al comando 'listar enventa'.
@@ -641,38 +638,44 @@ public class Juego implements Comandos{
 
     //Método que realiza las acciones asociadas al comando 'listar edificios'
     @Override
-    public void listarEdificios(String colorGrupo) {
-        if(edificios.isEmpty()) {
-            consola.imprimir("No hay edificios en este momento.");
-        }
-        // Mostrar todos los edificios si no se especifica un grupo
-        if(colorGrupo == null) {
-            for(Edificio edificio : edificios) {
-                System.out.println(edificio.toString());
-            }
+    public void listarEdificios(String _ignor) {
+        String filtro = (_ignor == null) ? "" : _ignor.trim();
+        boolean any = false;
+
+        if (tablero == null || tablero.getPosiciones() == null) {
+            consola.imprimir("\t(no hay edificios construidos)");
+            return;
         }
 
-        // Filtrar edificios por grupo si se especifica
-        ArrayList<Edificio> edificiosFiltrados = new ArrayList<>();
-        if (colorGrupo != null) {
-            for (Edificio edificio : edificios) {
-                if (edificio.getSolar() != null){
-                    Grupo grupo = edificio.getSolar().getGrupo();
-                    if(grupo!=null && grupo.getColorGrupo().equalsIgnoreCase(colorGrupo)) {
-                        edificiosFiltrados.add(edificio);
+        for (ArrayList<Casilla> lado : tablero.getPosiciones()) {
+            if (lado == null) continue;
+            for (Casilla cas : lado) {
+                if (!(cas instanceof Solar)) continue;
+                Solar solar = (Solar) cas;
+
+                // Si hay filtro, saltar solares cuyo grupo no coincida
+                if (!filtro.isEmpty()) {
+                    if (solar.getGrupo() == null || !solar.getGrupo().getColorGrupo().equalsIgnoreCase(filtro)) {
+                        continue;
+                    }
+                }
+
+                // recorrer cada lista de edificios del solar (casas, hoteles, piscinas, pistas)
+                for (ArrayList<Edificio> lista : solar.getEdificios()) {
+                    if (lista == null) continue;
+                    for (Edificio ed : lista) {
+                        consola.imprimir(ed.toString());
+                        any = true;
                     }
                 }
             }
+        }
 
-            if (edificiosFiltrados.isEmpty()) {
-                consola.imprimir("No hay edificios en el grupo " + colorGrupo + ".");
-                return;
-            }
-
-            // Mostrar los edificios filtrados
-            consola.imprimir("{");
-            for(Edificio edificio : edificios) {
-                consola.imprimir(edificio.toString());
+        if (!any) {
+            if (filtro.isEmpty()) {
+                consola.imprimir("\t(no hay edificios construidos)");
+            } else {
+                consola.imprimir("\t(no hay edificios construidos para el grupo " + filtro + ")");
             }
         }
     }
@@ -829,7 +832,7 @@ public class Juego implements Comandos{
 
     private String calcularCasillaMasRentable() {
         Casilla masRentable = null;
-        float maxRentabilidad = -1;
+        float maxDineroGenerado = -1;
 
         // Recorrer todas las casillas del tablero
         for (ArrayList<Casilla> lado : tablero.getPosiciones()) {
@@ -838,17 +841,14 @@ public class Juego implements Comandos{
                 if (casilla.getDuenho() != null && !casilla.getDuenho().getNombre().equals("Banca") &&
                         casilla.getDuenho() != banca) {
 
-                    // Solo considerar tipos que pueden generar renta
-                    if (!(casilla instanceof  Propiedad)) {
-                        // Calcular rentabilidad: alquiler / valor de la casilla
+                    // Solo considerar tipos que pueden generar renta (Propiedad)
+                    if (casilla instanceof Propiedad) {
+                        // Calcular rentabilidad: usar dinero generado acumulado
                         Propiedad propiedad = (Propiedad) casilla;
-                        float rentabilidad = 0;
-                        if (propiedad.getValor() > 0) {
-                            rentabilidad = propiedad.getImpuesto() / propiedad.getValor();
-                        }
+                        float dineroGenerado = propiedad.getDineroGenerado();
 
-                        if (rentabilidad > maxRentabilidad) {
-                            maxRentabilidad = rentabilidad;
+                        if (dineroGenerado > maxDineroGenerado) {
+                            maxDineroGenerado = dineroGenerado;
                             masRentable = casilla;
                         }
                     }
@@ -862,41 +862,33 @@ public class Juego implements Comandos{
 
 
     private String calcularGrupoMasRentable() {
-        HashMap<String, Float> rentabilidadGrupos = new HashMap<>(); //Usar HashMap porque no sabemos cuántos grupos hay comprados
+        HashMap<String, Float> dineroPorGrupo = new HashMap<>();
 
-        // Calcular rentabilidad solo de grupos con propiedades compradas
+        // Calcular dinero total generado por cada grupo
         for (Grupo grupo : tablero.getGrupos().values()) {
-            float rentabilidadTotal = 0;
-            int casillasValiosas = 0;
+            float dineroTotalGrupo = 0;
 
             for (Casilla casilla : grupo.getMiembros()) {
-                // SOLO considerar casillas compradas
-                if (casilla.getDuenho() != null && !casilla.getDuenho().getNombre().equals("Banca") &&
-                        casilla.getDuenho() != banca) {
-                    if(casilla instanceof Propiedad) {  // CAMBIAR: Verificar que SÍ ES Propiedad
-                        Propiedad propiedad = (Propiedad) casilla;
-                        if (propiedad.getValor() > 0) {
-                            float rentabilidad = propiedad.getImpuesto() / propiedad.getValor();
-                            rentabilidadTotal += rentabilidad;
-                            casillasValiosas++;
-                        }
-                    }
+                if (casilla instanceof Propiedad) {
+                    Propiedad propiedad = (Propiedad) casilla;
+                    dineroTotalGrupo += propiedad.getDineroGenerado();
                 }
             }
 
-            if (casillasValiosas > 0) {
-                rentabilidadGrupos.put(grupo.getColorGrupo(), rentabilidadTotal / casillasValiosas); //Meter en el HashMap la rentabilidad media del grupo
+            // Solo considerar grupos que han generado dinero
+            if (dineroTotalGrupo > 0) {
+                dineroPorGrupo.put(grupo.getColorGrupo(), dineroTotalGrupo);
             }
         }
 
-        // Encontrar el grupo más rentable entre los comprados
+        // Encontrar el grupo que más dinero ha generado
         String grupoMasRentable = "Ninguno";
-        float maxRentabilidad = -1;
-        //Recorrer el HashMap
-        for (String color : rentabilidadGrupos.keySet()) { //Para cada color de grupo en el HashMap
-            float rentabilidad = rentabilidadGrupos.get(color);
-            if (rentabilidad > maxRentabilidad) {
-                maxRentabilidad = rentabilidad;
+        float maxDinero = -1;
+
+        for (String color : dineroPorGrupo.keySet()) {
+            float dinero = dineroPorGrupo.get(color);
+            if (dinero > maxDinero) {
+                maxDinero = dinero;
                 grupoMasRentable = color;
             }
         }
@@ -992,7 +984,7 @@ public class Juego implements Comandos{
                     " en " + solar.getNombre());
 
             // Obtener el coste desde el Solar en lugar de pedirlo al Edificio
-            float coste = solar.obtenerCosteEdificio(tipoEdificio);
+            float coste = solar.obtenerCosteEdificio(tipoEdificio, "edificar");
             consola.imprimir("  Coste: " + String.format("%,.0f", coste) + "€");
             consola.imprimir("  Fortuna actual: " +
                     String.format("%,.0f", jugadorActual.getFortuna()) + "€");
@@ -1036,7 +1028,7 @@ public class Juego implements Comandos{
             jugadorActual.sumarFortuna(ingresoTotal);
 
             // 6. Eliminar edificios de las listas globales
-            eliminarEdificiosDeListas(solar, tipoVenta, cantidadVendida);
+            solar.eliminarEdificiosDeListasGlobales(edificios, jugadorActual, tipoVenta, cantidadVendida);
 
             // 7. Mostrar resultado
             consola.imprimir("✓ " + jugadorActual.getNombre() +
@@ -1048,21 +1040,6 @@ public class Juego implements Comandos{
             consola.imprimir("✗ " + e.getMessage());
         } catch (Exception e) {
             consola.imprimir("⚠ Error inesperado al vender edificios: " + e.getMessage());
-        }
-    }
-
-    // Método auxiliar para eliminar edificios de las listas
-    private void eliminarEdificiosDeListas(Solar solar, String tipoEdificio, int cantidad) {
-        String tipo = tipoEdificio.toLowerCase();
-        int eliminados = 0;
-
-        // Eliminar de lista global
-        for (int i = edificios.size() - 1; i >= 0 && eliminados < cantidad; i--) {
-            Edificio e = edificios.get(i);
-            if (e.getSolar() == solar && e.getTipoEdificio().equals(tipo)) {
-                edificios.remove(i);
-                eliminados++;
-            }
         }
     }
 

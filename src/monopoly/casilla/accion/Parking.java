@@ -26,6 +26,7 @@ public class Parking extends Accion {
                 actual.sumarFortuna(boteGanado);
                 actual.sumarPremiosInversionesOBote(boteGanado);
                 Juego.consola.imprimir("¡Has ganado el bote de %,.0f€!\n", boteGanado);
+                Juego.consola.imprimir("Fortuna actual: %,.0f€\n", actual.getFortuna());
             } else {
                 Juego.consola.imprimir("El bote del parking está vacío.");
             }
@@ -58,8 +59,6 @@ public class Parking extends Accion {
     // MÉTODOS específicos para manejar el bote
     public void añadirAlBote(float cantidad) {
         this.bote += cantidad;
-        Juego.consola.imprimir("Se han añadido %,.0f€ al bote del Parking. Bote actual: %,.0f€\n",
-                cantidad, this.bote);
     }
 
     public float reclamarBote() {

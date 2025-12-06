@@ -89,7 +89,7 @@ public abstract class Carta {
             if (jugador.getFortuna() >= cantidadPago) {
                 jugador.restarFortuna(cantidadPago);
                 jugador.sumarPagoTasasEImpuestos(cantidadPago);
-                // tablero.añadirAlBote(cantidadPago); // Descomenta si existe este método
+                tablero.añadirAlBote(cantidadPago);
                 Juego.consola.imprimir("Has pagado %,.0f€\n", cantidadPago);
             } else {
                 Juego.consola.imprimir("No tienes suficiente dinero para pagar.");
