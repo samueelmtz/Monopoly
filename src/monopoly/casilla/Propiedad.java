@@ -162,7 +162,7 @@ public class Propiedad extends Casilla {
         this.valorHipoteca = valorHipoteca;
     }
 
-    // monopoly/casilla/Propiedad.java - Añadir setHipotecada()
+
     public void setHipotecada(boolean hipotecada) {
         this.hipotecada = hipotecada;
     }
