@@ -5,6 +5,7 @@ import partida.Jugador;
 import partida.Avatar;
 import monopoly.Juego;
 import monopoly.Tablero;
+import java.util.ArrayList;
 
 public class Impuesto extends Casilla {
     private float cantidadImpuesto;
@@ -34,7 +35,7 @@ public class Impuesto extends Casilla {
 
     // MÉTODO de evaluación de casilla
     @Override
-    public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
+    public boolean evaluarCasilla(Jugador actual, Jugador banca, Tablero tablero, ArrayList<Jugador> jugadores, int tirada) {
         if (actual.getAvatar().getLugar() == this) {
             Juego.consola.imprimir("Impuesto a pagar: %,.0f€\n", this.cantidadImpuesto);
 
@@ -49,9 +50,7 @@ public class Impuesto extends Casilla {
             actual.restarFortuna(this.cantidadImpuesto);
             actual.sumarPagoTasasEImpuestos(this.cantidadImpuesto);
 
-            tablero.añadirAlBoteParking(this.cantidadImpuesto);
-            // El dinero va al bote del Parking
-            // Esto se manejará desde el Tablero/Juego
+            tablero.añadirAlBote(this.cantidadImpuesto);
             Juego.consola.imprimir("%s ha pagado %,.0f€ de impuestos\n", actual.getNombre(), this.cantidadImpuesto);
             return true;
         }

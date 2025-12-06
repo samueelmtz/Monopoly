@@ -1,9 +1,12 @@
 package monopoly.casilla;
 
+import monopoly.Tablero;
 import partida.Jugador;
 import partida.Avatar;
 import monopoly.Valor;
 import monopoly.Juego;
+
+import java.util.ArrayList;
 
 public class Especial extends Casilla {
     private final String tipoEspecial; // "Salida", "Carcel", "IrCarcel"
@@ -33,7 +36,7 @@ public class Especial extends Casilla {
 
     // MÉTODO de evaluación de casilla
     @Override
-    public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
+    public boolean evaluarCasilla(Jugador actual, Jugador banca, Tablero tablero, ArrayList<Jugador> jugadores, int tirada) {
         if (actual.getAvatar().getLugar() == this) {
             switch (this.tipoEspecial) {
                 case "Salida":
