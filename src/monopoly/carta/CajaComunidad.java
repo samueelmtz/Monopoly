@@ -26,9 +26,6 @@ public class CajaComunidad extends Carta {
             mazoCartas.add(new CajaComunidad(4, "Devolución de Hacienda. Cobra 500.000€.", "recibir:500000"));
             mazoCartas.add(new CajaComunidad(5, "Retrocede hasta Solar1 para comprar antigüedades exóticas.", "retroceder:16"));
             mazoCartas.add(new CajaComunidad(6, "Ve a Solar20 para disfrutar del San Fermín.", "avanzar:35"));
-
-            // Barajar el mazo
-            Collections.shuffle(mazoCartas);
             mazoInicializado = true;
         }
     }
@@ -44,11 +41,10 @@ public class CajaComunidad extends Carta {
             inicializarCartasComunidad();
         }
 
-        CajaComunidad carta = mazoCartas.removeFirst();
-        // Poner la carta usada al final del mazo
-        mazoCartas.add(carta);
-
+        CajaComunidad carta = mazoCartas.remove(0);
+        mazoCartas.add(carta); // colocar al final
         return carta;
+
     }
 
     @Override
