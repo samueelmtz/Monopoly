@@ -42,6 +42,7 @@ public class Accion extends Casilla {
             try {
                 Carta carta = Carta.obtenerSiguienteCarta(this.getTipoAccion());
                 carta.ejecutarAccion(actual, tablero, jugadores, banca);
+
             } catch (Exception e) {
                 Juego.consola.imprimir("Error ejecutando carta: " + e.getClass().getSimpleName() + " - " + e.getMessage());
                 e.printStackTrace();

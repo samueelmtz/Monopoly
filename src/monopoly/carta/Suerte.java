@@ -26,6 +26,7 @@ public class Suerte extends Carta {
             mazoCartas.add(new Suerte(6, "Te multan por usar el móvil mientras conduces. Paga 150.000€.", "pagar:150000"));
             mazoCartas.add(new Suerte(7, "Avanza hasta la casilla de transporte más cercana.", "transporteCercano"));
 
+
             mazoInicializado = true;
         }
     }
