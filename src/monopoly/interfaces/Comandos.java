@@ -22,4 +22,5 @@ public interface Comandos {
     void aceptarTrato(String idTrato);
     void listarTratos();
     void eliminarTrato(String idTrato);
+    void proponerTrato(String[] partes);
 }

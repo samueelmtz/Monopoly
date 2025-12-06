@@ -1282,19 +1282,28 @@ public class Juego implements Comandos{
         }
     }
 
-    public void proponerTrato(String comando) {
+    @Override
+    public void proponerTrato(String[] partes) {
         // Formato: proponer trato <jugador>: cambiar (<oferta>, <solicitud>)
         // Ejemplo: proponer trato Juan: cambiar (Solar1, Solar2)
         // Ejemplo: proponer trato Maria: cambiar (Solar1, 200000)
         // Ejemplo: proponer trato Pedro: cambiar (Solar1 y 100000, Solar2)
+
+        if (partes == null || partes.length == 0) {
+            consola.imprimir("Error: Comando de trato inválido.");
+            return;
+        }
+
+        // Unir el array en un solo string para mantener compatibilidad
+        String comando = String.join(" ", partes);
 
         try {
             // Obtener el jugador actual (ofertante)
             Jugador ofertante = jugadores.get(turno);
 
             // Parsear el comando
-            String[] partes = comando.split(":", 2);
-            if (partes.length != 2) {
+            String[] partesComando = comando.split(":", 2);
+            if (partesComando.length != 2) {
                 consola.imprimir("Formato incorrecto. Uso: proponer trato <jugador>: cambiar (<oferta>, <solicitud>)");
                 return;
             }
