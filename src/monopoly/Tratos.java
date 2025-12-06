@@ -2,7 +2,6 @@ package monopoly;
 
 import partida.Jugador;
 import monopoly.casilla.Propiedad;
-import monopoly.Juego;
 
 public class Tratos {
 

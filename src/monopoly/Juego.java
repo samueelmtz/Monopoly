@@ -5,13 +5,10 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.HashMap;
 
-import monopoly.Tratos;
 import monopoly.interfaces.*;
 import monopoly.casilla.*;
 import monopoly.casilla.accion.*;
 import monopoly.casilla.propiedad.*;
-import monopoly.casilla.Accion;
-import monopoly.casilla.Impuesto;
 import monopoly.edificio.*;
 import monopoly.carta.*;
 import partida.*;
@@ -30,7 +27,6 @@ public class Juego implements Comandos{
     private ArrayList<Jugador> jugadores; //Jugadores de la partida.
     private ArrayList<Avatar> avatares; //Avatares en la partida.
     private ArrayList<Edificio> edificios; //Edificios en la partida
-    private String colorGrupo;
     private int turno; //Índice correspondiente a la posición en el arrayList del jugador (y el avatar) que tienen el turno
     private int lanzamientos; //Variable para contar el número de lanzamientos de un jugador en un turno.
     private Tablero tablero; //Tablero en el que se juega.
@@ -56,7 +52,7 @@ public class Juego implements Comandos{
         this.solvente = true;
     }
 
-    // Metodo para inciar una partida: crea los jugadores y avatares.
+    // Método para iniciar una partida: crea los jugadores y avatares.
     public void iniciarPartida() {
         // Crear lista de jugadores, avatares y edificios
         jugadores = new ArrayList<>();
@@ -362,7 +358,7 @@ public class Juego implements Comandos{
         consola.imprimir(tablero.toString());
     }
 
-    /*Metodo que realiza las acciones asociadas al comando 'describir jugador'.
+    /*Método que realiza las acciones asociadas al comando 'describir jugador'.
      * Parámetro: comando introducido*/
     @Override
     public void descJugador(String[] partes) {
@@ -734,7 +730,7 @@ public class Juego implements Comandos{
             consola.imprimir("}");
 
             // Mostrar el tablero actualizado
-            tablero.toString();
+            verTablero();
 
         } catch (ExcepcionMonopoly e) {
             consola.imprimir("✗ " + e.getMessage());
@@ -1067,9 +1063,6 @@ public class Juego implements Comandos{
                 eliminados++;
             }
         }
-
-        // También eliminar del jugador
-        // (Esto debería hacerse en el método del jugador)
     }
 
 
@@ -1499,8 +1492,8 @@ public class Juego implements Comandos{
             consola.imprimir("Error al procesar el trato: " + e.getMessage());
             e.printStackTrace();
         }
-        }
     }
+}
 
 
 

@@ -2,7 +2,6 @@ package monopoly;
 
 import monopoly.casilla.*;
 import monopoly.casilla.accion.Parking;
-import monopoly.Juego;
 import partida.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -133,7 +132,7 @@ public class Tablero {
     }
 
 
-    //Metodo que inserta las casillas del lado sur.
+    //Método que inserta las casillas del lado sur.
     private void insertarLadoSur() {
         ArrayList<Casilla> ladoSur = this.posiciones.get(0);
 

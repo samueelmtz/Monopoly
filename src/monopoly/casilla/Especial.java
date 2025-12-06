@@ -102,8 +102,4 @@ public class Especial extends Casilla {
         return false;
     }
 
-    // GETTER específico
-    public String getTipoEspecial() {
-        return tipoEspecial;
-    }
 }
