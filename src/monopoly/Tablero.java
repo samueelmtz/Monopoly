@@ -2,15 +2,13 @@ package monopoly;
 
 import monopoly.casilla.*;
 import monopoly.casilla.accion.Parking;
-import monopoly.interfaces.Consola;
-import monopoly.interfaces.ConsolaNormal;
+import monopoly.Juego;
 import partida.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Tablero {
-    private static final Consola consola = new ConsolaNormal();
-    //Atributos.
+    //Atributos
     private ArrayList<ArrayList<Casilla>> posiciones; //Posiciones del tablero: se define como un arraylist de arraylists de casillas (uno por cada lado del tablero).
     private HashMap<String, Grupo> grupos; //Grupos del tablero, almacenados como un HashMap con clave String (será el color del grupo).
     private Jugador banca;//Un jugador que será la banca.
@@ -35,7 +33,7 @@ public class Tablero {
         if (parking != null) {
             ((Parking) parking).añadirAlBote(cantidad);
         }
-        System.out.printf("Se han añadido %,.0f€ al bote del Parking. Bote actual: %,.0f€\n", cantidad, this.boteParking);
+        Juego.consola.imprimir("Se han añadido %,.0f€ al bote del Parking. Bote actual: %,.0f€\n", cantidad, this.boteParking);
     }
 
     // Método para que un jugador reclame el bote
@@ -51,10 +49,10 @@ public class Tablero {
                 // Restar el valor actual para ponerlo a 0
                 ((Parking) parking).añadirAlBote(-boteActual);
             }
-            System.out.printf("¡%s ha ganado el bote del Parking: %,.0f€!\n", jugador.getNombre(), boteActual);
+            Juego.consola.imprimir("¡%s ha ganado el bote del Parking: %,.0f€!\n", jugador.getNombre(), boteActual);
             this.boteParking = 0f; // Resetear el bote
         } else {
-            System.out.println("El bote del Parking está vacío.");
+            Juego.consola.imprimir("El bote del Parking está vacío.");
         }
         return boteActual;
     }
@@ -80,33 +78,33 @@ public class Tablero {
 
     private void crearGrupo(String color, String... nombresCasillas) {
         ArrayList<Propiedad> propiedadesGrupo = new ArrayList<>();
-        
+
         for (String nombre : nombresCasillas) {
             Casilla casilla = encontrar_casilla(nombre);
             if (casilla == null) {
-                consola.imprimir("No se encontró la casilla: " + nombre);
+                Juego.consola.imprimir("No se encontró la casilla: " + nombre);
             }
             if (!(casilla instanceof Propiedad)) {
-                consola.imprimir("La casilla " + nombre + " no es una propiedad");
+                Juego.consola.imprimir("La casilla " + nombre + " no es una propiedad");
             }
             propiedadesGrupo.add((Propiedad) casilla);
         }
-        
+
         // Crear el grupo con el número correcto de propiedades
         switch (propiedadesGrupo.size()) {
             case 2:
                 grupos.put(color, new Grupo(
-                    propiedadesGrupo.get(0),
-                    propiedadesGrupo.get(1),
-                    color
+                        propiedadesGrupo.get(0),
+                        propiedadesGrupo.get(1),
+                        color
                 ));
                 break;
             case 3:
                 grupos.put(color, new Grupo(
-                    propiedadesGrupo.get(0),
-                    propiedadesGrupo.get(1),
-                    propiedadesGrupo.get(2),
-                    color
+                        propiedadesGrupo.get(0),
+                        propiedadesGrupo.get(1),
+                        propiedadesGrupo.get(2),
+                        color
                 ));
                 break;
             default:
@@ -427,7 +425,5 @@ public class Tablero {
         return banca;
     }
     
-    public float getBoteParking() {
-        return boteParking;
-    }
+    public float getBoteParking() { return boteParking;}
 }

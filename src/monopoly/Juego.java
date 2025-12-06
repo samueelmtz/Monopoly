@@ -31,7 +31,7 @@ public class Juego implements Comandos{
     private ArrayList<Avatar> avatares; //Avatares en la partida.
     private ArrayList<Edificio> edificios; //Edificios en la partida
     private String colorGrupo;
-    private int turno = 0; //Índice correspondiente a la posición en el arrayList del jugador (y el avatar) que tienen el turno
+    private int turno; //Índice correspondiente a la posición en el arrayList del jugador (y el avatar) que tienen el turno
     private int lanzamientos; //Variable para contar el número de lanzamientos de un jugador en un turno.
     private Tablero tablero; //Tablero en el que se juega.
     private Dado dado1; //Dos dados para lanzar y avanzar casillas.
@@ -40,12 +40,6 @@ public class Juego implements Comandos{
     private boolean tirado; //Booleano para comprobar si el jugador que tiene el turno ha tirado o no.
     private boolean solvente; //Booleano para comprobar si el jugador que tiene el turno es solvente, es decir, si ha pagado sus deudas.
     public final static Consola consola = new ConsolaNormal(); //Atributo estático para imprimir y leer mensajes por consola
-    //Gestion de cartas
-    private ArrayList<Carta> cartasSuerte;
-    private ArrayList<Carta> cartasComunidad;
-    private int contadorSuerte;
-    private int contadorComunidad;
-
 
     // Constructor
     public Juego() {
@@ -64,7 +58,6 @@ public class Juego implements Comandos{
 
     // Metodo para inciar una partida: crea los jugadores y avatares.
     public void iniciarPartida() {
-        Scanner scanner = new Scanner(System.in);
         // Crear lista de jugadores, avatares y edificios
         jugadores = new ArrayList<>();
         avatares = new ArrayList<>();
@@ -87,8 +80,7 @@ public class Juego implements Comandos{
         solvente = true;
 
         //Leemos el fichero txt de entrada (si lo hay)
-        consola.leer("Introduce la ruta del fichero de comandos (.txt): ");
-        String rutaFichero = scanner.nextLine().trim();
+        String rutaFichero = consola.leer("Introduce la ruta del fichero de comandos (.txt): ");
 
         lecturaFichero(rutaFichero);
 
@@ -119,8 +111,7 @@ public class Juego implements Comandos{
                 consola.imprimir("> eliminar trato");
                 consola.imprimir("> ver tablero");
                 consola.imprimir("> salir");
-                consola.imprimir("Acción a ejecutar: ");
-                String comando = scanner.nextLine().trim();
+                String comando = consola.leer("Acción a ejecutar: ");
 
                 // Salir del juego
                 if (comando.equalsIgnoreCase("salir")) {
@@ -137,7 +128,6 @@ public class Juego implements Comandos{
             }
         }
 
-        scanner.close();
         consola.imprimir("El juego ha terminado. Esperamos que hayáis disfrutado la experiencia!!!");
     }
 
@@ -158,7 +148,7 @@ public class Juego implements Comandos{
         }
     }
 
-    /*Metodo que interpreta el comando introducido y toma la accion correspondiente.
+    /*Método que interpreta el comando introducido y toma la accion correspondiente.
      * Parámetro: cadena de caracteres (el comando).
      */
     private void analizarComando(String comando) {
@@ -243,9 +233,6 @@ public class Juego implements Comandos{
                             case "jugadores":
                                 listarJugadores();
                                 break;
-                            case "avatares":
-                                listarAvatares();
-                                break;
                             case "edificios":
                                 if (comandos.length == 2) {
                                     listarEdificios(null);
@@ -262,8 +249,7 @@ public class Juego implements Comandos{
 
                 case "ver":
                     if (comandos.length == 2 && comandos[1].equals("tablero")) {
-                        // Usar toString()
-                        consola.imprimir(tablero.toString());
+                        verTablero();
                     } else {
                         consola.imprimir("Comando incorrecto. Uso: ver tablero");
                     }
@@ -356,6 +342,11 @@ public class Juego implements Comandos{
         }
     }
 
+    @Override
+    public void verTablero(){
+        consola.imprimir(tablero.toString());
+    }
+
     /*Metodo que realiza las acciones asociadas al comando 'describir jugador'.
      * Parámetro: comando introducido*/
     @Override
@@ -424,13 +415,6 @@ public class Juego implements Comandos{
             }
         }
         consola.imprimir("Jugador no encontrado: " + nombreJugador);
-    }
-
-    /*Metodo que realiza las acciones asociadas al comando 'describir avatar'.
-    * Parámetro: id del avatar a describir.
-     */
-
-    private void descAvatar(String ID) {
     }
 
     /* Método que realiza las acciones asociadas al comando 'describir nombre_casilla'.
@@ -503,7 +487,7 @@ public class Juego implements Comandos{
 
         consola.imprimir("Has lanzado los dados: " + valorDado1 + " y " + valorDado2 + ". Total: " + suma);
 
-        System.out.println("El avatar " + actual.getAvatar().getId() + " avanza " + (valorDado1 + valorDado2) + " posiciones");
+        consola.imprimir("El avatar " + actual.getAvatar().getId() + " avanza " + (valorDado1 + valorDado2) + " posiciones");
         // 3. Mover avatar
         actual.getAvatar().moverAvatar(tablero.getPosiciones(), valorDado1 + valorDado2);
 
@@ -512,7 +496,6 @@ public class Juego implements Comandos{
 
         // 5. EVALUAR LA CASILLA
         solvente = casillaActual.evaluarCasilla(actual, banca, tablero, jugadores, suma);
-
 
         // 6. Manejar dobles y cárcel
         if (valorDado1 == valorDado2) {
@@ -571,7 +554,7 @@ public class Juego implements Comandos{
     // Método que realiza las acciones asociadas al comando 'listar enventa'.
     @Override
     public void listarVenta() {
-        System.out.println("Propiedades en venta:");
+        consola.imprimir("Propiedades en venta:");
 
         boolean hayPropiedadesEnVenta = false;
 
@@ -586,7 +569,7 @@ public class Juego implements Comandos{
         }
 
         if (!hayPropiedadesEnVenta) {
-            System.out.println("No hay propiedades en venta en este momento.");
+            consola.imprimir("No hay propiedades en venta en este momento.");
         }
     }
 
@@ -643,11 +626,6 @@ public class Juego implements Comandos{
             }
             System.out.println("]");
         }
-    }
-
-    // Método que realiza las acciones asociadas al comando 'listar avatares'. //NO HACER PRIMERA ENTREGA
-    private void listarAvatares() {
-
     }
 
     //Método que realiza las acciones asociadas al comando 'listar edificios'

@@ -1,6 +1,7 @@
 package monopoly.interfaces;
 
 public interface Comandos {
+    void verTablero();
     void crearJugador(String nombre, String tipoAvatar);
     void turnoJugador();
     void descJugador(String[] partes);

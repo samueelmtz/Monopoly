@@ -50,7 +50,7 @@ public class Avatar {
             this.jugador.sumarFortuna(Valor.SUMA_VUELTA);
             this.jugador.sumarPasarPorCasillaDeSalida(Valor.SUMA_VUELTA);
             this.jugador.setVueltas(this.jugador.getVueltas() + 1);
-            System.out.println("¡" + this.jugador.getNombre() + " ha pasado por la Salida y recibe " +
+            Juego.consola.imprimir("¡" + this.jugador.getNombre() + " ha pasado por la Salida y recibe " +
                     String.format("%,.0f", Valor.SUMA_VUELTA) + "€! Vueltas: " + this.jugador.getVueltas());
         }
 
@@ -100,14 +100,14 @@ public class Avatar {
                     casilla.anhadirAvatar(this);
                     casilla.registrarVisita();
 
-                    System.out.println("Avatar " + this.id + " se movió a " + casilla.getNombre() + " (posición " + nuevaPosicion + ")");
+                    Juego.consola.imprimir("Avatar " + this.id + " se movió a " + casilla.getNombre() + " (posición " + nuevaPosicion + ")");
                     return;
                 }
             }
         }
 
         // Si no se encuentra la casilla, mostrar error
-        System.out.println("Error: No se pudo encontrar la casilla en posición " + nuevaPosicion);
+        Juego.consola.imprimir("Error: No se pudo encontrar la casilla en posición " + nuevaPosicion);
     }
 
 
@@ -120,7 +120,6 @@ public class Avatar {
     public String getTipo() {
         return tipo;
     }
-
 
     public Jugador getJugador() {
         return jugador;

@@ -53,7 +53,7 @@ public class Jugador {
      */
     public Jugador(String nombre, String tipoAvatar, Casilla inicio, ArrayList<Avatar> avCreados) {
         this.nombre = nombre;
-        this.avatar = new Avatar(tipoAvatar,this, inicio, avCreados);
+        this.avatar = new Avatar(tipoAvatar, this, inicio, avCreados);
         this.fortuna = Valor.FORTUNA_INICIAL;
         this.enCarcel = false;
         this.tiradasCarcel = 0;
@@ -66,26 +66,27 @@ public class Jugador {
         this.cobroDeAlquileres = 0;
         this.pasarPorCasillaDeSalida = 0;
         this.premiosInversionesBote = 0;
+        this.tratosPendientes = new ArrayList<>();
     }
 
     //Otros métodos:
     //Método para añadir una propiedad al jugador. Como parámetro, la casilla a añadir.
     public void anhadirPropiedad(Casilla casilla) {
-        if(!this.propiedades.contains(casilla)) {
+        if (!this.propiedades.contains(casilla)) {
             propiedades.add(casilla);
         }
     }
 
     //Método para eliminar una propiedad del arraylist de propiedades de jugador.
     public void eliminarPropiedad(Casilla casilla) {
-        if(this.propiedades.contains(casilla)) {
+        if (this.propiedades.contains(casilla)) {
             propiedades.remove(casilla);
         }
     }
 
     //Método para añadir un edificio a un jugador
     public void anhadirEdificio(Edificio edificio) {
-        if(!this.edificios.contains(edificio)) {
+        if (!this.edificios.contains(edificio)) {
             edificios.add(edificio);
         }
     }
@@ -109,9 +110,9 @@ public class Jugador {
         this.tiradasCarcel = 0;
 
         // Buscar la casilla de la cárcel por nombre
-        for(ArrayList<Casilla> lado : pos) {
-            for(Casilla cas : lado) {
-                if(cas.getNombre().equals("Carcel")) {
+        for (ArrayList<Casilla> lado : pos) {
+            for (Casilla cas : lado) {
+                if (cas.getNombre().equals("Carcel")) {
                     this.avatar.colocar(pos, cas.getPosicion());
                     Juego.consola.imprimir(this.nombre + " ha sido enviado a la cárcel.");
                     this.vecesEnCarcel++;
@@ -143,9 +144,6 @@ public class Jugador {
     }
 
     //Métodos de tratos
-    public ArrayList<Tratos> getTratosPendientes() {
-        return this.tratosPendientes;
-    }
 
     public void agregarTrato(Tratos trato) {
         this.tratosPendientes.add(trato);
@@ -153,12 +151,13 @@ public class Jugador {
     }
 
     public void eliminarTrato(Tratos trato) {
-        if (this.tratosPendientes.remove(trato)) {
-            return;
-        } else {
+        if (!this.tratosPendientes.remove(trato)) {
             Juego.consola.imprimir(String.format("No se encontró el trato %s en los pendientes.\n", trato.getId()));
+        } else {
+            this.tratosPendientes.remove(trato);
         }
     }
+
     public Tratos buscarTratoPorId(String id) {
         for (Tratos trato : tratosPendientes) {
             if (trato.getId().equals(id)) {
@@ -167,7 +166,6 @@ public class Jugador {
         }
         return null; // Devuelve null si no encuentra el trato
     }
-
 
 
     public boolean isEnCarcel() {
@@ -215,7 +213,7 @@ public class Jugador {
         return tiradasCarcel;
     }
 
-    public int getVueltas() {return vueltas;}
+    public int getVueltas() { return vueltas;}
 
     public int getVecesEnCarcel() {
         return vecesEnCarcel;
@@ -257,4 +255,5 @@ public class Jugador {
         return edificios;
     }
 
+    public ArrayList<Tratos> getTratosPendientes() {return this.tratosPendientes;}
 }
