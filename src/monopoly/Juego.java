@@ -970,7 +970,6 @@ public class Juego implements Comandos{
             Casilla casillaActual = jugadorActual.getAvatar().getLugar();
 
             // Verificar que es un solar
-            Juego.consola.imprimir("DEBUG: casillaActual='%s' clase='%s'", casillaActual.getNombre(), casillaActual.getClass().getSimpleName());
             if (!(casillaActual instanceof Solar)) {
                 throw new ExcepcionPropiedadNoEdificable(
                         casillaActual.getNombre(),
@@ -1004,6 +1003,7 @@ public class Juego implements Comandos{
             consola.imprimir("⚠ Error inesperado: " + e.getMessage());
         }
     }
+
 
 
     @Override

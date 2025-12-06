@@ -89,12 +89,12 @@ public class Solar extends Propiedad {
     @Override
     public boolean evaluarCasilla(Jugador actual, Jugador banca, Tablero tablero, ArrayList<Jugador> jugadores, int tirada) {
         if (actual.getAvatar().getLugar() == this) {
-            if (this.getDuenho() == null || this.getDuenho() == banca || this.getDuenho().getNombre().equals("Banca")) {
+            if (this.getDuenho() == null || this.getDuenho().equals(banca) || this.getDuenho().getNombre().equals("Banca")) {
                 Juego.consola.imprimir("¡Este solar está disponible para compra! Usa el comando 'comprar " + this.getNombre() + "' para adquirirla.");
                 return true;
             }
 
-            if (this.getDuenho() != null && this.getDuenho() != banca && this.getDuenho() != actual) {
+            if (this.getDuenho() != null && !this.getDuenho().equals(banca) && !this.getDuenho().equals(actual)) {
                 if (this.isHipotecada()) {
                     Juego.consola.imprimir("El solar " + this.getNombre() + " está hipotecado. No se cobra alquiler.");
                     return true;

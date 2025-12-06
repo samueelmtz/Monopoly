@@ -130,6 +130,7 @@ public abstract class Carta {
         Juego.consola.imprimir("Fortuna actual de %s: %,.0f€\n", jugador.getNombre(), jugador.getFortuna());
     }
 
+
     public static Carta obtenerSiguienteCarta(String tipo) {
         if (tipo == null) throw new IllegalArgumentException("Tipo de carta nulo");
         if (tipo.equalsIgnoreCase("Suerte")) {

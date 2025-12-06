@@ -1,6 +1,7 @@
 // monopoly/casilla/Accion.java
 package monopoly.casilla;
 
+import monopoly.carta.Carta;
 import partida.Jugador;
 import partida.Avatar;
 import monopoly.Juego;
@@ -38,6 +39,14 @@ public class Accion extends Casilla {
         if (actual.getAvatar().getLugar() == this) {
             Juego.consola.imprimir("Has caído en " + this.getTipoAccion() +
                     ". Se procesará la acción correspondiente.");
+            try {
+                Carta carta = Carta.obtenerSiguienteCarta(this.getTipoAccion());
+                carta.ejecutarAccion(actual, tablero, jugadores, banca);
+
+            } catch (Exception e) {
+                Juego.consola.imprimir("Error ejecutando carta: " + e.getClass().getSimpleName() + " - " + e.getMessage());
+                e.printStackTrace();
+            }
             return true;
         }
         return false;
