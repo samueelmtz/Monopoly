@@ -7,8 +7,7 @@ import monopoly.Juego;
 public class Grupo {
     private final ArrayList<Propiedad> propiedades;
     private String colorGrupo;
-    private int numCasillas;
-    private ArrayList<Casilla> miembros;
+    private int numCasillas;;
 
     /**
      * Constructor para un grupo con dos propiedades.
@@ -79,17 +78,24 @@ public class Grupo {
     // GETTERS Y SETTERS
 
     public ArrayList<Casilla> getMiembros() {
-        return new ArrayList<>(miembros); // Devolver copia para proteger encapsulación
+        // Convertir propiedades a Casillas
+        return new ArrayList<Casilla>(propiedades);
     }
 
-    // SETTER para miembros (si es necesario)
+    // Si necesitas setMiembros, puedes mantenerlo pero adaptarlo
     public void setMiembros(ArrayList<Casilla> miembros) {
-        this.miembros = new ArrayList<>(miembros);
-        this.numCasillas = miembros.size();
+        this.propiedades.clear();
+        for (Casilla casilla : miembros) {
+            if (casilla instanceof Propiedad) {
+                this.propiedades.add((Propiedad) casilla);
+                ((Propiedad) casilla).setGrupo(this);
+            }
+        }
+        this.numCasillas = propiedades.size();
     }
 
     public ArrayList<Propiedad> getPropiedades() {
-        return propiedades;
+        return new ArrayList<>(propiedades);
     }
 
     public String getColorGrupo() {

@@ -77,3 +77,4 @@ hipotecar Solar20
 hipotecar Solar19
 deshipotecar Solar18
 deshipotecar Solar19
+ver tablero

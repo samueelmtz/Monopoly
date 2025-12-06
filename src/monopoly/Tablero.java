@@ -28,14 +28,19 @@ public class Tablero {
     public void añadirAlBote(float cantidad) {
         this.boteParking += cantidad;
 
-        // Usar sumarValor en la casilla de Parking
         Casilla parking = encontrar_casilla("Parking");
         if (parking != null) {
-            ((Parking) parking).añadirAlBote(cantidad);
+            if (parking instanceof Parking) {
+                ((Parking) parking).añadirAlBote(cantidad);
+                Juego.consola.imprimir("Se han añadido %,.0f€ al bote del Parking. Bote actual: %,.0f€\n",
+                        cantidad, this.boteParking);
+            } else {
+                Juego.consola.imprimir("Advertencia: La casilla Parking no es del tipo correcto");
+            }
+        } else {
+            Juego.consola.imprimir("Error: No se encontró la casilla Parking");
         }
-        Juego.consola.imprimir("Se han añadido %,.0f€ al bote del Parking. Bote actual: %,.0f€\n", cantidad, this.boteParking);
     }
-
     // Método para que un jugador reclame el bote
     public float reclamarBote(Jugador jugador) {
         float boteActual = this.boteParking;
@@ -168,7 +173,7 @@ public class Tablero {
         ArrayList<Casilla> ladoNorte = this.posiciones.get(2);
 
         // Posiciones 21-30 con alquileres según PDF
-        ladoNorte.add(new Accion("Parking", 21, banca, "Parking"));
+        ladoNorte.add(new Parking("Parking", 21, banca));
         ladoNorte.add(new Propiedad("Solar12", 22, 2200000, 180000, banca));
         ladoNorte.add(new Accion("Suerte3", 23, banca, "Suerte"));
         ladoNorte.add(new Propiedad("Solar13", 24, 2200000, 180000, banca));

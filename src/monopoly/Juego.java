@@ -862,7 +862,7 @@ public class Juego implements Comandos{
                 // SOLO considerar casillas compradas
                 if (casilla.getDuenho() != null && !casilla.getDuenho().getNombre().equals("Banca") &&
                         casilla.getDuenho() != banca) {
-                    if(!(casilla instanceof Propiedad)) {
+                    if(casilla instanceof Propiedad) {  // CAMBIAR: Verificar que SÍ ES Propiedad
                         Propiedad propiedad = (Propiedad) casilla;
                         if (propiedad.getValor() > 0) {
                             float rentabilidad = propiedad.getImpuesto() / propiedad.getValor();
