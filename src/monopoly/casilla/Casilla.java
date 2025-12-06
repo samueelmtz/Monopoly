@@ -3,6 +3,7 @@ import partida.Avatar;
 import partida.Jugador;
 import java.util.ArrayList;
 import monopoly.Juego;
+import monopoly.Tablero;
 
 public abstract class Casilla {
     // Atributos COMUNES a todas las casillas
@@ -22,7 +23,7 @@ public abstract class Casilla {
     }
 
     //Métodos abstractos comunes
-    public abstract boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada);
+    public abstract boolean evaluarCasilla(Jugador actual, Jugador banca, Tablero tablero, ArrayList<Jugador> jugadores, int tirada);
     public abstract void infoCasilla();
     public abstract String toString();
 

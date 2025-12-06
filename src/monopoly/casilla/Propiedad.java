@@ -7,6 +7,7 @@ import monopoly.interfaces.*;
 import monopoly.edificio.*;
 import monopoly.casilla.propiedad.*;
 import monopoly.Juego;
+import monopoly.Tablero;
 
 public class Propiedad extends Casilla {
     // Atributos específicos de propiedades - PRIVADOS
@@ -173,7 +174,7 @@ public class Propiedad extends Casilla {
     }
 
     @Override
-    public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
+    public boolean evaluarCasilla(Jugador actual, Jugador banca, Tablero tablero, ArrayList<Jugador> jugadores, int tirada) {
         // Implementación por defecto - será sobrescrita en subclases
         if (actual.getAvatar().getLugar() == this) {
             if (this.getDuenho() == null || this.getDuenho() == banca || this.getDuenho().getNombre().equals("Banca")) {

@@ -2,7 +2,9 @@ package monopoly.casilla.accion;
 
 import monopoly.Juego;
 import monopoly.casilla.Accion;
+import monopoly.Tablero;
 import partida.Jugador;
+import java.util.ArrayList;
 
 public class Parking extends Accion {
     private float bote;
@@ -15,12 +17,15 @@ public class Parking extends Accion {
 
     // MÉTODO de evaluación de casilla - Específico para Parking
     @Override
-    public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
+    public boolean evaluarCasilla(Jugador actual, Jugador banca, Tablero tablero, ArrayList<Jugador> jugadores, int tirada) {
         if (actual.getAvatar().getLugar() == this) {
             Juego.consola.imprimir("¡Has caído en Parking!");
+
             if (this.bote > 0) {
-                Juego.consola.imprimir("¡Hay un bote de %,.0f€ acumulado!\n", this.bote);
-                // La reclamación del bote se manejará en el juego principal
+                float boteGanado = reclamarBote();
+                actual.sumarFortuna(boteGanado);
+                actual.sumarPremiosInversionesOBote(boteGanado);
+                Juego.consola.imprimir("¡Has ganado el bote de %,.0f€!\n", boteGanado);
             } else {
                 Juego.consola.imprimir("El bote del parking está vacío.");
             }

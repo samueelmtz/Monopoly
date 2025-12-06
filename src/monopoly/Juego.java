@@ -428,7 +428,6 @@ public class Juego implements Comandos{
 
     /*Metodo que realiza las acciones asociadas al comando 'describir avatar'.
     * Parámetro: id del avatar a describir.
-    NO HACER PRIMERA ENTREGA
      */
 
     private void descAvatar(String ID) {
@@ -505,66 +504,27 @@ public class Juego implements Comandos{
         consola.imprimir("Has lanzado los dados: " + valorDado1 + " y " + valorDado2 + ". Total: " + suma);
 
         System.out.println("El avatar " + actual.getAvatar().getId() + " avanza " + (valorDado1 + valorDado2) + " posiciones");
+        // 3. Mover avatar
         actual.getAvatar().moverAvatar(tablero.getPosiciones(), valorDado1 + valorDado2);
 
-        // NO establecer tirado = true aquí cuando hay dados dobles
-        if (valorDado1 != valorDado2) {
-            tirado = true;
-        }
-
-        lanzamientos++;
-
-        // EVALUAR LA CASILLA DESPUÉS DEL MOVIMIENTO
+        // 4. Obtener casilla actual
         Casilla casillaActual = actual.getAvatar().getLugar();
-        solvente = casillaActual.evaluarCasilla(actual, banca, suma);
 
+        // 5. EVALUAR LA CASILLA
+        solvente = casillaActual.evaluarCasilla(actual, banca, tablero, jugadores, suma);
 
-        // Para verificar si es una casilla de Suerte o Comunidad
-        if (casillaActual instanceof Accion) {
-            Accion accion = (Accion) casillaActual;
-            if (accion.getTipoAccion().equals("Suerte") || accion.getTipoAccion().equals("Comunidad")) {
-                ejecutarCarta(actual, accion.getTipoAccion());
-            }
-        }
-
-        // Para obtener el impuesto de una casilla
-        if (casillaActual instanceof Impuesto && solvente) {
-            float impuesto = ((Impuesto) casillaActual).getCantidadImpuesto();
-
-            // El dinero ya se restó en evaluarCasilla, pero fue a la banca
-            // Lo quitamos de la banca y lo ponemos en el bote
-            actual.restarFortuna(impuesto);
-            tablero.añadirAlBote(impuesto);
-
-            System.out.printf("Se han transferido %,.0f€ del impuesto al bote del Parking\n", impuesto);
-        }
-
-        // MANEJO ESPECIAL PARA PARKING DESPUÉS DE EVALUAR
-        if (casillaActual.getNombre().equals("Parking")) {
-            float boteGanado = tablero.reclamarBote(actual);
-            if (boteGanado > 0) {
-                System.out.printf("Fortuna actual de %s: %,.0f€\n", actual.getNombre(), actual.getFortuna());
-            }
-        }
-
-        // MANEJO ESPECIAL PARA IRCARCEL DESPUÉS DE EVALUAR
-        if (casillaActual.getNombre().equals("IrCarcel")) {
-            System.out.println("¡Has caído en Ir a la Cárcel! Moviendo a la cárcel...");
-            actual.encarcelar(tablero.getPosiciones());
-        }
-
+        // 6. Manejar dobles y cárcel
         if (valorDado1 == valorDado2) {
             if (lanzamientos == 3) {
-                System.out.println("Tercer doble consecutivo. El avatar va a la cárcel.");
                 actual.encarcelar(tablero.getPosiciones());
-                tirado = true; // Terminar turno después de ir a la cárcel
+                tirado = true;
             } else {
-                System.out.println("Dados dobles. Puedes lanzar de nuevo.");
-                // NO establecer tirado = true para permitir otro lanzamiento
+                // Permite otro lanzamiento
+                tirado = false;
             }
         } else {
+            tirado = true;
             lanzamientos = 0;
-            // tirado ya se estableció arriba para casos no dobles
         }
     }
 

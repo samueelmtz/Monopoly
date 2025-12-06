@@ -4,6 +4,8 @@ package monopoly.casilla;
 import partida.Jugador;
 import partida.Avatar;
 import monopoly.Juego;
+import monopoly.Tablero;
+import java.util.ArrayList;
 
 public class Accion extends Casilla {
     private final String tipoAccion; // "Suerte", "Comunidad", "Parking"
@@ -32,9 +34,10 @@ public class Accion extends Casilla {
 
     // MÉTODO de evaluación de casilla
     @Override
-    public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
+    public boolean evaluarCasilla(Jugador actual, Jugador banca, Tablero tablero, ArrayList<Jugador> jugadores, int tirada) {
         if (actual.getAvatar().getLugar() == this) {
-            Juego.consola.imprimir("Has caído en " + this.tipoAccion + ". Se procesará la acción correspondiente.");
+            Juego.consola.imprimir("Has caído en " + this.getTipoAccion() +
+                    ". Se procesará la acción correspondiente.");
             return true;
         }
         return false;

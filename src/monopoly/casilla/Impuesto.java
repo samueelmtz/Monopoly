@@ -4,6 +4,7 @@ package monopoly.casilla;
 import partida.Jugador;
 import partida.Avatar;
 import monopoly.Juego;
+import monopoly.Tablero;
 
 public class Impuesto extends Casilla {
     private float cantidadImpuesto;
@@ -48,10 +49,10 @@ public class Impuesto extends Casilla {
             actual.restarFortuna(this.cantidadImpuesto);
             actual.sumarPagoTasasEImpuestos(this.cantidadImpuesto);
 
+            tablero.añadirAlBoteParking(this.cantidadImpuesto);
             // El dinero va al bote del Parking
             // Esto se manejará desde el Tablero/Juego
-            Juego.consola.imprimir("%s ha pagado %,.0f€ de impuestos\n",
-                    actual.getNombre(), this.cantidadImpuesto);
+            Juego.consola.imprimir("%s ha pagado %,.0f€ de impuestos\n", actual.getNombre(), this.cantidadImpuesto);
             return true;
         }
         return false;

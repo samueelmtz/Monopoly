@@ -11,6 +11,7 @@ import monopoly.edificio.Casa;
 import monopoly.edificio.Hotel;
 import monopoly.edificio.Piscina;
 import monopoly.edificio.PistaDeporte;
+import monopoly.Tablero;
 
 public class Solar extends Propiedad {
     private final ArrayList<ArrayList<Edificio>> edificios;
@@ -86,7 +87,7 @@ public class Solar extends Propiedad {
 
     // MÉTODO de evaluación de casilla
     @Override
-    public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
+    public boolean evaluarCasilla(Jugador actual, Jugador banca, Tablero tablero, ArrayList<Jugador> jugadores, int tirada) {
         if (actual.getAvatar().getLugar() == this) {
             if (this.getDuenho() == null || this.getDuenho() == banca || this.getDuenho().getNombre().equals("Banca")) {
                 Juego.consola.imprimir("¡Este solar está disponible para compra! Usa el comando 'comprar " + this.getNombre() + "' para adquirirla.");

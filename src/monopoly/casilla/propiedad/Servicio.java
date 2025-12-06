@@ -5,6 +5,9 @@ import monopoly.casilla.Propiedad;
 import partida.Jugador;
 import monopoly.Valor;
 import monopoly.Juego;
+import monopoly.Tablero;
+
+import java.util.ArrayList;
 
 public class Servicio extends Propiedad {
 
@@ -60,7 +63,7 @@ public class Servicio extends Propiedad {
 
     // MÉTODO de evaluación de casilla - Polimorfismo
     @Override
-    public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
+    public boolean evaluarCasilla(Jugador actual, Jugador banca, Tablero tablero, ArrayList<Jugador> jugadores, int tirada) {
         if (actual.getAvatar().getLugar() == this) {
             // Verificar si está disponible para compra
             if (this.getDuenho() == null || this.getDuenho() == banca || this.getDuenho().getNombre().equals("Banca")) {

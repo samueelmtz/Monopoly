@@ -3,6 +3,9 @@ package monopoly.casilla.accion;
 import monopoly.casilla.Accion;
 import partida.Jugador;
 import monopoly.Juego;
+import monopoly.Tablero;
+import monopoly.carta.Carta;
+import java.util.ArrayList;
 
 public class Suerte extends Accion {
 
@@ -13,10 +16,16 @@ public class Suerte extends Accion {
 
     // MÉTODO de evaluación de casilla - Específico para Suerte
     @Override
-    public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
+    public boolean evaluarCasilla(Jugador actual, Jugador banca,
+                                  Tablero tablero, ArrayList<Jugador> jugadores,
+                                  int tirada) {
         if (actual.getAvatar().getLugar() == this) {
-            Juego.consola.imprimir("¡Has caído en Suerte! Se elegirá una carta de suerte.");
-            // La ejecución de la carta se manejará en el juego principal
+            Juego.consola.imprimir("¡Has caído en " + this.getTipoAccion() + "!");
+
+            // Ahora tenemos acceso a tablero y jugadores
+            Carta carta = Carta.obtenerSiguienteCarta(this.getTipoAccion());
+            carta.ejecutarAccion(actual, tablero, jugadores, banca);
+
             return true;
         }
         return false;
