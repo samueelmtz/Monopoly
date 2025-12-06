@@ -29,7 +29,7 @@ public class Impuesto extends Casilla {
 
     @Override
     public String toString() {
-        return String.format("Impuesto{nombre='%s', posicion=%d, impuesto=%,.0f€}",
+        return String.format("Impuesto{nombre='%s', posición=%d, impuesto=%,.0f€}",
                 this.getNombre(), this.getPosicion(), cantidadImpuesto);
     }
 
