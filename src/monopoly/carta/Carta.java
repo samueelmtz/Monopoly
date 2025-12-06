@@ -116,7 +116,7 @@ public abstract class Carta {
                 if (destino != null) {
                     jugador.getAvatar().colocar(tablero.getPosiciones(), destino.getPosicion());
                     Juego.consola.imprimir("Te has movido a " + destino.getNombre());
-                    destino.evaluarCasilla(jugador, banca, 0);
+                    destino.evaluarCasilla(jugador, banca, tablero, jugadores, 0);
                 }
             }
 

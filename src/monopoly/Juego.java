@@ -513,6 +513,7 @@ public class Juego implements Comandos{
         // 5. EVALUAR LA CASILLA
         solvente = casillaActual.evaluarCasilla(actual, banca, tablero, jugadores, suma);
 
+
         // 6. Manejar dobles y cárcel
         if (valorDado1 == valorDado2) {
             if (lanzamientos == 3) {
