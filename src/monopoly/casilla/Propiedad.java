@@ -127,6 +127,7 @@ public class Propiedad extends Casilla {
         }
     }
 
+
     public boolean puedeDeshipotecar(Jugador jugador) {
         if (this.getDuenho() == null || !this.getDuenho().equals(jugador)) {
             Juego.consola.imprimir(jugador.getNombre() + " no puede hipotecar " + this.getNombre() + ". No es una propiedad que le pertenece.");

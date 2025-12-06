@@ -141,6 +141,7 @@ public class Jugador {
                     + this.fortuna + " < " + PRECIO_SALIDA_CARCEL + ").");
             return false;
         }
+
     }
 
     //Métodos de tratos

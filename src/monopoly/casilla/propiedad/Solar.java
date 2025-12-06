@@ -42,6 +42,7 @@ public class Solar extends Propiedad {
         return this.getDuenho() != null && this.getDuenho().equals(jugador);
     }
 
+
     @Override
     public boolean alquiler() {
         return !this.isHipotecada() && this.getDuenho() != null;

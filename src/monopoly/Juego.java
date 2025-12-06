@@ -830,6 +830,7 @@ public class Juego implements Comandos{
         consola.imprimir("}");
     }
 
+
     private String calcularCasillaMasRentable() {
         Casilla masRentable = null;
         float maxDineroGenerado = -1;
