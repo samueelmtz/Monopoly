@@ -26,7 +26,7 @@ public class Suerte extends Carta {
             mazoCartas.add(new Suerte(6, "Te multan por usar el móvil mientras conduces. Paga 150.000€.", "pagar:150000"));
             mazoCartas.add(new Suerte(7, "Avanza hasta la casilla de transporte más cercana.", "transporteCercano"));
 
-            Collections.shuffle(mazoCartas);
+
             mazoInicializado = true;
         }
     }
@@ -39,10 +39,8 @@ public class Suerte extends Carta {
         if (mazoCartas.isEmpty()) {
             inicializarCartasSuerte();
         }
-
-        Suerte carta = mazoCartas.removeFirst();
-        mazoCartas.add(carta);
-
+        Suerte carta = mazoCartas.remove(0); // extrae la primera carta
+        mazoCartas.add(carta);               // la coloca al final (ciclo)
         return carta;
     }
 

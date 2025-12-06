@@ -1005,6 +1005,7 @@ public class Juego implements Comandos{
     }
 
 
+
     @Override
     public void venderEdificios(String tipoVenta, String nombreCasilla, int cantidadSolicitada) {
         try {
