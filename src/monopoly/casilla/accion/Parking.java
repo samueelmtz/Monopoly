@@ -21,6 +21,7 @@ public class Parking extends Accion {
         if (actual.getAvatar().getLugar() == this) {
             Juego.consola.imprimir("¡Has caído en Parking!");
 
+
             if (this.bote > 0) {
                 float boteGanado = reclamarBote();
                 actual.sumarFortuna(boteGanado);

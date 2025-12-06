@@ -831,6 +831,7 @@ public class Juego implements Comandos{
     }
 
 
+
     private String calcularCasillaMasRentable() {
         Casilla masRentable = null;
         float maxDineroGenerado = -1;

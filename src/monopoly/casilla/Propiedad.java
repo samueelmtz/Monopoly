@@ -113,6 +113,7 @@ public class Propiedad extends Casilla {
                 }
             }
 
+
             // Si hay edificaciones, no se puede hipotecar
             if (!sinEdificios) {
                 Juego.consola.imprimir("No puedes hipotecar la casilla " + this.getNombre() + " porque tienes que vender todas tus edificaciones.");

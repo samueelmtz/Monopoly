@@ -43,6 +43,7 @@ public class Solar extends Propiedad {
     }
 
 
+
     @Override
     public boolean alquiler() {
         return !this.isHipotecada() && this.getDuenho() != null;

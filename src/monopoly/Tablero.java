@@ -188,6 +188,7 @@ public class Tablero {
     }
 
 
+
     //Método que inserta casillas del lado este.
     private void insertarLadoEste() {
         ArrayList<Casilla> ladoEste = this.posiciones.get(3);

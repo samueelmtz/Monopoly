@@ -62,6 +62,7 @@ public class Servicio extends Propiedad {
     }
 
 
+
     // MÉTODO de evaluación de casilla - Polimorfismo
     @Override
     public boolean evaluarCasilla(Jugador actual, Jugador banca, Tablero tablero, ArrayList<Jugador> jugadores, int tirada) {

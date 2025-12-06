@@ -95,6 +95,7 @@ public class Transporte extends Propiedad {
     }
 
 
+
     private float calcularAlquilerTransporte() {
         // Contar cuántos transportes tiene el dueño
         int transportesDelDuenho = 0;

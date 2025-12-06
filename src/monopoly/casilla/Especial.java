@@ -8,6 +8,7 @@ import monopoly.Juego;
 
 import java.util.ArrayList;
 
+
 public class Especial extends Casilla {
     private final String tipoEspecial; // "Salida", "Carcel", "IrCarcel"
 

@@ -9,6 +9,7 @@ public class Grupo {
     private String colorGrupo;
     private int numCasillas;;
 
+
     /**
      * Constructor para un grupo con dos propiedades.
      */
