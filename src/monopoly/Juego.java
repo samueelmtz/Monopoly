@@ -298,6 +298,21 @@ public class Juego implements Comandos{
                         consola.imprimir("Comando incorrecto. Uso: vender <casas|hoteles|piscina|pista_deporte> <nombre_casilla> <cantidad>");
                     }
                     break;
+                    
+                case "proponer":
+                    if (comandos.length >= 2 && comandos[1].equals("trato")) {
+                        // Obtener la parte del comando después de "proponer trato"
+                        String[] partesTrato = comando.substring("proponer trato".length()).trim().split(":");
+                        if (partesTrato.length >= 2) {
+                            // Procesar el trato
+                            proponerTrato(partesTrato);
+                        } else {
+                            consola.imprimir("Formato incorrecto. Uso: proponer trato <jugador>: cambiar (<oferta>, <solicitud>)");
+                        }
+                    } else {
+                        consola.imprimir("Comando incorrecto. Uso: proponer trato <jugador>: cambiar (<oferta>, <solicitud>)");
+                    }
+                    break;
 
                 case "hipotecar":
                     if (comandos.length == 2) {
