@@ -6,6 +6,11 @@ import partida.Jugador;
 import monopoly.casilla.Grupo;
 import java.util.ArrayList;
 import monopoly.Juego;
+import excepciones.*;
+import monopoly.edificio.Casa;
+import monopoly.edificio.Hotel;
+import monopoly.edificio.Piscina;
+import monopoly.edificio.PistaDeporte;
 
 public class Solar extends Propiedad {
     private final ArrayList<ArrayList<Edificio>> edificios;
@@ -77,35 +82,7 @@ public class Solar extends Propiedad {
         Juego.consola.imprimir("}");
     }
 
-    // MÉTODOS ESPECÍFICOS
-    public void edificar(String tipoEdificio) {
-        switch (tipoEdificio.toLowerCase()) {
-            case "casa":
-                if (anhadirCasa()) {
-                    Juego.consola.imprimir("Casa construída en " + this.getNombre());
-                }
-                break;
-            case "hotel":
-                if (anhadirHotel()) {
-                    Juego.consola.imprimir("Hotel construído en " + this.getNombre());
-                }
-                break;
-            case "piscina":
-                if (anhadirPiscina()) {
-                    Juego.consola.imprimir("Piscina construída en " + this.getNombre());
-                }
-                break;
-            case "pista_deporte":
-                if (anhadirPistaDeporte()) {
-                    Juego.consola.imprimir("Pista de deporte construída en " + this.getNombre());
-                }
-                break;
-        }
-    }
 
-    public boolean estaHipotecada() {
-        return this.isHipotecada();
-    }
 
     // MÉTODO de evaluación de casilla
     @Override
@@ -208,6 +185,271 @@ public class Solar extends Propiedad {
             return true;
         }
         return false;
+    }
+
+    public Edificio construirEdificio(String tipoEdificio, Jugador jugador) throws ExcepcionMonopoly {
+        // 1. Validar
+        validarEdificacion(tipoEdificio, jugador);
+
+        // 2. Obtener coste
+        float coste = obtenerCosteEdificio(tipoEdificio);
+
+        // 3. Verificar fondos
+        if (jugador.getFortuna() < coste) {
+            throw new ExcepcionFondosInsuficientes(
+                    jugador.getNombre(), coste, jugador.getFortuna(),
+                    "edificar " + tipoEdificio + " en " + this.getNombre()
+            );
+        }
+
+        // 4. Construir
+        boolean construido = false;
+        switch (tipoEdificio.toLowerCase()) {
+            case "casa": construido = anhadirCasa(); break;
+            case "hotel": construido = anhadirHotel(); break;
+            case "piscina": construido = anhadirPiscina(); break;
+            case "pista_deporte": construido = anhadirPistaDeporte(); break;
+        }
+
+        if (!construido) {
+            throw new ExcepcionReglasEdificacion(
+                    tipoEdificio, this.getNombre(), "error al construir"
+            );
+        }
+
+        // 5. Restar dinero
+        jugador.restarFortuna(coste);
+        jugador.sumarDineroInvertido(coste);
+
+        // 6. Crear instancia
+        return crearInstanciaEdificio(tipoEdificio);
+    }
+
+    public int venderEdificios(String tipoEdificio, int cantidad, Jugador jugador) throws ExcepcionMonopoly {
+        // 1. Verificar propiedad
+        if (!this.perteneceAJugador(jugador)) {
+            throw new ExcepcionPropiedadNoPertenece(jugador.getNombre(), this.getNombre());
+        }
+
+        // 2. Obtener cantidad disponible
+        int disponibles = obtenerCantidadEdificios(tipoEdificio);
+
+        // 3. Validar
+        if (disponibles == 0) {
+            throw new ExcepcionEdificioNoExistente(
+                    tipoEdificio + "(s) en " + this.getNombre(),
+                    this.getNombre()
+            );
+        }
+
+        if (cantidad > disponibles) {
+            throw new ExcepcionCantidadEdificiosInsuficiente(
+                    this.getNombre(), tipoEdificio, cantidad, disponibles
+            );
+        }
+
+        // 4. Eliminar edificios
+        eliminarEdificios(tipoEdificio, cantidad);
+
+        return cantidad;
+    }
+
+    private int obtenerCantidadEdificios(String tipoEdificio) {
+        switch (tipoEdificio.toLowerCase()) {
+            case "casa": return numCasas;
+            case "hotel": return numHoteles;
+            case "piscina": return numPiscinas;
+            case "pista_deporte": return numPistas;
+            default: return 0;
+        }
+    }
+
+    private void eliminarEdificios(String tipoEdificio, int cantidad) {
+        switch (tipoEdificio.toLowerCase()) {
+            case "casa":
+                numCasas = Math.max(0, numCasas - cantidad);
+                break;
+            case "hotel":
+                numHoteles = Math.max(0, numHoteles - cantidad);
+                break;
+            case "piscina":
+                numPiscinas = Math.max(0, numPiscinas - cantidad);
+                break;
+            case "pista_deporte":
+                numPistas = Math.max(0, numPistas - cantidad);
+                break;
+        }
+    }
+
+    public float obtenerPrecioVentaEdificio(String tipoEdificio) throws ExcepcionMonopoly{
+        // Según las reglas: se vende al mismo precio de compra
+        return obtenerCosteEdificio(tipoEdificio);
+    }
+
+    public float obtenerCosteEdificio(String tipoEdificio) throws ExcepcionMonopoly {
+        // Validamos el tipo de edificio
+        if (tipoEdificio == null || tipoEdificio.trim().isEmpty()) {
+            throw new ExcepcionAccionNoPermitida(
+                    "edificar",
+                    "tipo de edificio no especificado"
+            );
+        }
+
+        // Usamos switch con los tipos exactos que esperas
+        switch (tipoEdificio) {
+            case "casa":
+                return getPrecioCasa();
+
+            case "hotel":
+                return getPrecioHotel();
+
+            case "piscina":
+                return getPrecioPiscina();
+
+            case "pista_deporte":
+                return getPrecioPistaDeporte();
+
+            default:
+                // Si el tipo no coincide, lanzamos excepción
+                throw new ExcepcionAccionNoPermitida(
+                        "edificar",
+                        "tipo de edificio '" + tipoEdificio + "' no válido. " +
+                                "Tipos válidos: casa, hotel, piscina, pista_deporte"
+                );
+        }
+    }
+
+    public Edificio crearInstanciaEdificio(String tipoEdificio) throws ExcepcionMonopoly {
+        switch (tipoEdificio.toLowerCase()) {
+            case "casa":
+                Casa casa = new Casa(this);
+                añadirEdificioALista(casa, 0); // Índice 0 = casas
+                return casa;
+
+            case "hotel":
+                Hotel hotel = new Hotel(this);
+                añadirEdificioALista(hotel, 1); // Índice 1 = hoteles
+                return hotel;
+
+            case "piscina":
+                Piscina piscina = new Piscina(this);
+                añadirEdificioALista(piscina, 2); // Índice 2 = piscinas
+                return piscina;
+
+            case "pista_deporte":
+                PistaDeporte pista = new PistaDeporte(this);
+                añadirEdificioALista(pista, 3); // Índice 3 = pistas
+                return pista;
+
+            default:
+                throw new ExcepcionAccionNoPermitida(
+                        "crear edificio",
+                        "tipo de edificio '" + tipoEdificio + "' no válido"
+                );
+        }
+    }
+
+    public void validarEdificacion(String tipoEdificio, Jugador jugador) throws ExcepcionMonopoly {
+        // 1. Verificar que el jugador es el dueño
+        if (!this.perteneceAJugador(jugador)) {
+            throw new ExcepcionPropiedadNoPertenece(jugador.getNombre(), this.getNombre());
+        }
+
+        // 2. Verificar que la propiedad no está hipotecada
+        if (this.isHipotecada()) {
+            throw new ExcepcionPropiedadHipotecada(this.getNombre());
+        }
+
+        // 3. Verificar que tiene todo el grupo (si aplica)
+        if (grupo != null && !grupo.tieneTodoElGrupo(jugador)) {
+            throw new ExcepcionPropiedadGrupoIncompleto(
+                    this.getNombre(),
+                    grupo.getColorGrupo()
+            );
+        }
+
+        // 4. Validar tipo de edificio y límites (TODO EN UNO)
+        validarTipoYLimites(tipoEdificio);
+    }
+
+    // UN SOLO MÉTODO PARA TODAS LAS VALIDACIONES
+    private void validarTipoYLimites(String tipoEdificio) throws ExcepcionMonopoly {
+        String tipo = tipoEdificio.toLowerCase();
+
+        switch (tipo) {
+            case "casa":
+                if (numCasas >= 4) {
+                    throw new ExcepcionValidacionEdificacion(
+                            "casa", this.getNombre(),
+                            "Máximo 4 casas por solar (actual: " + numCasas + ")"
+                    );
+                }
+                if (numHoteles > 0) {
+                    throw new ExcepcionValidacionEdificacion(
+                            "casa", this.getNombre(),
+                            "No se pueden construir casas cuando hay un hotel"
+                    );
+                }
+                break;
+
+            case "hotel":
+                if (numHoteles >= 1) {
+                    throw new ExcepcionValidacionEdificacion(
+                            "hotel", this.getNombre(),
+                            "Máximo 1 hotel por solar (actual: " + numHoteles + ")"
+                    );
+                }
+                if (numCasas < 4) {
+                    throw new ExcepcionValidacionEdificacion(
+                            "hotel", this.getNombre(),
+                            "Se requieren 4 casas para construir un hotel (actual: " + numCasas + ")"
+                    );
+                }
+                break;
+
+            case "piscina":
+                if (numPiscinas >= 1) {
+                    throw new ExcepcionValidacionEdificacion(
+                            "piscina", this.getNombre(),
+                            "Máximo 1 piscina por solar (actual: " + numPiscinas + ")"
+                    );
+                }
+                if (numHoteles < 1) {
+                    throw new ExcepcionValidacionEdificacion(
+                            "piscina", this.getNombre(),
+                            "Se requiere un hotel para construir una piscina (hoteles: " + numHoteles + ")"
+                    );
+                }
+                break;
+
+            case "pista_deporte":
+                if (numPistas >= 1) {
+                    throw new ExcepcionValidacionEdificacion(
+                            "pista de deporte", this.getNombre(),
+                            "Máximo 1 pista de deporte por solar (actual: " + numPistas + ")"
+                    );
+                }
+                if (numHoteles < 1) {
+                    throw new ExcepcionValidacionEdificacion(
+                            "pista de deporte", this.getNombre(),
+                            "Se requiere un hotel para construir una pista de deporte (hoteles: " + numHoteles + ")"
+                    );
+                }
+                break;
+
+            default:
+                throw new ExcepcionAccionNoPermitida(
+                        "edificar",
+                        "tipo de edificio '" + tipoEdificio + "' no válido. " +
+                                "Tipos válidos: casa, hotel, piscina, pista_deporte"
+                );
+        }
+    }
+
+    private void añadirEdificioALista(Edificio edificio, int indice) {
+        if (indice >= 0 && indice < edificios.size()) {
+            edificios.get(indice).add(edificio);
+        }
     }
 
     // MÉTODOS de precios y alquileres

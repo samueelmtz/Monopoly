@@ -15,6 +15,13 @@ import monopoly.casilla.Impuesto;
 import monopoly.edificio.*;
 import monopoly.carta.*;
 import partida.*;
+import excepciones.*;
+import excepciones.ExcepcionComandoNoReconocido;
+import excepciones.ExcepcionAvatarNoValido;
+import excepciones.ExcepcionJugadorNombreDuplicado;
+import excepciones.ExcepcionMaxJugadores;
+import excepciones.ExcepcionPropiedadNoComprable;
+import excepciones.ExcepcionCasillaNoEncontrada;
 
 
 public class Juego implements Comandos{
@@ -158,191 +165,194 @@ public class Juego implements Comandos{
         String[] comandos = comando.split(" ");
         if (comandos.length == 0) return;
 
-        switch (comandos[0]) {
-            case "crear":
-                if (comandos.length >= 4 && comandos[1].equals("jugador")) {
-                    crearJugador(comandos[2], comandos[3]);
-                } else {
-                    consola.imprimir("Comando incorrecto. Uso: crear jugador <nombre> <tipo_avatar>");
-                }
-                break;
-
-            case "jugador":
-                if (comandos.length == 1) {
-                    turnoJugador();
-                } else {
-                    consola.imprimir("Comando incorrecto. Uso: jugador");
-                }
-                break;
-
-            case "describir":
-                if (comandos.length == 2 || comandos.length == 3) {
-                    switch (comandos[1]) {
-                        case "jugador":
-                            descJugador(comandos);
-                            break;
-                        default:
-                            descCasilla(comandos[1]);
-                            break;
+        try {
+            switch (comandos[0]) {
+                case "crear":
+                    if (comandos.length >= 4 && comandos[1].equals("jugador")) {
+                        crearJugador(comandos[2], comandos[3]);
+                    } else {
+                        consola.imprimir("Comando incorrecto. Uso: crear jugador <nombre> <tipo_avatar>");
                     }
-                } else {
-                    consola.imprimir("Comando erróneo. Uso: describir <jugador> [nombre] o describir [nombre_casilla]");
+                    break;
 
-                }
-                break;
+                case "jugador":
+                    if (comandos.length == 1) {
+                        turnoJugador();
+                    } else {
+                        consola.imprimir("Comando incorrecto. Uso: jugador");
+                    }
+                    break;
 
-            case "lanzar":
-                if (comandos.length == 2 && comandos[1].equals("dados")) {
-                    lanzarDados(null); // Lanzamiento normal
-                } else if (comandos.length == 3 && comandos[1].equals("dados")) {
-                    lanzarDados(comandos[2]); // Lanzamiento con dados forzados
-                } else {
-                    consola.imprimir("Comando incorrecto. Uso: lanzar dados [valor1+valor2]");
-                }
-                break;
+                case "describir":
+                    if (comandos.length == 2 || comandos.length == 3) {
+                        switch (comandos[1]) {
+                            case "jugador":
+                                descJugador(comandos);
+                                break;
+                            default:
+                                descCasilla(comandos[1]);
+                                break;
+                        }
+                    } else {
+                        consola.imprimir("Comando erróneo. Uso: describir <jugador> [nombre] o describir [nombre_casilla]");
 
-            case "comprar":
-                if (comandos.length < 2) {
-                    consola.imprimir("Falta el nombre de la casilla. Uso: comprar <nombre_casilla>");
-                } else {
-                    String nombreCasilla = comando.substring(comando.indexOf(" ") + 1);
-                    comprar(nombreCasilla);
-                }
-                break;
+                    }
+                    break;
 
-            case "salir":
-                if (comandos.length >= 2) {
-                    String subcomando = comandos[1].toLowerCase();
-                    // Aceptar ambas versiones
-                    if (subcomando.equals("carcel") || subcomando.equals("cárcel")) {
-                        salirCarcel();
+                case "lanzar":
+                    if (comandos.length == 2 && comandos[1].equals("dados")) {
+                        lanzarDados(null); // Lanzamiento normal
+                    } else if (comandos.length == 3 && comandos[1].equals("dados")) {
+                        lanzarDados(comandos[2]); // Lanzamiento con dados forzados
+                    } else {
+                        consola.imprimir("Comando incorrecto. Uso: lanzar dados [valor1+valor2]");
+                    }
+                    break;
+
+                case "comprar":
+                    if (comandos.length < 2) {
+                        consola.imprimir("Falta el nombre de la casilla. Uso: comprar <nombre_casilla>");
+                    } else {
+                        String nombreCasilla = comando.substring(comando.indexOf(" ") + 1);
+                        comprar(nombreCasilla);
+                    }
+                    break;
+
+                case "salir":
+                    if (comandos.length >= 2) {
+                        String subcomando = comandos[1].toLowerCase();
+                        // Aceptar ambas versiones
+                        if (subcomando.equals("carcel") || subcomando.equals("cárcel")) {
+                            salirCarcel();
+                        } else {
+                            consola.imprimir("Comando incorrecto. Uso: salir cárcel");
+                        }
                     } else {
                         consola.imprimir("Comando incorrecto. Uso: salir cárcel");
                     }
-                } else {
-                    consola.imprimir("Comando incorrecto. Uso: salir cárcel");
-                }
-                break;
+                    break;
 
-            case "listar":
-                if (comandos.length < 2) {
-                    consola.imprimir("Comando incompleto. Uso: listar <enventa|jugadores|avatares>");
-                } else {
-                    switch (comandos[1]) {
-                        case "enventa":
-                            listarVenta();
-                            break;
-                        case "jugadores":
-                            listarJugadores();
-                            break;
-                        case "avatares":
-                            listarAvatares();
-                            break;
-                        case "edificios":
-                            if (comandos.length == 2) {
-                                listarEdificios(null);
-                            } else if (comandos.length == 3) {
-                                listarEdificios(comandos[2]);
-                            }
-                            break;
-                        default:
-                            consola.imprimir("Comando incorrecto. Uso: listar <enventa|jugadores|avatares|edificios>");
-                            break;
+                case "listar":
+                    if (comandos.length < 2) {
+                        consola.imprimir("Comando incompleto. Uso: listar <enventa|jugadores|avatares>");
+                    } else {
+                        switch (comandos[1]) {
+                            case "enventa":
+                                listarVenta();
+                                break;
+                            case "jugadores":
+                                listarJugadores();
+                                break;
+                            case "avatares":
+                                listarAvatares();
+                                break;
+                            case "edificios":
+                                if (comandos.length == 2) {
+                                    listarEdificios(null);
+                                } else if (comandos.length == 3) {
+                                    listarEdificios(comandos[2]);
+                                }
+                                break;
+                            default:
+                                consola.imprimir("Comando incorrecto. Uso: listar <enventa|jugadores|avatares|edificios>");
+                                break;
+                        }
                     }
-                }
-                break;
+                    break;
 
-            case "ver":
-                if (comandos.length == 2 && comandos[1].equals("tablero")) {
-                    // Usar toString()
-                    consola.imprimir(tablero.toString());
-                } else {
-                    consola.imprimir("Comando incorrecto. Uso: ver tablero");
-                }
-                break;
-
-            case "acabar":
-                if (comandos.length == 2 && comandos[1].equals("turno")) {
-                    acabarTurno();
-                } else {
-                    consola.imprimir("Comando incorrecto. Uso: acabar turno");
-                }
-                break;
-
-            case "estadisticas":
-                if (comandos.length == 2) {
-                    mostrarEstadisticas(comandos[1]);
-                } else if (comandos.length == 1) {
-                    mostrarEstadisticasJuego();
-                } else {
-                    consola.imprimir("Comando incorrecto. Uso: estadisticas <nombre_jugador> o estadisticas");
-                }
-                break;
-
-            case "edificar":
-                if (comandos.length == 2) {
-                    edificar(comandos[1]);
-                } else {
-                    consola.imprimir("Comando incorrecto. Uso: edificar <tipo_edificio>");
-                }
-                break;
-
-            case "vender":
-                // vender <casas|hoteles|piscina|pista_deporte> <nombre_casilla> <cantidad>
-                if (comandos.length >= 4) {
-                    String tipoVenta = comandos[1].toLowerCase();
-                    String nombreCasilla = comandos[2];
-                    int cantidad;
-                    try {
-                        cantidad = Integer.parseInt(comandos[3]);
-                    } catch (NumberFormatException e) {
-                        consola.imprimir("Cantidad inválida. Uso: vender <tipo> <nombre_casilla> <cantidad>");
-                        break;
+                case "ver":
+                    if (comandos.length == 2 && comandos[1].equals("tablero")) {
+                        // Usar toString()
+                        consola.imprimir(tablero.toString());
+                    } else {
+                        consola.imprimir("Comando incorrecto. Uso: ver tablero");
                     }
-                    venderEdificios(tipoVenta, nombreCasilla, cantidad);
-                } else {
-                    consola.imprimir("Comando incorrecto. Uso: vender <casas|hoteles|piscina|pista_deporte> <nombre_casilla> <cantidad>");
-                }
-                break;
+                    break;
 
-            case "hipotecar":
-                if (comandos.length == 2) {
-                    hipotecarPropiedad(comandos[1]);
-                } else {
-                    consola.imprimir("Comando incorrecto. Uso: hipotecar <nombre_casilla>");
-                }
-                break;
+                case "acabar":
+                    if (comandos.length == 2 && comandos[1].equals("turno")) {
+                        acabarTurno();
+                    } else {
+                        consola.imprimir("Comando incorrecto. Uso: acabar turno");
+                    }
+                    break;
 
-            case "deshipotecar":
-                if (comandos.length == 2) {
-                    deshipotecarPropiedad(comandos[1]);
-                } else{
-                    consola.imprimir("Comando incorrecto. Uso: deshipotecar <nombre_casilla>");
-                }
-                break;
+                case "estadisticas":
+                    if (comandos.length == 2) {
+                        mostrarEstadisticas(comandos[1]);
+                    } else if (comandos.length == 1) {
+                        mostrarEstadisticasJuego();
+                    } else {
+                        consola.imprimir("Comando incorrecto. Uso: estadisticas <nombre_jugador> o estadisticas");
+                    }
+                    break;
 
-            case "aceptar":
-                if (comandos.length == 2) {
-                    aceptarTrato(comandos[1]);
-                } else{
-                    consola.imprimir("Comando incorrecto. Uso: aceptar <idTrato>");
-                }
+                case "edificar":
+                    if (comandos.length == 2) {
+                        edificar(comandos[1]);
+                    } else {
+                        consola.imprimir("Comando incorrecto. Uso: edificar <tipo_edificio>");
+                    }
+                    break;
 
-            case "tratos":
-                if (comandos.length == 1) {
-                    listarTratos();
-                }
+                case "vender":
+                    // vender <casas|hoteles|piscina|pista_deporte> <nombre_casilla> <cantidad>
+                    if (comandos.length >= 4) {
+                        String tipoVenta = comandos[1].toLowerCase();
+                        String nombreCasilla = comandos[2];
+                        int cantidad;
+                        try {
+                            cantidad = Integer.parseInt(comandos[3]);
+                        } catch (NumberFormatException e) {
+                            consola.imprimir("Cantidad inválida. Uso: vender <tipo> <nombre_casilla> <cantidad>");
+                            break;
+                        }
+                        venderEdificios(tipoVenta, nombreCasilla, cantidad);
+                    } else {
+                        consola.imprimir("Comando incorrecto. Uso: vender <casas|hoteles|piscina|pista_deporte> <nombre_casilla> <cantidad>");
+                    }
+                    break;
 
-            case "eliminar":
-                if (comandos.length == 2) {
-                    eliminarTrato(comandos[1]);
-                } else{
-                    consola.imprimir("Comando incorrecto. Uso: eliminar <idTrato>");
-                }
+                case "hipotecar":
+                    if (comandos.length == 2) {
+                        hipotecarPropiedad(comandos[1]);
+                    } else {
+                        consola.imprimir("Comando incorrecto. Uso: hipotecar <nombre_casilla>");
+                    }
+                    break;
 
-            default:
-                consola.imprimir("Comando no reconocido: " + comando);
-                break;
+                case "deshipotecar":
+                    if (comandos.length == 2) {
+                        deshipotecarPropiedad(comandos[1]);
+                    } else {
+                        consola.imprimir("Comando incorrecto. Uso: deshipotecar <nombre_casilla>");
+                    }
+                    break;
+
+                case "aceptar":
+                    if (comandos.length == 2) {
+                        aceptarTrato(comandos[1]);
+                    } else {
+                        consola.imprimir("Comando incorrecto. Uso: aceptar <idTrato>");
+                    }
+
+                case "tratos":
+                    if (comandos.length == 1) {
+                        listarTratos();
+                    }
+
+                case "eliminar":
+                    if (comandos.length == 2) {
+                        eliminarTrato(comandos[1]);
+                    } else {
+                        consola.imprimir("Comando incorrecto. Uso: eliminar <idTrato>");
+                    }
+
+                default:
+                    throw new ExcepcionComandoNoReconocido(comando);
+            }
+            }catch(ExcepcionComandoNoReconocido e) {
+            consola.imprimir(e.getMessage());
         }
     }
 
@@ -564,17 +574,24 @@ public class Juego implements Comandos{
      */
     @Override
     public void comprar(String nombre) {
-        Jugador jugadorActual = jugadores.get(turno);
-        Casilla casilla = tablero.encontrar_casilla(nombre);
+        try {
+            Jugador jugadorActual = jugadores.get(turno);
+            Casilla casilla = tablero.encontrar_casilla(nombre);
 
-        if (casilla != null) {
-            if (casilla instanceof Propiedad) {
-                ((Propiedad) casilla).comprarCasilla(jugadorActual, banca);
-            } else {
-                consola.imprimir("No se puede comprar esta casilla: " + nombre);
+            if (casilla == null) {
+                throw new ExcepcionCasillaNoEncontrada(nombre);
             }
-        } else {
-            consola.imprimir("No se pudo encontrar la casilla: " + nombre);
+
+            if (!(casilla instanceof Propiedad)) {
+                throw new ExcepcionPropiedadNoComprable(nombre);
+            }
+
+            Propiedad propiedad = (Propiedad) casilla;
+            propiedad.comprarCasilla(jugadorActual, banca);
+        } catch (ExcepcionMonopoly e) {
+            consola.imprimir("✗ " + e.getMessage());
+        } catch (Exception e) {
+            consola.imprimir("⚠ Error inesperado al comprar: " + e.getMessage());
         }
     }
 
@@ -728,32 +745,32 @@ public class Juego implements Comandos{
 
     @Override
     public void crearJugador(String nombre, String tipoAvatar) {
+        try{
         // Validar primero el tipo de avatar
         String tipoValidado = validarTipoAvatar(tipoAvatar);
         if (tipoValidado == null) {
-            System.out.println("Error: '" + tipoAvatar + "' no es un avatar permitido.");
-            System.out.println("Avatares válidos: sombrero, esfinge, pelota, coche");
-            return;
+            throw new ExcepcionAvatarNoValido(tipoAvatar);
         }
 
         // Verificar si el jugador ya existe
         for (Jugador jugador : jugadores) {
             if (jugador.getNombre().equalsIgnoreCase(nombre)) {
-                System.out.println("Error: Ya existe un jugador con el nombre '" + nombre + "'");
-                return;
+                throw new ExcepcionJugadorNombreDuplicado(nombre);
             }
         }
+        // Verificar el número máximo de jugadores
+            if (jugadores.size() >= 4) {
+                 throw new ExcepcionMaxJugadores(4, jugadores.size());
+            }
 
-        // Encontrar la casilla de salida
-        Casilla salida = tablero.encontrar_casilla("Salida");
-        if (salida == null) {
-            System.out.println("Error: No se pudo encontrar la casilla de Salida");
-            return;
-        }
+            // Obtener la casilla Salida del tablero (antes se usaba una variable no declarada 'salida')
+            Casilla salidaCasilla = tablero.encontrar_casilla("Salida");
+            if (salidaCasilla == null) {
+                consola.imprimir("Aviso: no se encontró la casilla Salida; se usará null como ubicación inicial.");
+            }
 
-        try {
             // Crear el nuevo jugador
-            Jugador nuevoJugador = new Jugador(nombre, tipoValidado, salida, avatares);
+            Jugador nuevoJugador = new Jugador(nombre, tipoValidado, salidaCasilla, avatares);
             jugadores.add(nuevoJugador);
 
             // Mostrar la información como en el PDF
@@ -765,8 +782,11 @@ public class Juego implements Comandos{
             // Mostrar el tablero actualizado
             tablero.toString();
 
+        } catch (ExcepcionMonopoly e) {
+            consola.imprimir("✗ " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("Error al crear el jugador: " + e.getMessage());
+            // Manejar errores inesperados
+            consola.imprimir("⚠ Error inesperado al crear jugador: " + e.getMessage());
         }
     }
 
@@ -995,409 +1015,109 @@ public class Juego implements Comandos{
     //Método que verifica si se puede construir el edificio y llama a la función de construcción
     @Override
     public void edificar(String tipoEdificio) {
-        Jugador jugadorActual = jugadores.get(turno);
-        Casilla casillaActual = jugadorActual.getAvatar().getLugar();
+        try {
+            Jugador jugadorActual = jugadores.get(turno);
+            Casilla casillaActual = jugadorActual.getAvatar().getLugar();
 
-        // Verificar que la casilla es un solar
-        if (!(casillaActual instanceof Solar)) {
-            System.out.println("Solo se pueden construir edificios en solares.");
-            return;
-        }
-
-        // Verificar que el jugador es dueño de la casilla
-        if (casillaActual.getDuenho() != jugadorActual) {
-            System.out.println("No eres el dueño de esta casilla.");
-            return;
-        }
-
-        // Verificar que el jugador tiene todas las casillas del grupo
-        Grupo grupo = null;
-        if (casillaActual instanceof Propiedad) {
-            grupo = ((Propiedad) casillaActual).getGrupo();
-        }
-        if (grupo == null) {
-            consola.imprimir("Esta casilla no pertenece a ningún grupo.");
-            return;
-        }
-
-        // Verificar si la casilla está hipotecada
-        if (casillaActual instanceof Propiedad && ((Propiedad) casillaActual).isHipotecada()) {
-            System.out.println("No se puede edificar en " + casillaActual.getNombre() + " porque está hipotecada.");
-            return;
-        }
-
-        if (!grupo.tieneTodoElGrupo(jugadorActual)) {
-            System.out.println("No puedes edificar hasta que no seas dueño de todas las casillas del grupo " + grupo.getColorGrupo() + ".");
-            return;
-        }
-
-        // Obtener contadores de edificios actuales
-        Solar solar =(Solar) casillaActual;
-        int casasEnCasilla = solar.getNumCasas();
-        int hotelesEnCasilla = solar.getNumHoteles();
-        int piscinasEnCasilla = solar.getNumPiscinas();
-        int pistasEnCasilla = solar.getNumPistas();
-
-        // Verificar límites de construcción
-        if (!puedeConstruir(tipoEdificio, casasEnCasilla, hotelesEnCasilla, piscinasEnCasilla, pistasEnCasilla, grupo, casillaActual)) {
-            return;
-        }
-
-        // Calcular coste del edificio
-        float coste;
-        switch (tipoEdificio.toLowerCase()) {
-            case "casa":
-                coste = solar.getPrecioCasa();
-                break;
-            case "hotel":
-                coste = solar.getPrecioHotel();
-                break;
-            case "piscina":
-                coste = solar.getPrecioPiscina();
-                break;
-            case "pista_deporte":
-                coste = solar.getPrecioPistaDeporte();
-                break;
-            default:
-                consola.imprimir("Tipo de edificio desconocido: " + tipoEdificio);
-                return;
-        }
-
-
-        // Verificar si tiene suficiente dinero
-        if (jugadorActual.getFortuna() < coste) {
-            System.out.printf("La fortuna de %s no es suficiente...\n", jugadorActual.getNombre(), tipoEdificio, casillaActual.getNombre());
-            return;
-        }
-        // Construir (el Edificio calculará el mismo coste internamente)
-        construirEdificio(jugadorActual, casillaActual, tipoEdificio, coste);
-    }
-
-    /**
-     * Construye el edificio y actualiza la fortuna del jugador
-     */
-    private void construirEdificio(Jugador jugador, Casilla casilla, String tipoEdificio, float coste) {
-        if (!(casilla instanceof Solar)) {
-            System.out.println("Solo se pueden construir edificios en solares.");
-            return;
-        }
-
-        Solar solar = (Solar) casilla;
-        boolean construido = false;
-        String tipo = tipoEdificio.toLowerCase();
-
-        switch (tipo) {
-            case "casa":
-                construido = solar.anhadirCasa();
-                break;
-            case "hotel":
-                // Para hotel: requerimos 4 casas previas
-                if (solar.getNumCasas() == 4) {
-                    // Eliminar las casas asociadas a este solar de la lista global
-                    for (int i = edificios.size() - 1; i >= 0; i--) {
-                        Edificio e = edificios.get(i);
-                        if (e.getSolar() == solar && "casa".equalsIgnoreCase(e.getTipoEdificio())) {
-                            edificios.remove(i);
-                        }
-                    }
-                    // Eliminar las casas asociadas de la lista del jugador
-                    ArrayList<Edificio> edificiosJugador = jugador.getEdificios();
-                    for (int i = edificiosJugador.size() - 1; i >= 0; i--) {
-                        Edificio e = edificiosJugador.get(i);
-                        if (e.getSolar() == solar && "casa".equalsIgnoreCase(e.getTipoEdificio())) {
-                            edificiosJugador.remove(i);
-                        }
-                    }
-                    construido = solar.anhadirHotel();
-                } else {
-                    construido = false;
-                }
-                break;
-            case "piscina":
-                construido = solar.anhadirPiscina();
-                break;
-            case "pista_deporte":
-                construido = solar.anhadirPistaDeporte();
-                break;
-            default:
-                System.out.println("Tipo de edificio no reconocido: " + tipoEdificio);
-                return;
-        }
-
-        if (construido) {
-            // Restar el coste
-            jugador.restarFortuna(coste);
-            jugador.sumarDineroInvertido(coste);
-
-            // Crear instancia concreta del edificio
-            Edificio nuevoEdificio = null;
-            switch (tipo) {
-                case "casa":
-                    nuevoEdificio = new Casa(solar);
-                    break;
-                case "hotel":
-                    nuevoEdificio = new Hotel(solar);
-                    break;
-                case "piscina":
-                    nuevoEdificio = new Piscina(solar);
-                    break;
-                case "pista_deporte":
-                    nuevoEdificio = new PistaDeporte(solar);
-                    break;
+            // Verificar que es un solar
+            if (!(casillaActual instanceof Solar)) {
+                throw new ExcepcionPropiedadNoEdificable(
+                        casillaActual.getNombre(),
+                        casillaActual.getClass().getSimpleName()
+                );
             }
 
-            if (nuevoEdificio != null) {
-                // Añadir a jugador y a lista global
-                jugador.anhadirEdificio(nuevoEdificio);
-                edificios.add(nuevoEdificio);
-            }
+            Solar solar = (Solar) casillaActual;
 
-            System.out.printf("Se ha edificado un %s en %s.\n", tipoEdificio, casilla.getNombre());
-            System.out.printf("La fortuna de %s se reduce en %,.0f€.\n", jugador.getNombre(), coste);
-            System.out.printf("Fortuna actual: %,.0f€\n", jugador.getFortuna());
+            // DELEGAR TODA LA LÓGICA AL SOLAR
+            Edificio nuevoEdificio = solar.construirEdificio(tipoEdificio, jugadorActual);
 
-            // Mostrar estado actual de edificios en la casilla
-            mostrarEstadoEdificios(casilla);
-        } else {
-            System.out.println("Error: No se pudo construir el " + tipoEdificio + " en " + casilla.getNombre());
+            // Registrar el edificio
+            jugadorActual.anhadirEdificio(nuevoEdificio);
+            edificios.add(nuevoEdificio);
+
+            // Mostrar éxito
+            consola.imprimir("✓ " + jugadorActual.getNombre() +
+                    " ha construido un " + tipoEdificio +
+                    " en " + solar.getNombre());
+
+            // Obtener el coste desde el Solar en lugar de pedirlo al Edificio
+            float coste = solar.obtenerCosteEdificio(tipoEdificio);
+            consola.imprimir("  Coste: " + String.format("%,.0f", coste) + "€");
+            consola.imprimir("  Fortuna actual: " +
+                    String.format("%,.0f", jugadorActual.getFortuna()) + "€");
+
+        } catch (ExcepcionMonopoly e) {
+            consola.imprimir("✗ " + e.getMessage());
+        } catch (Exception e) {
+            consola.imprimir("⚠ Error inesperado: " + e.getMessage());
         }
     }
 
-    /**
-     * Muestra el estado actual de los edificios en una casilla
-     */
 
-    private void mostrarEstadoEdificios(Casilla casilla) {
-        if (casilla instanceof Solar) {
-            Solar solar = (Solar) casilla;
-            System.out.printf("Edificios en %s: %d casas, %d hoteles, %d piscinas, %d pistas de deporte%n",
-                    solar.getNombre(),
-                    solar.getNumCasas(),
-                    solar.getNumHoteles(),
-                    solar.getNumPiscinas(),
-                    solar.getNumPistas());
-        } else {
-            System.out.printf("Edificios en %s: no es un solar (no aplicable)%n", casilla.getNombre());
-        }
-    }
-
-    /**
-     * Verifica si se puede construir un tipo específico de edificio
-     */
-    private boolean puedeConstruir(String tipoEdificio, int casas, int hoteles, int piscinas, int pistas, Grupo grupo, Casilla casillaActual) {
-        switch (tipoEdificio) {
-            case "casa":
-                if (casas >= 4) {
-                    System.out.println("No se pueden construir más de 4 casas por casilla.");
-                    return false;
-                }
-                if (hoteles > 0) {
-                    System.out.println("No se pueden construir casas cuando hay un hotel.");
-                    return false;
-                }
-                break;
-
-            case "hotel":
-                if (hoteles >= 1) {
-                    System.out.println("No se pueden construir más de 1 hotel por casilla.");
-                    return false;
-                }
-                if (casas < 4) {
-                    System.out.println("Se necesitan 4 casas para construir un hotel.");
-                    return false;
-                }
-                break;
-
-            case "piscina":
-                if (piscinas >= 1) {
-                    System.out.println("No se pueden construir más de 1 piscina por casilla.");
-                    return false;
-                }
-                if (hoteles < 1) {
-                    System.out.println("No se puede edificar una piscina, ya que no se dispone de un hotel.");
-                    return false;
-                }
-                break;
-
-            case "pista_deporte":
-                if (pistas >= 1) {
-                    System.out.println("No se pueden construir más de 1 pista de deporte por casilla.");
-                    return false;
-                }
-                if (hoteles < 1) {
-                    System.out.println("No se puede edificar una pista de deporte, ya que no se dispone de un hotel.");
-                    return false;
-                }
-                break;
-
-            default:
-                System.out.println("Tipo de edificio no reconocido: " + tipoEdificio);
-                return false;
-        }
-
-        //Verificar si hay edificios en el resto de casillas del grupo, si hay no se puede edificar
-        boolean hayEdificiosEnGrupo = false;
-        for (Casilla miembro : grupo.getMiembros()) {
-            if (miembro != casillaActual && miembro instanceof Solar) {
-                Solar s = (Solar) miembro;
-                int totalEdificios = s.getNumCasas() + s.getNumHoteles() + s.getNumPiscinas() + s.getNumPistas();
-                if (totalEdificios > 0) {
-                    hayEdificiosEnGrupo = true;
-                    break;
-                }
-            }
-        }
-
-        if (hayEdificiosEnGrupo) {
-            System.out.println("No se puede edificar ningún edificio más en esta casilla ni en el grupo al que la casilla pertenece porque ya hay un edificio en este grupo.");
-            return false;
-        }
-
-        return true;
-    }
-
-
-    //Metodo para vender un edificio
     @Override
     public void venderEdificios(String tipoVenta, String nombreCasilla, int cantidadSolicitada) {
-        Jugador jugadorActual = jugadores.get(turno);
+        try {
+            // 1. Obtener jugador actual
+            Jugador jugadorActual = jugadores.get(turno);
 
-        // La cantidad a vender debe ser positiva
-        if (cantidadSolicitada <= 0) {
-            System.out.println("La cantidad a vender debe ser positiva.");
-            return;
+            // 2. Encontrar la casilla
+            Casilla casilla = tablero.encontrar_casilla(nombreCasilla);
+            if (casilla == null) {
+                throw new ExcepcionCasillaNoEncontrada(nombreCasilla);
+            }
+
+            // 3. Verificar que es un solar
+            if (!(casilla instanceof Solar)) {
+                throw new ExcepcionPropiedadNoEdificable(
+                        nombreCasilla,
+                        casilla.getClass().getSimpleName()
+                );
+            }
+
+            Solar solar = (Solar) casilla;
+
+            // 4. DELEGAR la venta al Solar
+            int cantidadVendida = solar.venderEdificios(tipoVenta, cantidadSolicitada, jugadorActual);
+            float ingresoTotal = cantidadVendida * solar.obtenerPrecioVentaEdificio(tipoVenta);
+
+            // 5. Actualizar dinero del jugador
+            jugadorActual.sumarFortuna(ingresoTotal);
+
+            // 6. Eliminar edificios de las listas globales
+            eliminarEdificiosDeListas(solar, tipoVenta, cantidadVendida);
+
+            // 7. Mostrar resultado
+            consola.imprimir("✓ " + jugadorActual.getNombre() +
+                    " ha vendido " + cantidadVendida + " " + tipoVenta +
+                    " en " + solar.getNombre() +
+                    " por " + String.format("%,.0f", ingresoTotal) + "€");
+
+        } catch (ExcepcionMonopoly e) {
+            consola.imprimir("✗ " + e.getMessage());
+        } catch (Exception e) {
+            consola.imprimir("⚠ Error inesperado al vender edificios: " + e.getMessage());
         }
+    }
 
-        // Solo se aceptan tipos de edificio válidos
-        if (!(tipoVenta.equals("casas") || tipoVenta.equals("hoteles") || tipoVenta.equals("piscina") || tipoVenta.equals("pista_deporte"))) {
-            System.out.println("Tipo de edificio no reconocido para vender: " + tipoVenta);
-            return;
-        }
-
-        // Encontrar la casilla por nombre
-        Casilla casilla = tablero.encontrar_casilla(nombreCasilla);
-        if (casilla == null) {
-            System.out.println("Casilla no encontrada: " + nombreCasilla);
-            return;
-        }
-
-        // Debe ser un solar para tener edificios
-        if (!(casilla instanceof Solar)) {
-            System.out.println("Solo se pueden vender edificios en solares.");
-            return;
-        }
-
-        Solar solar = (Solar) casilla;
-
-        // Comprobar propiedad
-        if (casilla.getDuenho() != jugadorActual) {
-            System.out.println("Esta propiedad no pertenece a " + jugadorActual.getNombre() + ".");
-            return;
-        }
-
-        // Obtener disponibles y precio unitario
-        int disponibles;
-        float precioUnitario;
-        String tipoParaEliminar; // Tipo para eliminar de la lista de edificios
-
-        switch (tipoVenta.toLowerCase()) {
-            case "casas":
-                disponibles = solar.getNumCasas();
-                precioUnitario = solar.getPrecioCasa();
-                tipoParaEliminar = "casa";
-                break;
-            case "hoteles":
-                disponibles = solar.getNumHoteles();
-                precioUnitario = solar.getPrecioHotel();
-                tipoParaEliminar = "hotel";
-                break;
-            case "piscina":
-                disponibles = solar.getNumPiscinas();
-                precioUnitario = solar.getPrecioPiscina();
-                tipoParaEliminar = "piscina";
-                break;
-            case "pista_deporte":
-                disponibles = solar.getNumPistas();
-                precioUnitario = solar.getPrecioPistaDeporte();
-                tipoParaEliminar = "pista_deporte";
-                break;
-            default:
-                return;
-        }
-
-        //Si no hay edificios disponibles
-        if (disponibles == 0) {
-            System.out.println("No hay " + tipoParaEliminar + " para vender en " + casilla.getNombre() + ".");
-            return;
-        }
-
-        // Determinar cuántos se pueden vender
-        int aVender = Math.min(cantidadSolicitada, disponibles); //Elige el mínimo entre lo solicitado y lo disponible
-        float ingreso = precioUnitario * aVender; // Calcular ingreso total
-
-        // ELIMINAR LOS EDIFICIOS DE LA LISTA DEL JUGADOR
-        ArrayList<Edificio> edificiosJugador = jugadorActual.getEdificios();
+    // Método auxiliar para eliminar edificios de las listas
+    private void eliminarEdificiosDeListas(Solar solar, String tipoEdificio, int cantidad) {
+        String tipo = tipoEdificio.toLowerCase();
         int eliminados = 0;
 
-        // Buscar y eliminar los edificios de este tipo en esta casilla (recorrer en orden inverso para evitar problemas de indices al eliminar)
-        for (int i = edificiosJugador.size() - 1; i >= 0 && eliminados < aVender; i--) {
-            Edificio edificio = edificiosJugador.get(i);
-            if (edificio.getSolar() == casilla && edificio.getTipoEdificio().equals(tipoParaEliminar)) {
-                edificiosJugador.remove(i);
+        // Eliminar de lista global
+        for (int i = edificios.size() - 1; i >= 0 && eliminados < cantidad; i--) {
+            Edificio e = edificios.get(i);
+            if (e.getSolar() == solar && e.getTipoEdificio().equals(tipo)) {
+                edificios.remove(i);
                 eliminados++;
             }
         }
 
-        // ELIMINAR TAMBIÉN DE LA LISTA GLOBAL DE EDIFICIOS (recorrer en orden inverso para evitar problemas de indices al eliminar)
-        int eliminadosGlobal = 0;
-        for (int i = edificios.size() - 1; i >= 0 && eliminadosGlobal < aVender; i--) {
-            Edificio edificio = edificios.get(i);
-            if (edificio.getSolar() == casilla && edificio.getTipoEdificio().equals(tipoParaEliminar)) {
-                edificios.remove(i);
-                eliminadosGlobal++;
-            }
-        }
-
-        // Actualizar contadores en la casilla
-        switch (tipoVenta.toLowerCase()) {
-            case "casas":
-                solar.setNumCasas(disponibles - aVender); //Actualizar (casas disponibles - minimo de (disponibles, solicitadas))
-                break;
-            case "hoteles":
-                solar.setNumHoteles(disponibles - aVender);
-                break;
-            case "piscina":
-                solar.setNumPiscinas(disponibles - aVender);
-                break;
-            case "pista_deporte":
-                solar.setNumPistas(disponibles - aVender);
-                break;
-        }
-
-        // Actualizar fortuna del jugador
-        jugadorActual.sumarFortuna(ingreso);
-
-        // Mostrar resultado de la venta
-        System.out.printf("%s ha recibido %,.0f€ por vender %d %s de %s.\n", jugadorActual.getNombre(), ingreso, aVender, tipoParaEliminar, casilla.getNombre());
-
-        // Estado restante
-        int quedan;
-        switch (tipoVenta.toLowerCase()) {
-            case "casas":
-                quedan = solar.getNumCasas();
-                break;
-            case "hoteles":
-                quedan = solar.getNumHoteles();
-                break;
-            case "piscina":
-                quedan = solar.getNumPiscinas();
-                break;
-            default:
-                quedan = solar.getNumPistas();
-                break;
-        }
-        System.out.printf("En la propiedad queda %d %s.\n", quedan, tipoParaEliminar);
+        // También eliminar del jugador
+        // (Esto debería hacerse en el método del jugador)
     }
+
 
     /**
  * Método para hipotecar una propiedad
