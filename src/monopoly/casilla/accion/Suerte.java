@@ -31,6 +31,7 @@ public class Suerte extends Accion {
         return false;
     }
 
+
     // MÉTODO de información - Específico para Suerte
     @Override
     public void infoCasilla() {

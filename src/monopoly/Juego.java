@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.HashMap;
 
+import partida.Jugador;
 import monopoly.interfaces.*;
 import monopoly.casilla.*;
 import monopoly.casilla.accion.*;
@@ -362,7 +363,6 @@ public class Juego implements Comandos{
      * Parámetro: comando introducido*/
     @Override
     public void descJugador(String[] partes) {
-        // Verificar que hay suficientes partes en el comando
         if (partes.length < 3) {
             consola.imprimir("Error: Comando incompleto. Uso: describir jugador <nombre_jugador>");
             return;
@@ -371,55 +371,42 @@ public class Juego implements Comandos{
         String nombreJugador = partes[2];
         for (Jugador jugador : jugadores) {
             if (jugador.getNombre().equalsIgnoreCase(nombreJugador)) {
+                // Encabezado
                 consola.imprimir("{");
                 consola.imprimir("    nombre: " + jugador.getNombre() + ",");
                 consola.imprimir("    avatar: " + (jugador.getAvatar() != null ? jugador.getAvatar().getId() : "-") + ",");
                 consola.imprimir("    fortuna: " + String.format("%,.0f", jugador.getFortuna()) + ",");
 
-                // Mostrar propiedades
-                consola.leer("    propiedades: [");
-                ArrayList<Casilla> propiedades = jugador.getPropiedades();
-                for (int i = 0; i < propiedades.size(); i++) {
-                    Casilla propiedad = propiedades.get(i);
-                    consola.leer(propiedad.getNombre());
-                    if (propiedad instanceof Propiedad) {
-                        Propiedad prop = (Propiedad) propiedad;
-                        if (prop.isHipotecada()) {
-                            consola.leer("(H)");
-                        }
-                    }
-                    if (i < propiedades.size() - 1) {
-                        consola.leer(", ");
+                // Propiedades en una línea
+                String props = "";
+                for (Casilla c : jugador.getPropiedades()) {
+                    if (!props.isEmpty()) props += ", ";
+                    props += c.getNombre();
+                    if (c instanceof Propiedad && ((Propiedad)c).isHipotecada()) {
+                        props += "(H)";
                     }
                 }
-                consola.imprimir("],");
+                consola.imprimir("    propiedades: [" + props + "],");
 
-                // Mostrar edificios
-                consola.leer("    edificios: [");
-                ArrayList<Edificio> edificiosJugador = jugador.getEdificios();
-                for (int i = 0; i < edificiosJugador.size(); i++) {
-                    Edificio edificio = edificiosJugador.get(i);
-                    consola.leer(edificio.getId() + "(" + edificio.getSolar().getNombre() + ")");
-                    if (i < edificiosJugador.size() - 1) {
-                        consola.leer(", ");
-                    }
+                // Edificios en una línea
+                String edifs = "";
+                for (Edificio e : jugador.getEdificios()) {
+                    if (!edifs.isEmpty()) edifs += ", ";
+                    edifs += e.getId() + "(" + e.getSolar().getNombre() + ")";
                 }
-                consola.imprimir("],");
+                consola.imprimir("    edificios: [" + edifs + "],");
 
-                // Mostrar propiedades hipotecadas
-                consola.leer("    hipotecas: [");
-                boolean primeraHipoteca = true;
-                for (Casilla propiedad : propiedades) {
-                    if (propiedad instanceof Propiedad) {
-                        Propiedad prop = (Propiedad) propiedad;
-                        if (prop.isHipotecada()) {
-                            if (!primeraHipoteca) consola.leer(", ");
-                            consola.leer(prop.getNombre() + ":" + String.format("%,.0f", prop.getValorHipoteca()));
-                            primeraHipoteca = false;
-                        }
+                // Hipotecas en una línea
+                String hips = "";
+                for (Casilla c : jugador.getPropiedades()) {
+                    if (c instanceof Propiedad && ((Propiedad)c).isHipotecada()) {
+                        if (!hips.isEmpty()) hips += ", ";
+                        hips += c.getNombre() + ":" +
+                                String.format("%,.0f", ((Propiedad)c).getValorHipoteca());
                     }
                 }
-                consola.imprimir("]");
+                if (hips.isEmpty()) hips = "-";
+                consola.imprimir("    hipotecas: [" + hips + "]");
 
                 consola.imprimir("}");
                 return;
@@ -448,78 +435,105 @@ public class Juego implements Comandos{
     //Método que ejecuta todas las acciones relacionadas con el comando 'lanzar dados'.
     @Override
     public void lanzarDados(String valoresForzados) {
-        Jugador actual = jugadores.get(turno);
-        if (actual.isEnCarcel()) {
-            consola.imprimir("No puedes lanzar los dados, estás en la cárcel.");
-            return;
-        }
+        try {
+            Jugador actual = jugadores.get(turno);
 
-        // Permitir lanzar si no ha tirado O si tiene dados dobles y menos de 3 lanzamientos
-        if (tirado && lanzamientos > 3) {
-            consola.imprimir("Ya has lanzado los dados en este turno.");
-            return;
-        }
 
-        int valorDado1, valorDado2;
+            // 1. Verificar si el jugador está en la cárcel
+            if (actual.isEnCarcel()) {
+                throw new ExcepcionJugadorEnCarcel(actual.getNombre());
+            }
 
-        if (valoresForzados != null && valoresForzados.contains("+")) {
-            // Procesar dados forzados
-            try {
-                String[] valoresArray = valoresForzados.split("\\+");
-                if (valoresArray.length == 2) {
-                    valorDado1 = Integer.parseInt(valoresArray[0].trim());
-                    valorDado2 = Integer.parseInt(valoresArray[1].trim());
+            // 2. Verificar si ya ha tirado (y no tiene dobles pendientes)
+            if (tirado && lanzamientos == 0) {
+                throw new ExcepcionJugadorNoTurno(actual.getNombre());
+            }
 
-                    // Validar que los valores estén entre 1 y 6
-                    if (valorDado1 >= 1 && valorDado1 <= 6 && valorDado2 >= 1 && valorDado2 <= 6) {
+            // 3. Verificar límite de 3 lanzamientos con dobles
+            if (lanzamientos >= 3) {
+                throw new ExcepcionDadosDoblesTresVeces(actual.getNombre());
+            }
+
+            int valorDado1 = 0, valorDado2 = 0;
+
+            // Procesamiento de dados forzados o aleatorios
+            if (valoresForzados != null && valoresForzados.contains("+")) {
+                try {
+                    String[] valoresArray = valoresForzados.split("\\+");
+                    if (valoresArray.length == 2) {
+                        valorDado1 = Integer.parseInt(valoresArray[0].trim());
+                        valorDado2 = Integer.parseInt(valoresArray[1].trim());
+
+                        // Validar valores entre 1 y 6
+                        if (valorDado1 < 1 || valorDado1 > 6 || valorDado2 < 1 || valorDado2 > 6) {
+                            consola.imprimir(" Valores de dados forzados inválidos. Deben estar entre 1 y 6.");
+                        }
+
                         consola.imprimir("Dados forzados a: " + valorDado1 + " y " + valorDado2);
                     } else {
-                        consola.imprimir("Error: Los valores deben estar entre 1 y 6. Usando valores aleatorios...");
-                        valorDado1 = dado1.hacerTirada();
-                        valorDado2 = dado2.hacerTirada();
+                        consola.imprimir("Formato de dados forzados incorrecto.");
                     }
-                } else {
-                    consola.imprimir("Error en formato. Usando valores aleatorios...");
-                    valorDado1 = dado1.hacerTirada();
-                    valorDado2 = dado2.hacerTirada();
+                } catch (NumberFormatException e) {
+                    consola.imprimir("Formato de dados incorrecto.");
                 }
-            } catch (NumberFormatException e) {
-                consola.imprimir("Error en valores de dados. Usando valores aleatorios.");
+            } else {
+                // Lanzamiento normal
                 valorDado1 = dado1.hacerTirada();
                 valorDado2 = dado2.hacerTirada();
+                consola.imprimir("Lanzamiento normal: " + valorDado1 + " y " + valorDado2);
             }
-        } else {
-            // Lanzamiento normal
-            valorDado1 = dado1.hacerTirada();
-            valorDado2 = dado2.hacerTirada();
-        }
 
-        int suma = valorDado1 + valorDado2;
+            int suma = valorDado1 + valorDado2;
 
-        consola.imprimir("Has lanzado los dados: " + valorDado1 + " y " + valorDado2 + ". Total: " + suma);
+            consola.imprimir("Has lanzado los dados: " + valorDado1 + " y " + valorDado2 + ". Total: " + suma);
+            consola.imprimir("El avatar " + actual.getAvatar().getId() + " avanza " + suma + " posiciones");
 
-        consola.imprimir("El avatar " + actual.getAvatar().getId() + " avanza " + (valorDado1 + valorDado2) + " posiciones");
-        // 3. Mover avatar
-        actual.getAvatar().moverAvatar(tablero.getPosiciones(), valorDado1 + valorDado2);
+            // 4. Mover avatar
+            actual.getAvatar().moverAvatar(tablero.getPosiciones(), suma);
 
-        // 4. Obtener casilla actual
-        Casilla casillaActual = actual.getAvatar().getLugar();
+            // 5. Obtener casilla actual
+            Casilla casillaActual = actual.getAvatar().getLugar();
 
-        // 5. EVALUAR LA CASILLA
-        solvente = casillaActual.evaluarCasilla(actual, banca, tablero, jugadores, suma);
+            // 6. EVALUAR LA CASILLA
+            solvente = casillaActual.evaluarCasilla(actual, banca, tablero, jugadores, suma);
 
-        // 6. Manejar dobles y cárcel
-        if (valorDado1 == valorDado2) {
-            if (lanzamientos == 3) {
+            // 7. Manejar dobles y cárcel
+            if (valorDado1 == valorDado2) {
+                consola.imprimir("¡Dobles (" + valorDado1 + "," + valorDado2 + ")! Puedes lanzar de nuevo.");
+                lanzamientos++;
+
+                if (lanzamientos == 3) {
+                    consola.imprimir("¡Tercer doble consecutivo! Vas a la cárcel.");
+                    actual.encarcelar(tablero.getPosiciones());
+                    tirado = true;
+                    lanzamientos = 0;
+                    consola.imprimir("Turno finalizado automáticamente por tercer doble.");
+                } else {
+                    tirado = false; // Permite otro lanzamiento
+                }
+            } else {
+                // No son dobles
+                tirado = true;
+                lanzamientos = 0;
+                consola.imprimir("No son dobles. Puedes realizar otras acciones antes de terminar tu turno.");
+            }
+
+        } catch (ExcepcionMonopoly e) {
+            // Capturar excepciones personalizadas del Monopoly
+            consola.imprimir("✗ " + e.getMessage());
+
+            // Si es tercer doble, enviar a la cárcel y terminar turno
+            if (e instanceof ExcepcionDadosDoblesTresVeces) {
+                Jugador actual = jugadores.get(turno);
                 actual.encarcelar(tablero.getPosiciones());
                 tirado = true;
-            } else {
-                // Permite otro lanzamiento
-                tirado = false;
+                lanzamientos = 0;
             }
-        } else {
-            tirado = true;
-            lanzamientos = 0;
+
+        } catch (Exception e) {
+            // Capturar cualquier otra excepción inesperada
+            consola.imprimir("Error inesperado al lanzar dados: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -555,11 +569,7 @@ public class Juego implements Comandos{
     @Override
     public void salirCarcel() {
         Jugador jugadorActual = jugadores.get(turno);
-        if (jugadorActual.salirDeCarcel()) {
-            consola.imprimir(jugadorActual.getNombre() + " paga 500.000€ y sale de la cárcel. Puede lanzar los datos.");
-        } else {
-            consola.imprimir("No se pudo salir de la cárcel. Asegúrate de que estás en la cárcel y tienes suficiente dinero.");
-        }
+        jugadorActual.salirDeCarcel();
     }
 
     // Método que realiza las acciones asociadas al comando 'listar enventa'.
@@ -641,38 +651,44 @@ public class Juego implements Comandos{
 
     //Método que realiza las acciones asociadas al comando 'listar edificios'
     @Override
-    public void listarEdificios(String colorGrupo) {
-        if(edificios.isEmpty()) {
-            consola.imprimir("No hay edificios en este momento.");
-        }
-        // Mostrar todos los edificios si no se especifica un grupo
-        if(colorGrupo == null) {
-            for(Edificio edificio : edificios) {
-                System.out.println(edificio.toString());
-            }
+    public void listarEdificios(String _ignor) {
+        String filtro = (_ignor == null) ? "" : _ignor.trim();
+        boolean any = false;
+
+        if (tablero == null || tablero.getPosiciones() == null) {
+            consola.imprimir("\t(no hay edificios construidos)");
+            return;
         }
 
-        // Filtrar edificios por grupo si se especifica
-        ArrayList<Edificio> edificiosFiltrados = new ArrayList<>();
-        if (colorGrupo != null) {
-            for (Edificio edificio : edificios) {
-                if (edificio.getSolar() != null){
-                    Grupo grupo = edificio.getSolar().getGrupo();
-                    if(grupo!=null && grupo.getColorGrupo().equalsIgnoreCase(colorGrupo)) {
-                        edificiosFiltrados.add(edificio);
+        for (ArrayList<Casilla> lado : tablero.getPosiciones()) {
+            if (lado == null) continue;
+            for (Casilla cas : lado) {
+                if (!(cas instanceof Solar)) continue;
+                Solar solar = (Solar) cas;
+
+                // Si hay filtro, saltar solares cuyo grupo no coincida
+                if (!filtro.isEmpty()) {
+                    if (solar.getGrupo() == null || !solar.getGrupo().getColorGrupo().equalsIgnoreCase(filtro)) {
+                        continue;
+                    }
+                }
+
+                // recorrer cada lista de edificios del solar (casas, hoteles, piscinas, pistas)
+                for (ArrayList<Edificio> lista : solar.getEdificios()) {
+                    if (lista == null) continue;
+                    for (Edificio ed : lista) {
+                        consola.imprimir(ed.toString());
+                        any = true;
                     }
                 }
             }
+        }
 
-            if (edificiosFiltrados.isEmpty()) {
-                consola.imprimir("No hay edificios en el grupo " + colorGrupo + ".");
-                return;
-            }
-
-            // Mostrar los edificios filtrados
-            consola.imprimir("{");
-            for(Edificio edificio : edificios) {
-                consola.imprimir(edificio.toString());
+        if (!any) {
+            if (filtro.isEmpty()) {
+                consola.imprimir("\t(no hay edificios construidos)");
+            } else {
+                consola.imprimir("\t(no hay edificios construidos para el grupo " + filtro + ")");
             }
         }
     }
@@ -827,9 +843,11 @@ public class Juego implements Comandos{
         consola.imprimir("}");
     }
 
+
+
     private String calcularCasillaMasRentable() {
         Casilla masRentable = null;
-        float maxRentabilidad = -1;
+        float maxDineroGenerado = -1;
 
         // Recorrer todas las casillas del tablero
         for (ArrayList<Casilla> lado : tablero.getPosiciones()) {
@@ -838,17 +856,14 @@ public class Juego implements Comandos{
                 if (casilla.getDuenho() != null && !casilla.getDuenho().getNombre().equals("Banca") &&
                         casilla.getDuenho() != banca) {
 
-                    // Solo considerar tipos que pueden generar renta
-                    if (!(casilla instanceof  Propiedad)) {
-                        // Calcular rentabilidad: alquiler / valor de la casilla
+                    // Solo considerar tipos que pueden generar renta (Propiedad)
+                    if (casilla instanceof Propiedad) {
+                        // Calcular rentabilidad: usar dinero generado acumulado
                         Propiedad propiedad = (Propiedad) casilla;
-                        float rentabilidad = 0;
-                        if (propiedad.getValor() > 0) {
-                            rentabilidad = propiedad.getImpuesto() / propiedad.getValor();
-                        }
+                        float dineroGenerado = propiedad.getDineroGenerado();
 
-                        if (rentabilidad > maxRentabilidad) {
-                            maxRentabilidad = rentabilidad;
+                        if (dineroGenerado > maxDineroGenerado) {
+                            maxDineroGenerado = dineroGenerado;
                             masRentable = casilla;
                         }
                     }
@@ -862,41 +877,33 @@ public class Juego implements Comandos{
 
 
     private String calcularGrupoMasRentable() {
-        HashMap<String, Float> rentabilidadGrupos = new HashMap<>(); //Usar HashMap porque no sabemos cuántos grupos hay comprados
+        HashMap<String, Float> dineroPorGrupo = new HashMap<>();
 
-        // Calcular rentabilidad solo de grupos con propiedades compradas
+        // Calcular dinero total generado por cada grupo
         for (Grupo grupo : tablero.getGrupos().values()) {
-            float rentabilidadTotal = 0;
-            int casillasValiosas = 0;
+            float dineroTotalGrupo = 0;
 
             for (Casilla casilla : grupo.getMiembros()) {
-                // SOLO considerar casillas compradas
-                if (casilla.getDuenho() != null && !casilla.getDuenho().getNombre().equals("Banca") &&
-                        casilla.getDuenho() != banca) {
-                    if(casilla instanceof Propiedad) {  // CAMBIAR: Verificar que SÍ ES Propiedad
-                        Propiedad propiedad = (Propiedad) casilla;
-                        if (propiedad.getValor() > 0) {
-                            float rentabilidad = propiedad.getImpuesto() / propiedad.getValor();
-                            rentabilidadTotal += rentabilidad;
-                            casillasValiosas++;
-                        }
-                    }
+                if (casilla instanceof Propiedad) {
+                    Propiedad propiedad = (Propiedad) casilla;
+                    dineroTotalGrupo += propiedad.getDineroGenerado();
                 }
             }
 
-            if (casillasValiosas > 0) {
-                rentabilidadGrupos.put(grupo.getColorGrupo(), rentabilidadTotal / casillasValiosas); //Meter en el HashMap la rentabilidad media del grupo
+            // Solo considerar grupos que han generado dinero
+            if (dineroTotalGrupo > 0) {
+                dineroPorGrupo.put(grupo.getColorGrupo(), dineroTotalGrupo);
             }
         }
 
-        // Encontrar el grupo más rentable entre los comprados
+        // Encontrar el grupo que más dinero ha generado
         String grupoMasRentable = "Ninguno";
-        float maxRentabilidad = -1;
-        //Recorrer el HashMap
-        for (String color : rentabilidadGrupos.keySet()) { //Para cada color de grupo en el HashMap
-            float rentabilidad = rentabilidadGrupos.get(color);
-            if (rentabilidad > maxRentabilidad) {
-                maxRentabilidad = rentabilidad;
+        float maxDinero = -1;
+
+        for (String color : dineroPorGrupo.keySet()) {
+            float dinero = dineroPorGrupo.get(color);
+            if (dinero > maxDinero) {
+                maxDinero = dinero;
                 grupoMasRentable = color;
             }
         }
@@ -992,7 +999,7 @@ public class Juego implements Comandos{
                     " en " + solar.getNombre());
 
             // Obtener el coste desde el Solar en lugar de pedirlo al Edificio
-            float coste = solar.obtenerCosteEdificio(tipoEdificio);
+            float coste = solar.obtenerCosteEdificio(tipoEdificio, "edificar");
             consola.imprimir("  Coste: " + String.format("%,.0f", coste) + "€");
             consola.imprimir("  Fortuna actual: " +
                     String.format("%,.0f", jugadorActual.getFortuna()) + "€");
@@ -1036,7 +1043,7 @@ public class Juego implements Comandos{
             jugadorActual.sumarFortuna(ingresoTotal);
 
             // 6. Eliminar edificios de las listas globales
-            eliminarEdificiosDeListas(solar, tipoVenta, cantidadVendida);
+            solar.eliminarEdificiosDeListasGlobales(edificios, jugadorActual, tipoVenta, cantidadVendida);
 
             // 7. Mostrar resultado
             consola.imprimir("✓ " + jugadorActual.getNombre() +
@@ -1048,21 +1055,6 @@ public class Juego implements Comandos{
             consola.imprimir("✗ " + e.getMessage());
         } catch (Exception e) {
             consola.imprimir("⚠ Error inesperado al vender edificios: " + e.getMessage());
-        }
-    }
-
-    // Método auxiliar para eliminar edificios de las listas
-    private void eliminarEdificiosDeListas(Solar solar, String tipoEdificio, int cantidad) {
-        String tipo = tipoEdificio.toLowerCase();
-        int eliminados = 0;
-
-        // Eliminar de lista global
-        for (int i = edificios.size() - 1; i >= 0 && eliminados < cantidad; i--) {
-            Edificio e = edificios.get(i);
-            if (e.getSolar() == solar && e.getTipoEdificio().equals(tipo)) {
-                edificios.remove(i);
-                eliminados++;
-            }
         }
     }
 

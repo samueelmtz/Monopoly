@@ -33,6 +33,7 @@ public class Impuesto extends Casilla {
                 this.getNombre(), this.getPosicion(), cantidadImpuesto);
     }
 
+
     // MÉTODO de evaluación de casilla
     @Override
     public boolean evaluarCasilla(Jugador actual, Jugador banca, Tablero tablero, ArrayList<Jugador> jugadores, int tirada) {

@@ -27,6 +27,7 @@ public abstract class Casilla {
     public abstract void infoCasilla();
     public abstract String toString();
 
+
     // MÉTODOS COMUNES que ya tienes en tu clase original
     public void eliminarAvatar(Avatar avatar) {
         this.avatares.remove(avatar);

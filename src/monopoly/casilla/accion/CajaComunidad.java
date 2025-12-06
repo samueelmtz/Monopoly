@@ -14,6 +14,7 @@ public class CajaComunidad extends Accion {
         super(nombre, posicion, duenho, "Comunidad");
     }
 
+
     // MÉTODO de evaluación de casilla - Específico para CajaComunidad
     @Override
     public boolean evaluarCasilla(Jugador actual, Jugador banca,

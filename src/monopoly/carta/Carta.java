@@ -77,6 +77,7 @@ public abstract class Carta {
                 }
             }
 
+
         } else if (accion.startsWith("retroceder:")) {
             int casillas = Integer.parseInt(accion.split(":")[1]);
             int posicionActual = jugador.getAvatar().getLugar().getPosicion();
