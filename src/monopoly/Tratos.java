@@ -1,5 +1,6 @@
 package monopoly;
 
+import excepciones.ExcepcionTratoInvalido;
 import partida.Jugador;
 import monopoly.casilla.Propiedad;
 
@@ -94,9 +95,12 @@ public class Tratos {
 
     //Método para aceptar el trato
     public boolean aceptar(){
-        if(!esTratoValido()){
-            Juego.consola.imprimir("El trato no es válido!\n");
-            return false;
+        try {
+            if (!esTratoValido()) {
+                throw new ExcepcionTratoInvalido(this.id);
+            }
+        } catch (ExcepcionTratoInvalido e){
+            Juego.consola.imprimir("ERROR: " + e.getMessage());
         }
 
         //Verificar fortune
