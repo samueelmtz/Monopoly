@@ -1,5 +1,7 @@
 package monopoly;
 
+import excepciones.ExcepcionBoteVacio;
+import excepciones.ExcepcionCasillaNoEncontrada;
 import monopoly.casilla.*;
 import monopoly.casilla.accion.CajaComunidad;
 import monopoly.casilla.accion.Parking;
@@ -33,35 +35,43 @@ public class Tablero {
         this.boteParking += cantidad;
 
         Casilla parking = encontrar_casilla("Parking");
-        if (parking != null) {
-            if (parking instanceof Parking) {
-                ((Parking) parking).añadirAlBote(cantidad);
-                Juego.consola.imprimir("Se han añadido %,.0f€ al bote del Parking. Bote actual: %,.0f€\n",
-                        cantidad, this.boteParking);
+        try {
+            if (parking != null) {
+                if (parking instanceof Parking) {
+                    ((Parking) parking).añadirAlBote(cantidad);
+                    Juego.consola.imprimir("Se han añadido %,.0f€ al bote del Parking. Bote actual: %,.0f€\n",
+                            cantidad, this.boteParking);
+                } else {
+                    Juego.consola.imprimir("Advertencia: La casilla Parking no es del tipo correcto");
+                }
             } else {
-                Juego.consola.imprimir("Advertencia: La casilla Parking no es del tipo correcto");
+                throw new ExcepcionCasillaNoEncontrada("Parking");
             }
-        } else {
-            Juego.consola.imprimir("Error: No se encontró la casilla Parking");
+        } catch (ExcepcionCasillaNoEncontrada e) {
+            Juego.consola.imprimir("ERROR: " + e.getMessage());
         }
     }
     // Método para que un jugador reclame el bote
     public float reclamarBote(Jugador jugador) {
         float boteActual = this.boteParking;
-        if (boteActual > 0) {
-            jugador.sumarFortuna(boteActual);
-            jugador.sumarPremiosInversionesOBote(boteActual);
+        try {
+            if (boteActual > 0) {
+                jugador.sumarFortuna(boteActual);
+                jugador.sumarPremiosInversionesOBote(boteActual);
 
-            // Resetear el valor de la casilla Parking usando sumarValor
-            Casilla parking = encontrar_casilla("Parking");
-            if (parking != null) {
-                // Restar el valor actual para ponerlo a 0
-                ((Parking) parking).añadirAlBote(-boteActual);
+                // Resetear el valor de la casilla Parking usando sumarValor
+                Casilla parking = encontrar_casilla("Parking");
+                if (parking != null) {
+                    // Restar el valor actual para ponerlo a 0
+                    ((Parking) parking).añadirAlBote(-boteActual);
+                }
+                Juego.consola.imprimir("¡%s ha ganado el bote del Parking: %,.0f€!\n", jugador.getNombre(), boteActual);
+                this.boteParking = 0f; // Resetear el bote
+            } else {
+                throw new ExcepcionBoteVacio(jugador.getNombre());
             }
-            Juego.consola.imprimir("¡%s ha ganado el bote del Parking: %,.0f€!\n", jugador.getNombre(), boteActual);
-            this.boteParking = 0f; // Resetear el bote
-        } else {
-            Juego.consola.imprimir("El bote del Parking está vacío.");
+        } catch (ExcepcionBoteVacio e){
+            Juego.consola.imprimir("ERROR: " + e.getMessage());
         }
         return boteActual;
     }
