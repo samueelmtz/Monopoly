@@ -77,9 +77,11 @@ public class Juego implements Comandos{
         solvente = true;
 
         //Leemos el fichero txt de entrada (si lo hay)
-        String rutaFichero = consola.leer("Introduce la ruta del fichero de comandos (.txt): ");
-
-        lecturaFichero(rutaFichero);
+        String respuesta = consola.leer("¿Desea cargar comandos desde un fichero? (s/n): ");
+        if (respuesta.equalsIgnoreCase("s")) {
+            String rutaFichero = consola.leer("Introduce la ruta del fichero de comandos (.txt): ");
+            lecturaFichero(rutaFichero);
+        }
 
         while (true) {
             try {
