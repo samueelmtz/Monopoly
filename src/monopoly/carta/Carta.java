@@ -1,5 +1,6 @@
 package monopoly.carta;
 
+import excepciones.ExcepcionCartaNoValida;
 import monopoly.casilla.Casilla;
 import partida.Jugador;
 import monopoly.*;
@@ -136,15 +137,20 @@ public abstract class Carta {
 
 
     public static Carta obtenerSiguienteCarta(String tipo) {
-        if (tipo == null) throw new IllegalArgumentException("Tipo de carta nulo");
-        if (tipo.equalsIgnoreCase("Suerte")) {
-            Suerte.inicializarCartasSuerte(); // garantiza inicialización si es necesario
-            return Suerte.sacarCarta();
-        } else if (tipo.equalsIgnoreCase("Comunidad") || tipo.equalsIgnoreCase("CajaComunidad")) {
-            CajaComunidad.inicializarCartasComunidad();
-            return CajaComunidad.sacarCarta();
-        } else {
-            throw new IllegalArgumentException("Tipo de carta desconocido: " + tipo);
+        try {
+            if (tipo == null) throw new ExcepcionCartaNoValida(tipo, "no existe");
+            if (tipo.equalsIgnoreCase("Suerte")) {
+                Suerte.inicializarCartasSuerte(); // garantiza inicialización si es necesario
+                return Suerte.sacarCarta();
+            } else if (tipo.equalsIgnoreCase("Comunidad") || tipo.equalsIgnoreCase("CajaComunidad")) {
+                CajaComunidad.inicializarCartasComunidad();
+                return CajaComunidad.sacarCarta();
+            } else {
+                throw new ExcepcionCartaNoValida(tipo, "tipo desconocido");
+            }
+        }catch(ExcepcionCartaNoValida e) {
+            Juego.consola.imprimir("ERROR: " + e.getMessage());
+            return null;
         }
     }
     // Getters
