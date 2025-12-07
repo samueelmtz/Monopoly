@@ -315,29 +315,18 @@ public class Juego implements Comandos{
                     // Get the rest of the command after "trato"
                     String restoComando = comando.substring(comando.indexOf("trato") + "trato".length()).trim();
                     
-                    // Find the first space to separate player name from the rest
-                    int spaceIndex = restoComando.indexOf(' ');
-                    if (spaceIndex == -1) {
+                    // Split the command into player name and trade details
+                    String[] partes = restoComando.split(":", 2);
+                    if (partes.length != 2) {
                         throw new ExcepcionComandoNoReconocido("trato <jugador>: cambiar (<oferta>, <solicitud>)", comando);
                     }
                     
-                    // Extract player name (everything before the first space)
-                    String nombreJugador = restoComando.substring(0, spaceIndex).trim();
+                    // Extract player name and trade details
+                    String nombreJugador = partes[0].trim();
+                    String ofertaSolicitud = partes[1].trim();
                     
-                    // The rest should be ": cambiar (...)"
-                    String resto = restoComando.substring(spaceIndex).trim();
-                    
-                    // Check if it starts with ":" and has the "cambiar" part
-                    if (!resto.startsWith(":")) {
-                        throw new ExcepcionComandoNoReconocido("trato <jugador>: cambiar (<oferta>, <solicitud>)", comando);
-                    }
-                    
-                    // Remove the ":" and trim
-                    String ofertaSolicitud = resto.substring(1).trim();
-                    
-                    // Pass both parts to proponerTrato
-                    String[] partesTrato = new String[]{nombreJugador, ofertaSolicitud};
-                    proponerTrato(partesTrato);
+                    // Pass to proponerTrato as a single string
+                    proponerTrato(new String[]{nombreJugador, ofertaSolicitud});
                     break;
 
                 case "hipotecar":
@@ -1342,27 +1331,20 @@ public class Juego implements Comandos{
         // Ejemplo: trato Maria: cambiar (Solar1, 200000)
         // Ejemplo: trato Pedro: cambiar (Solar1 y 100000, Solar2)
 
-        if (partes == null || partes.length == 0) {
-            consola.imprimir("Error: Comando de trato inválido.");
+        if (partes == null || partes.length < 2) {
+            consola.imprimir("Error: Comando de trato inválido. Uso: trato <jugador>: cambiar (<oferta>, <solicitud>)");
             return;
         }
-
-        // Unir el array en un solo string para mantener compatibilidad
-        String comando = String.join(" ", partes);
 
         try {
             // Obtener el jugador actual (ofertante)
             Jugador ofertante = jugadores.get(turno);
-
-            // Parsear el comando
-            String[] partesComando = comando.split(":", 2);
-            if (partesComando.length != 2) {
-                consola.imprimir("Formato incorrecto. Uso: trato <jugador>: cambiar (<oferta>, <solicitud>)");
-                return;
-            }
-
-            // Obtener el nombre del receptor y validar
-            String nombreReceptor = partesComando[0].trim();
+            
+            // El primer elemento es el nombre del jugador receptor
+            String nombreReceptor = partes[0].trim();
+            String ofertaSolicitud = partes[1].trim();
+            
+            // Validar que el receptor existe
             Jugador receptor = null;
             for (Jugador j : jugadores) {
                 if (j.getNombre().equalsIgnoreCase(nombreReceptor)) {
@@ -1382,7 +1364,6 @@ public class Juego implements Comandos{
             }
 
             // Parsear la oferta y la solicitud
-            String ofertaSolicitud = partes[1].trim();
             if (!ofertaSolicitud.startsWith("cambiar (") || !ofertaSolicitud.endsWith(")")) {
                 consola.imprimir("Formato incorrecto. Debe ser: cambiar (<oferta>, <solicitud>)");
                 return;
@@ -1539,11 +1520,3 @@ public class Juego implements Comandos{
         }
     }
 }
-
-
-
-
-
-
-
-
