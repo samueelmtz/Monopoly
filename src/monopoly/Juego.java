@@ -349,7 +349,7 @@ public class Juego implements Comandos{
                     if (comandos.length == 2) {
                         aceptarTrato(comandos[1]);
                     } else {
-                        throw new ExcepcionComandoNoReconocido("aceptar Tratos <idTrato>", comando);
+                        throw new ExcepcionComandoNoReconocido("aceptar <idTrato>", comando);
                     }
                     break;
 
@@ -1306,6 +1306,7 @@ public class Juego implements Comandos{
                 }
 
                 sb.append("\n}");
+                consola.imprimir(sb.toString());
             }
         }
     }
