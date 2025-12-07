@@ -99,13 +99,14 @@ public class Tratos {
             return false;
         }
 
-        //Verificar fortune
-        if(dineroDemandado > 0 && receptor.getFortuna() < dineroDemandado){
-            Juego.consola.imprimir("El trato no se puede aceptar, el jugador " + receptor.getNombre() + "no tiene suficiente dinero!\n");
+        // Verificar que ambos jugadores tienen suficiente dinero
+        if (dineroOfrecido > 0 && ofertante.getFortuna() < dineroOfrecido) {
+            Juego.consola.imprimir("El trato no se puede aceptar, el jugador " + ofertante.getNombre() + " no tiene suficiente dinero! (Necesita: " + dineroOfrecido + "€, Tiene: " + ofertante.getFortuna() + "€)\n");
             return false;
         }
-        if(dineroOfrecido > 0 && ofertante.getFortuna() > dineroOfrecido){
-            Juego.consola.imprimir("El trato no se puede aceptar, el jugador " + ofertante.getNombre() + "no tiene suficiente dinero!\n");
+        if (dineroDemandado > 0 && receptor.getFortuna() < dineroDemandado) {
+            Juego.consola.imprimir("El trato no se puede aceptar, el jugador " + receptor.getNombre() + " no tiene suficiente dinero! (Necesita: " + dineroDemandado + "€, Tiene: " + receptor.getFortuna() + "€)\n");
+            return false;
         }
         // Verificar propiedades
         if (propiedadOfrecida != null && !propiedadOfrecida.getDuenho().equals(ofertante)) {
@@ -117,15 +118,21 @@ public class Tratos {
             return false;
         }
 
-        // Realizar el intercambio
+        // Realizar el intercambio de dinero primero
+        if (dineroOfrecido > 0) {
+            transferirDinero(dineroOfrecido, ofertante, receptor);
+        }
+        if (dineroDemandado > 0) {
+            transferirDinero(dineroDemandado, receptor, ofertante);
+        }
+        
+        // Luego realizar el intercambio de propiedades
         if (propiedadOfrecida != null) {
             transferirPropiedad(propiedadOfrecida, ofertante, receptor);
         }
         if (propiedadDemandada != null) {
             transferirPropiedad(propiedadDemandada, receptor, ofertante);
         }
-        transferirDinero(dineroOfrecido, ofertante, receptor);
-        transferirDinero(dineroDemandado, receptor, ofertante);
 
         return true;
     }
