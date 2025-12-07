@@ -1,5 +1,6 @@
 package monopoly.casilla;
 
+import excepciones.*;
 import partida.Jugador;
 import partida.Avatar;
 import java.util.ArrayList;
@@ -43,22 +44,25 @@ public class Propiedad extends Casilla {
     }
 
     public void comprar(Jugador jugador) {
-        if (jugador.getFortuna() >= this.valor) {
-            jugador.restarFortuna(this.valor);
-            jugador.sumarDineroInvertido(this.valor);
+        try {
+            if (jugador.getFortuna() >= this.valor) {
+                jugador.restarFortuna(this.valor);
+                jugador.sumarDineroInvertido(this.valor);
 
-            if (this.getDuenho() != null && this.getDuenho().getNombre().equals("Banca")) {
-                this.getDuenho().eliminarPropiedad(this);
+                if (this.getDuenho() != null && this.getDuenho().getNombre().equals("Banca")) {
+                    this.getDuenho().eliminarPropiedad(this);
+                }
+
+                jugador.anhadirPropiedad(this);
+                this.setDuenho(jugador);
+
+                Juego.consola.imprimir("%s ha comprado la propiedad %s por el precio de %,.0f€\n",
+                        jugador.getNombre(), this.getNombre(), this.valor);
+            } else {
+                throw new ExcepcionFondosInsuficientes(jugador.getNombre(), this.valor, jugador.getFortuna(), "comprar propiedad");
             }
-
-            jugador.anhadirPropiedad(this);
-            this.setDuenho(jugador);
-
-            Juego.consola.imprimir("%s ha comprado la propiedad %s por el precio de %,.0f€\n",
-                    jugador.getNombre(), this.getNombre(), this.valor);
-        } else {
-            Juego.consola.imprimir("No tienes dinero para comprar esta propiedad. Necesitas %,.0f€ pero tienes %,.0f€\n",
-                    this.valor, jugador.getFortuna());
+        }catch (ExcepcionFondosInsuficientes e){
+            Juego.consola.imprimir("ERROR: " + e.getMessage());
         }
     }
 
@@ -83,14 +87,22 @@ public class Propiedad extends Casilla {
     }
 
     public void comprarCasilla(Jugador solicitante, Jugador banca) {
-        if (solicitante.getAvatar().getLugar() == this) {
-            if (this.getDuenho() == null || this.getDuenho() == banca || this.getDuenho().getNombre().equals("Banca")) {
-                this.comprar(solicitante);
+        try {
+            if (solicitante.getAvatar().getLugar() == this) {
+                try {
+                    if (this.getDuenho() == null || this.getDuenho() == banca || this.getDuenho().getNombre().equals("Banca")) {
+                        this.comprar(solicitante);
+                    } else {
+                        throw new ExcepcionPropiedadYaComprada(this.getNombre(), this.getDuenho().getNombre());
+                    }
+                } catch (ExcepcionPropiedadYaComprada e) {
+                    Juego.consola.imprimir("ERROR: " + e.getMessage());
+                }
             } else {
-                Juego.consola.imprimir("Esta propiedad no está en venta. Pertenece a: " + this.getDuenho().getNombre());
+                throw new ExcepcionPropiedadNoValida(this.getNombre(), solicitante.getNombre());
             }
-        } else {
-            Juego.consola.imprimir("¡Tienes que caer en la propiedad para poder comprarla!\n");
+        }catch (ExcepcionPropiedadNoValida e){
+            Juego.consola.imprimir("ERROR: " + e.getMessage());
         }
     }
 
@@ -99,33 +111,40 @@ public class Propiedad extends Casilla {
     }
 
     public boolean esHipotecable() {
-        if (!hipotecada) { // Verifica si la propiedad no está hipotecada
-            boolean sinEdificios = true; // Inicializa como que no hay edificaciones
+        try {
+            if (!hipotecada) { // Verifica si la propiedad no está hipotecada
+                boolean sinEdificios = true; // Inicializa como que no hay edificaciones
 
-            // Verifica si la propiedad es una instancia de Solar
-            if (this instanceof Solar) {
-                Solar solar = (Solar) this;  // Hacemos un cast a Solar para acceder a los atributos específicos de Solar
-                for (ArrayList<Edificio> tipoEdificio : solar.getEdificios()) {  // Accede a la lista de edificios
-                    if (!tipoEdificio.isEmpty()) {  // Si alguna lista de edificios no está vacía
-                        sinEdificios = false;  // Marca que no está vacío, por lo tanto, no puede hipotecarse
-                        break;
+                // Verifica si la propiedad es una instancia de Solar
+                if (this instanceof Solar) {
+                    Solar solar = (Solar) this;  // Hacemos un cast a Solar para acceder a los atributos específicos de Solar
+                    for (ArrayList<Edificio> tipoEdificio : solar.getEdificios()) {  // Accede a la lista de edificios
+                        if (!tipoEdificio.isEmpty()) {  // Si alguna lista de edificios no está vacía
+                            sinEdificios = false;  // Marca que no está vacío, por lo tanto, no puede hipotecarse
+                            break;
+                        }
                     }
                 }
-            }
 
 
-            // Si hay edificaciones, no se puede hipotecar
-            if (!sinEdificios) {
-                Juego.consola.imprimir("No puedes hipotecar la casilla " + this.getNombre() + " porque tienes que vender todas tus edificaciones.");
-                return false;  // Retorna false indicando que no puede hipotecarse
+                // Si hay edificaciones, no se puede hipotecar
+                try {
+                    if (!sinEdificios) {
+                        throw new ExcepcionExistenEdificios(this.getNombre(), this.getDuenho().getNombre());
+                    } else {
+                        hipotecada = true;  // Marca como hipotecada
+                        return true;  // Retorna true indicando que sí se puede hipotecar
+                    }
+                }catch (ExcepcionExistenEdificios e){
+                    Juego.consola.imprimir("ERROR: " + e.getMessage());
+                }
             } else {
-                hipotecada = true;  // Marca como hipotecada
-                return true;  // Retorna true indicando que sí se puede hipotecar
+                throw new ExcepcionPropiedadHipotecada(this.getNombre());
             }
-        } else {
-            Juego.consola.imprimir("No puedes hipotecar esta propiedad porque ya está hipotecada.");
-            return false;  // Retorna false si ya está hipotecada
+        }catch (ExcepcionPropiedadHipotecada e){
+            Juego.consola.imprimir("ERROR: " + e.getMessage());
         }
+        return false;
     }
 
 
