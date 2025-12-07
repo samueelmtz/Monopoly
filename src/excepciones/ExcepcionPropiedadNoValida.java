@@ -31,3 +31,4 @@ public class ExcepcionPropiedadNoValida extends ExcepcionPropiedad {
         return operacionIntentada;
     }
 }
+
