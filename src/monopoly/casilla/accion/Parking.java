@@ -1,5 +1,6 @@
 package monopoly.casilla.accion;
 
+import excepciones.ExcepcionBoteVacio;
 import monopoly.Juego;
 import monopoly.casilla.Accion;
 import monopoly.Tablero;
@@ -18,22 +19,31 @@ public class Parking extends Accion {
     // MÉTODO de evaluación de casilla - Específico para Parking
     @Override
     public boolean evaluarCasilla(Jugador actual, Jugador banca, Tablero tablero, ArrayList<Jugador> jugadores, int tirada) {
-        if (actual.getAvatar().getLugar() == this) {
-            Juego.consola.imprimir("¡Has caído en Parking!");
+        try {
+            if (actual.getAvatar().getLugar() == this) {
+                Juego.consola.imprimir("¡Has caído en Parking!");
 
-
-            if (this.bote > 0) {
-                float boteGanado = reclamarBote();
-                actual.sumarFortuna(boteGanado);
-                actual.sumarPremiosInversionesOBote(boteGanado);
-                Juego.consola.imprimir("¡Has ganado el bote de %,.0f€!\n", boteGanado);
-                Juego.consola.imprimir("Fortuna actual: %,.0f€\n", actual.getFortuna());
-            } else {
-                Juego.consola.imprimir("El bote del parking está vacío.");
+                if (this.bote > 0) {
+                    float boteGanado = reclamarBote();
+                    actual.sumarFortuna(boteGanado);
+                    actual.sumarPremiosInversionesOBote(boteGanado);
+                    Juego.consola.imprimir("¡Has ganado el bote de %,.0f€!\n", boteGanado);
+                    Juego.consola.imprimir("Fortuna actual: %,.0f€\n", actual.getFortuna());
+                } else {
+                    throw new ExcepcionBoteVacio(actual.getNombre());
+                }
+                return true;
             }
-            return true;
+            return false;
+
+        } catch (ExcepcionBoteVacio e) {
+            Juego.consola.imprimir("✗ " + e.getMessage());
+            return false; // Indicamos que hubo un problema
+        } catch (Exception e) {
+            Juego.consola.imprimir("⚠ Error inesperado en Parking: " + e.getMessage());
+            e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
     // MÉTODO de información - Específico para Parking

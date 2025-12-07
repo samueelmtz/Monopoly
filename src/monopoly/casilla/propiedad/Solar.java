@@ -44,8 +44,6 @@ public class Solar extends Propiedad {
         return this.getDuenho() != null && this.getDuenho().equals(jugador);
     }
 
-
-
     @Override
     public boolean alquiler() {
         return !this.isHipotecada() && this.getDuenho() != null;
@@ -381,8 +379,7 @@ public class Solar extends Propiedad {
     public static boolean esTipoEdificioValido(String tipo) {
         if (tipo == null) return false;
         String tipoNorm = normalizarTipoEdificio(tipo);
-        return tipoNorm.equals("casa") || tipoNorm.equals("hotel") ||
-                tipoNorm.equals("piscina") || tipoNorm.equals("pista_deporte");
+        return tipoNorm.equals("casa") || tipoNorm.equals("hotel") || tipoNorm.equals("piscina") || tipoNorm.equals("pista_deporte");
     }
 
     public Edificio crearInstanciaEdificio(String tipoEdificio, Jugador jugador) throws ExcepcionMonopoly {
@@ -427,10 +424,7 @@ public class Solar extends Propiedad {
                 return pista;
 
             default:
-                throw new ExcepcionAccionNoPermitida(
-                        "crear edificio",
-                        "tipo de edificio '" + tipoEdificio + "' no válido"
-                );
+                throw new ExcepcionAccionNoPermitida("crear edificio", "tipo de edificio '" + tipoEdificio + "' no válido");
         }
     }
 
@@ -447,10 +441,7 @@ public class Solar extends Propiedad {
 
         // 3. Verificar que tiene todo el grupo (si aplica)
         if (grupo != null && !grupo.tieneTodoElGrupo(jugador)) {
-            throw new ExcepcionPropiedadGrupoIncompleto(
-                    this.getNombre(),
-                    grupo.getColorGrupo()
-            );
+            throw new ExcepcionPropiedadGrupoIncompleto(this.getNombre(), grupo.getColorGrupo());
         }
 
         // 4. Validar tipo de edificio y límites (TODO EN UNO)
@@ -525,8 +516,7 @@ public class Solar extends Propiedad {
             default:
                 throw new ExcepcionAccionNoPermitida(
                         "edificar",
-                        "tipo de edificio '" + tipoEdificio + "' no válido. " +
-                                "Tipos válidos: casa, hotel, piscina, pista_deporte"
+                        "tipo de edificio '" + tipoEdificio + "' no válido. " + "Tipos válidos: casa, hotel, piscina, pista_deporte"
                 );
         }
     }

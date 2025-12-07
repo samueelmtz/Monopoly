@@ -44,14 +44,13 @@ public class Accion extends Casilla {
                 carta.ejecutarAccion(actual, tablero, jugadores, banca);
 
             } catch (Exception e) {
-                Juego.consola.imprimir("Error ejecutando carta: " + e.getClass().getSimpleName() + " - " + e.getMessage());
+                Juego.consola.imprimir("✗ Error ejecutando carta: " + e.getClass().getSimpleName() + " - " + e.getMessage());
                 e.printStackTrace();
             }
             return true;
         }
         return false;
     }
-
 
     // MÉTODO de información
     @Override
@@ -66,12 +65,6 @@ public class Accion extends Casilla {
     // Las casillas de acción no tienen valor monetario
     public float getValor() {
         return 0;
-    }
-
-    // Las casillas de acción no son comprables
-    @Override
-    public boolean esTipoComprable() {
-        return false;
     }
 
     // GETTER específico

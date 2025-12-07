@@ -1,5 +1,7 @@
 package monopoly;
 
+import excepciones.ExcepcionFondosInsuficientes;
+import excepciones.ExcepcionPropiedadNoPertenece;
 import excepciones.ExcepcionTratoInvalido;
 import partida.Jugador;
 import monopoly.casilla.Propiedad;
@@ -94,53 +96,83 @@ public class Tratos {
     }
 
     //Método para aceptar el trato
-    public boolean aceptar(){
+// Método para aceptar el trato
+    public boolean aceptar() {
         try {
             if (!esTratoValido()) {
-                throw new ExcepcionTratoInvalido(this.id);
+                throw new ExcepcionTratoInvalido(
+                        this.id,
+                        "el trato no es válido según las reglas del juego"
+                );
             }
-        } catch (ExcepcionTratoInvalido e){
-            Juego.consola.imprimir("ERROR: " + e.getMessage());
-        }
 
-        // Verificar que ambos jugadores tienen suficiente dinero
-        if (dineroOfrecido > 0 && ofertante.getFortuna() < dineroOfrecido) {
-            Juego.consola.imprimir("El trato no se puede aceptar, el jugador " + ofertante.getNombre() + " no tiene suficiente dinero! (Necesita: " + dineroOfrecido + "€, Tiene: " + ofertante.getFortuna() + "€)\n");
-            return false;
-        }
-        if (dineroDemandado > 0 && receptor.getFortuna() < dineroDemandado) {
-            Juego.consola.imprimir("El trato no se puede aceptar, el jugador " + receptor.getNombre() + " no tiene suficiente dinero! (Necesita: " + dineroDemandado + "€, Tiene: " + receptor.getFortuna() + "€)\n");
-            return false;
-        }
-        // Verificar propiedades
-        if (propiedadOfrecida != null && !propiedadOfrecida.getDuenho().equals(ofertante)) {
-            Juego.consola.imprimir("El trato no puede ser aceptado: " + propiedadOfrecida.getNombre() + " no pertenece a " + ofertante.getNombre() + ".\n");
-            return false;
-        }
-        if (propiedadDemandada != null && !propiedadDemandada.getDuenho().equals(receptor)) {
-            Juego.consola.imprimir("El trato no puede ser aceptado: " + propiedadDemandada.getNombre() + " no pertenece a " + receptor.getNombre() + ".\n");
-            return false;
-        }
+            // Verificar que ambos jugadores tienen suficiente dinero
+            if (dineroOfrecido > 0 && ofertante.getFortuna() < dineroOfrecido) {
+                throw new ExcepcionFondosInsuficientes(
+                        ofertante.getNombre(),
+                        dineroOfrecido,
+                        ofertante.getFortuna(),
+                        "pagar " + String.format("%,.0f", dineroOfrecido) + "€ en el trato " + this.id
+                );
+            }
 
-        // Realizar el intercambio de dinero primero
-        if (dineroOfrecido > 0) {
-            transferirDinero(dineroOfrecido, ofertante, receptor);
-        }
-        if (dineroDemandado > 0) {
-            transferirDinero(dineroDemandado, receptor, ofertante);
-        }
-        
-        // Luego realizar el intercambio de propiedades
-        if (propiedadOfrecida != null) {
-            transferirPropiedad(propiedadOfrecida, ofertante, receptor);
-        }
-        if (propiedadDemandada != null) {
-            transferirPropiedad(propiedadDemandada, receptor, ofertante);
-        }
+            if (dineroDemandado > 0 && receptor.getFortuna() < dineroDemandado) {
+                throw new ExcepcionFondosInsuficientes(
+                        receptor.getNombre(),
+                        dineroDemandado,
+                        receptor.getFortuna(),
+                        "pagar " + String.format("%,.0f", dineroDemandado) + "€ en el trato " + this.id
+                );
+            }
 
-        return true;
+            // Verificar propiedades
+            if (propiedadOfrecida != null && !propiedadOfrecida.getDuenho().equals(ofertante)) {
+                throw new ExcepcionPropiedadNoPertenece(
+                        ofertante.getNombre(),
+                        propiedadOfrecida.getNombre()
+                );
+            }
+
+            if (propiedadDemandada != null && !propiedadDemandada.getDuenho().equals(receptor)) {
+                throw new ExcepcionPropiedadNoPertenece(
+                        receptor.getNombre(),
+                        propiedadDemandada.getNombre()
+                );
+            }
+
+            // Realizar el intercambio de dinero primero
+            if (dineroOfrecido > 0) {
+                transferirDinero(dineroOfrecido, ofertante, receptor);
+            }
+            if (dineroDemandado > 0) {
+                transferirDinero(dineroDemandado, receptor, ofertante);
+            }
+
+            // Luego realizar el intercambio de propiedades
+            if (propiedadOfrecida != null) {
+                transferirPropiedad(propiedadOfrecida, ofertante, receptor);
+            }
+            if (propiedadDemandada != null) {
+                transferirPropiedad(propiedadDemandada, receptor, ofertante);
+            }
+
+            return true;
+
+        } catch (ExcepcionTratoInvalido e) {
+            Juego.consola.imprimir("✗ " + e.getMessage());
+            return false;
+        } catch (ExcepcionFondosInsuficientes e) {
+            Juego.consola.imprimir("✗ " + e.getMessage());
+            return false;
+        } catch (ExcepcionPropiedadNoPertenece e) {
+            Juego.consola.imprimir("✗ " + e.getMessage());
+            return false;
+        } catch (Exception e) {
+            Juego.consola.imprimir("⚠ Error inesperado al aceptar trato: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
-
 
     //Getters
     public String getId(){

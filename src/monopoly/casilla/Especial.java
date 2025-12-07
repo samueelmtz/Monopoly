@@ -97,10 +97,4 @@ public class Especial extends Casilla {
         return 0;
     }
 
-    // Las casillas especiales no son comprables
-    @Override
-    public boolean esTipoComprable() {
-        return false;
-    }
-
 }

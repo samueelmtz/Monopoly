@@ -1,6 +1,7 @@
 // monopoly/casilla/Impuesto.java
 package monopoly.casilla;
 
+import excepciones.ExcepcionFondosInsuficientes;
 import partida.Jugador;
 import partida.Avatar;
 import monopoly.Juego;
@@ -37,25 +38,38 @@ public class Impuesto extends Casilla {
     // MÉTODO de evaluación de casilla
     @Override
     public boolean evaluarCasilla(Jugador actual, Jugador banca, Tablero tablero, ArrayList<Jugador> jugadores, int tirada) {
-        if (actual.getAvatar().getLugar() == this) {
-            Juego.consola.imprimir("Impuesto a pagar: %,.0f€\n", this.cantidadImpuesto);
+        try {
+            if (actual.getAvatar().getLugar() == this) {
+                Juego.consola.imprimir("Impuesto a pagar: %,.0f€\n", this.cantidadImpuesto);
 
-            // Verificar solvencia
-            if (actual.getFortuna() < this.cantidadImpuesto) {
-                Juego.consola.imprimir("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n",
-                        this.cantidadImpuesto, actual.getFortuna());
-                return false;
+                // Verificar solvencia
+                if (actual.getFortuna() < this.cantidadImpuesto) {
+                    throw new ExcepcionFondosInsuficientes(
+                            actual.getNombre(),
+                            this.cantidadImpuesto,
+                            actual.getFortuna(),
+                            "pagar impuestos en " + this.getNombre()
+                    );
+                }
+
+                // Aplicar pago del impuesto
+                actual.restarFortuna(this.cantidadImpuesto);
+                actual.sumarPagoTasasEImpuestos(this.cantidadImpuesto);
+
+                tablero.añadirAlBote(this.cantidadImpuesto);
+                Juego.consola.imprimir("%s ha pagado %,.0f€ de impuestos\n", actual.getNombre(), this.cantidadImpuesto);
+                return true;
             }
+            return false;
 
-            // Aplicar pago del impuesto
-            actual.restarFortuna(this.cantidadImpuesto);
-            actual.sumarPagoTasasEImpuestos(this.cantidadImpuesto);
-
-            tablero.añadirAlBote(this.cantidadImpuesto);
-            Juego.consola.imprimir("%s ha pagado %,.0f€ de impuestos\n", actual.getNombre(), this.cantidadImpuesto);
-            return true;
+        } catch (ExcepcionFondosInsuficientes e) {
+            Juego.consola.imprimir("✗ " + e.getMessage());
+            return false;
+        } catch (Exception e) {
+            Juego.consola.imprimir("⚠ Error inesperado en casilla de impuestos: " + e.getMessage());
+            e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
     // MÉTODO de información
@@ -73,11 +87,6 @@ public class Impuesto extends Casilla {
         return 0;
     }
 
-    // Las casillas de impuesto no son comprables
-    @Override
-    public boolean esTipoComprable() {
-        return false;
-    }
 
     // GETTER específico
     public float getCantidadImpuesto() {

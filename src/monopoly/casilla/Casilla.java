@@ -24,11 +24,12 @@ public abstract class Casilla {
 
     //Métodos abstractos comunes
     public abstract boolean evaluarCasilla(Jugador actual, Jugador banca, Tablero tablero, ArrayList<Jugador> jugadores, int tirada);
+
     public abstract void infoCasilla();
+
     public abstract String toString();
 
 
-    // MÉTODOS COMUNES que ya tienes en tu clase original
     public void eliminarAvatar(Avatar avatar) {
         this.avatares.remove(avatar);
     }
@@ -42,7 +43,7 @@ public abstract class Casilla {
     }
 
     public void casEnVenta() {
-        if(this.getDuenho() == null || this.getDuenho().getNombre().equals("Banca")){
+        if (this.getDuenho() == null || this.getDuenho().getNombre().equals("Banca")) {
             try {
                 double valor = (double) this.getClass().getMethod("getValor").invoke(this);
                 Juego.consola.imprimir("{");
@@ -60,9 +61,8 @@ public abstract class Casilla {
             Juego.consola.imprimir("La casilla " + this.getNombre() + " ya está vendida a " + this.getDuenho().getNombre());
         }
     }
-
-    /////MÉTODOS ABSTRACTOS
     public abstract boolean estaAvatar(Avatar avatar);
+
     public abstract int frecuenciaVisita();
 
     // GETTERS y SETTERS comunes
@@ -96,11 +96,6 @@ public abstract class Casilla {
 
     public int getContadorVisitas() {
         return this.contadorVisitas;
-    }
-
-    // MÉTODO para verificar si es comprable - común pero puede sobrescribirse
-    public boolean esTipoComprable() {
-        return false; // Por defecto no es comprable, se sobrescribe en propiedades
     }
 }
 

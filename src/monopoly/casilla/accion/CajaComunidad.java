@@ -17,9 +17,7 @@ public class CajaComunidad extends Accion {
 
     // MÉTODO de evaluación de casilla - Específico para CajaComunidad
     @Override
-    public boolean evaluarCasilla(Jugador actual, Jugador banca,
-                                  Tablero tablero, ArrayList<Jugador> jugadores,
-                                  int tirada) {
+    public boolean evaluarCasilla(Jugador actual, Jugador banca, Tablero tablero, ArrayList<Jugador> jugadores, int tirada) {
         if (actual.getAvatar().getLugar() == this) {
             Juego.consola.imprimir("¡Has caído en " + this.getTipoAccion() + "!");
 

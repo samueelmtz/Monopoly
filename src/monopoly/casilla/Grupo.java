@@ -83,7 +83,6 @@ public class Grupo {
         return new ArrayList<Casilla>(propiedades);
     }
 
-    // Si necesitas setMiembros, puedes mantenerlo pero adaptarlo
     public void setMiembros(ArrayList<Casilla> miembros) {
         this.propiedades.clear();
         for (Casilla casilla : miembros) {

@@ -67,12 +67,6 @@ public class Propiedad extends Casilla {
         }
     }
 
-    // MÉTODOS COMUNES
-    @Override
-    public boolean esTipoComprable() {
-        return true;
-    }
-
     @Override
     public boolean estaAvatar(Avatar avatar) {
         return this.getAvatares().contains(avatar);
