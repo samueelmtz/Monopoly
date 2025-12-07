@@ -31,6 +31,7 @@ public class Suerte extends Carta {
         }
     }
 
+
     public static Suerte sacarCarta() {
         if (!mazoInicializado) {
             inicializarCartasSuerte();

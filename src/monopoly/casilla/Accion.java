@@ -52,6 +52,7 @@ public class Accion extends Casilla {
         return false;
     }
 
+
     // MÉTODO de información
     @Override
     public void infoCasilla() {

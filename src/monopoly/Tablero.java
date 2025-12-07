@@ -1,7 +1,9 @@
 package monopoly;
 
 import monopoly.casilla.*;
+import monopoly.casilla.accion.CajaComunidad;
 import monopoly.casilla.accion.Parking;
+import monopoly.casilla.accion.Suerte;
 import partida.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -143,12 +145,12 @@ public class Tablero {
         ladoSur.add(new Especial("Salida", 1, banca, "Salida"));
         // Propiedades (solares)
         ladoSur.add(new Solar("Solar1", 2, 600000, 20000, banca, null));
-        ladoSur.add(new Accion("Caja1", 3, banca, "Comunidad"));
+        ladoSur.add(new CajaComunidad("Caja1", 3, banca));
         ladoSur.add(new Solar("Solar2", 4, 600000, 40000, banca, null));
         ladoSur.add(new Impuesto("Imp1", 5, banca, 2000000));
         ladoSur.add(new Transporte("Trans1", 6, 500000, banca)); // Transporte
         ladoSur.add(new Solar("Solar3", 7, 1000000, 60000, banca, null));
-        ladoSur.add(new Accion("Suerte1", 8, banca, "Suerte"));
+        ladoSur.add(new Suerte("Suerte1", 8, banca));
         ladoSur.add(new Solar("Solar4", 9, 1000000, 60000, banca, null));
         ladoSur.add(new Solar("Solar5", 10, 1200000, 80000, banca, null));
     }
@@ -165,7 +167,7 @@ public class Tablero {
         ladoOeste.add(new Solar("Solar8", 15, 1600000, 120000, banca, null));
         ladoOeste.add(new Transporte("Trans2", 16, 500000,banca));
         ladoOeste.add(new Solar("Solar9", 17, 1800000, 140000, banca, null));
-        ladoOeste.add(new Accion("Caja2", 18, banca, "CajaComunidad"));
+        ladoOeste.add(new CajaComunidad("Caja2", 18, banca));
         ladoOeste.add(new Solar("Solar10", 19, 1800000, 140000, banca, null));
         ladoOeste.add(new Solar("Solar11", 20, 2200000, 160000, banca, null));
     }
@@ -177,7 +179,7 @@ public class Tablero {
         // Posiciones 21-30 con alquileres según PDF
         ladoNorte.add(new Parking("Parking", 21, banca));
         ladoNorte.add(new Solar("Solar12", 22, 2200000, 180000, banca, null));
-        ladoNorte.add(new Accion("Suerte3", 23, banca, "Suerte"));
+        ladoNorte.add(new Suerte("Suerte3", 23, banca));
         ladoNorte.add(new Solar("Solar13", 24, 2200000, 180000, banca, null));
         ladoNorte.add(new Solar("Solar14", 25, 2400000, 200000, banca, null));
         ladoNorte.add(new Transporte("Trans3", 26, 500000, banca));
@@ -188,6 +190,7 @@ public class Tablero {
     }
 
 
+
     //Método que inserta casillas del lado este.
     private void insertarLadoEste() {
         ArrayList<Casilla> ladoEste = this.posiciones.get(3);
@@ -196,10 +199,10 @@ public class Tablero {
         ladoEste.add(new Especial("IrCarcel", 31, banca, "IrCarcel"));
         ladoEste.add(new Solar("Solar18", 32, 3000000, 260000, banca, null));
         ladoEste.add(new Solar("Solar19", 33, 3000000, 260000, banca, null));
-        ladoEste.add(new Accion("Caja3", 34, banca, "CajaComunidad"));
+        ladoEste.add(new CajaComunidad("Caja3", 34, banca));
         ladoEste.add(new Solar("Solar20", 35, 3200000, 280000, banca, null));
         ladoEste.add(new Transporte("Trans4", 36, 500000, banca));
-        ladoEste.add(new Accion("Suerte2", 37, banca, "Suerte"));
+        ladoEste.add(new Suerte("Suerte2", 37, banca));
         ladoEste.add(new Solar("Solar21", 38, 3500000, 350000, banca, null));
         ladoEste.add(new Impuesto("Imp2", 39, banca,2000000));
         ladoEste.add(new Solar("Solar22", 40, 4000000, 500000, banca, null));

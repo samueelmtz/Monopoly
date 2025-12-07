@@ -61,6 +61,8 @@ public class Servicio extends Propiedad {
         Juego.consola.imprimir("}");
     }
 
+
+
     // MÉTODO de evaluación de casilla - Polimorfismo
     @Override
     public boolean evaluarCasilla(Jugador actual, Jugador banca, Tablero tablero, ArrayList<Jugador> jugadores, int tirada) {
@@ -91,6 +93,7 @@ public class Servicio extends Propiedad {
                 actual.sumarPagoDeAlquileres(aPagar);
                 this.getDuenho().sumarFortuna(aPagar);
                 this.getDuenho().sumarCobroDeAlquileres(aPagar);
+                this.anhadirDineroGenerado(aPagar);
 
                 Juego.consola.imprimir("%s ha pagado %,.0f€ de alquiler a %s\n", actual.getNombre(), aPagar, this.getDuenho().getNombre());
             }

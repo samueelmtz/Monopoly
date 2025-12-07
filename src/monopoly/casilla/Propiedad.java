@@ -16,6 +16,7 @@ public class Propiedad extends Casilla {
     private float valorHipoteca;
     private float impuesto;
     private Grupo grupo;
+    private float dineroGenerado;
 
     // Constructores
     public Propiedad(String nombre, int posicion, float valor, float impuesto, Jugador duenho) {
@@ -25,6 +26,7 @@ public class Propiedad extends Casilla {
         this.hipotecada = false;
         this.grupo = null;
         this.valorHipoteca = valor / 2;
+        this.dineroGenerado = 0;
     }
 
     // MÉTODOS REQUERIDOS - IMPLEMENTACIÓN POR DEFECTO
@@ -111,6 +113,7 @@ public class Propiedad extends Casilla {
                 }
             }
 
+
             // Si hay edificaciones, no se puede hipotecar
             if (!sinEdificios) {
                 Juego.consola.imprimir("No puedes hipotecar la casilla " + this.getNombre() + " porque tienes que vender todas tus edificaciones.");
@@ -124,6 +127,7 @@ public class Propiedad extends Casilla {
             return false;  // Retorna false si ya está hipotecada
         }
     }
+
 
     public boolean puedeDeshipotecar(Jugador jugador) {
         if (this.getDuenho() == null || !this.getDuenho().equals(jugador)) {
@@ -193,6 +197,15 @@ public class Propiedad extends Casilla {
         Juego.consola.imprimir("\tDueño: " + (this.getDuenho() != null ? this.getDuenho().getNombre() : "Banca"));
         Juego.consola.imprimir(String.format("\tPrecio: %,.0f€", this.valor));
         Juego.consola.imprimir("}");
+    }
+
+    public void anhadirDineroGenerado(float cantidad) {
+        this.dineroGenerado += cantidad;
+    }
+
+    // Getter
+    public float getDineroGenerado() {
+        return dineroGenerado;
     }
 
     public Grupo getGrupo() {
