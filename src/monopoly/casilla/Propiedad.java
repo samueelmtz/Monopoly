@@ -111,38 +111,31 @@ public class Propiedad extends Casilla {
     }
 
     public boolean esHipotecable() {
-        try {
-            if (!hipotecada) { // Verifica si la propiedad no está hipotecada
-                boolean sinEdificios = true; // Inicializa como que no hay edificaciones
+        if (hipotecada) {
+            Juego.consola.imprimir("No puedes hipotecar esta propiedad porque ya está hipotecada.");
+            return false;
+        }
 
-                // Verifica si la propiedad es una instancia de Solar
-                if (this instanceof Solar) {
-                    Solar solar = (Solar) this;  // Hacemos un cast a Solar para acceder a los atributos específicos de Solar
-                    for (ArrayList<Edificio> tipoEdificio : solar.getEdificios()) {  // Accede a la lista de edificios
-                        if (!tipoEdificio.isEmpty()) {  // Si alguna lista de edificios no está vacía
-                            sinEdificios = false;  // Marca que no está vacío, por lo tanto, no puede hipotecarse
-                            break;
-                        }
-                    }
+        // Verificar si es Solar y tiene edificios
+        if (this instanceof Solar) {
+            Solar solar = (Solar) this;
+            for (ArrayList<Edificio> tipoEdificio : solar.getEdificios()) {
+                if (!tipoEdificio.isEmpty()) {
+                    Juego.consola.imprimir("No puedes hipotecar la casilla " + this.getNombre() +
+                            " porque tienes que vender todas tus edificaciones.");
+                    return false;
                 }
-
-
-                // Si hay edificaciones, no se puede hipotecar
-                try {
-                    if (!sinEdificios) {
-                        throw new ExcepcionExistenEdificios(this.getNombre(), this.getDuenho().getNombre());
-                    } else {
-                        hipotecada = true;  // Marca como hipotecada
-                        return true;  // Retorna true indicando que sí se puede hipotecar
-                    }
-                }catch (ExcepcionExistenEdificios e){
-                    Juego.consola.imprimir("ERROR: " + e.getMessage());
-                }
-            } else {
-                throw new ExcepcionPropiedadHipotecada(this.getNombre());
             }
-        }catch (ExcepcionPropiedadHipotecada e){
-            Juego.consola.imprimir("ERROR: " + e.getMessage());
+        }
+
+        return true;  // Solo verifica, NO cambia estado
+    }
+
+    // Nuevo método para EJECUTAR la hipoteca
+    public boolean ejecutarHipoteca() {
+        if (esHipotecable()) {
+            hipotecada = true;
+            return true;
         }
         return false;
     }
@@ -150,14 +143,25 @@ public class Propiedad extends Casilla {
 
     public boolean puedeDeshipotecar(Jugador jugador) {
         if (this.getDuenho() == null || !this.getDuenho().equals(jugador)) {
-            Juego.consola.imprimir(jugador.getNombre() + " no puede hipotecar " + this.getNombre() + ". No es una propiedad que le pertenece.");
+            Juego.consola.imprimir(jugador.getNombre() + " no puede DESHIPOTECAR " +
+                    this.getNombre() + ". No es una propiedad que le pertenece.");
             return false;
         }
-        if(!this.hipotecada) {
-            Juego.consola.imprimir(jugador.getNombre() + " no puede deshipotecar " + this.getNombre() + ". No está hipotecada.");
+        if (!this.hipotecada) {
+            Juego.consola.imprimir(jugador.getNombre() + " no puede deshipotecar " +
+                    this.getNombre() + ". No está hipotecada.");
             return false;
-       }
+        }
         return true;
+    }
+
+    // Nuevo método para EJECUTAR la deshipoteca
+    public boolean ejecutarDeshipoteca() {
+        if (hipotecada) {
+            hipotecada = false;
+            return true;
+        }
+        return false;
     }
 
     // GETTERS Y SETTERS
