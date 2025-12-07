@@ -1,6 +1,8 @@
 // monopoly/casilla/propiedad/Servicio.java
 package monopoly.casilla.propiedad;
 
+import excepciones.ExcepcionPropiedadHipotecada;
+import excepciones.ExcepcionFondosInsuficientes;
 import monopoly.casilla.Propiedad;
 import partida.Jugador;
 import monopoly.Valor;
@@ -63,7 +65,7 @@ public class Servicio extends Propiedad {
 
 
 
-    // MÉTODO de evaluación de casilla - Polimorfismo
+    // MÉTODO de evaluación de casilla
     @Override
     public boolean evaluarCasilla(Jugador actual, Jugador banca, Tablero tablero, ArrayList<Jugador> jugadores, int tirada) {
         if (actual.getAvatar().getLugar() == this) {
@@ -75,17 +77,23 @@ public class Servicio extends Propiedad {
 
             // Si tiene dueño y no es el jugador actual, calcular alquiler
             if (this.getDuenho() != null && this.getDuenho() != banca && this.getDuenho() != actual) {
-                if (this.isHipotecada()) {
-                    Juego.consola.imprimir("El servicio " + this.getNombre() + " está hipotecado. No se cobra alquiler.");
-                    return true;
+                try {
+                    if (this.isHipotecada()) {
+                        throw new ExcepcionPropiedadHipotecada(this.getNombre());
+                    }
+                }catch(ExcepcionPropiedadHipotecada e){
+                    Juego.consola.imprimir("ERROR: " + e.getMessage());
                 }
 
                 float aPagar = calcularAlquilerServicio(tirada);
 
                 // Verificar solvencia
-                if (actual.getFortuna() < aPagar) {
-                    Juego.consola.imprimir("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n", aPagar, actual.getFortuna());
-                    return false;
+                try {
+                    if (actual.getFortuna() < aPagar) {
+                        throw new ExcepcionFondosInsuficientes(actual.getNombre(), aPagar, actual.getFortuna(), "pagar alquiler");
+                    }
+                }catch(ExcepcionFondosInsuficientes e){
+                    Juego.consola.imprimir("ERROR: " + e.getMessage());
                 }
 
                 // Aplicar pago
