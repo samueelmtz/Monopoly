@@ -142,8 +142,19 @@ public class Juego implements Comandos{
                 consola.imprimir(line);
                 analizarComando(line);
             }
+            sc.close();
         } catch (FileNotFoundException e) {
-            consola.imprimir("Error al abrir el fichero");
+            try {
+                throw new ExcepcionComandosFichero(fichero, "Archivo no encontrado: " + e.getMessage());
+            } catch (ExcepcionComandosFichero ex) {
+                consola.imprimir("✗ " + ex.getMessage());
+            }
+        } catch (Exception e) {
+            try {
+                throw new ExcepcionComandosFichero(fichero, "Error al procesar archivo: " + e.getMessage());
+            } catch (ExcepcionComandosFichero ex) {
+                consola.imprimir("✗ " + ex.getMessage());
+            }
         }
     }
 
