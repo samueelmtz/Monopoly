@@ -266,17 +266,4 @@ public class Jugador {
     }
 
     public ArrayList<Tratos> getTratosPendientes() {return this.tratosPendientes;}
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Jugador jugador = (Jugador) obj;
-        return nombre.equals(jugador.nombre);
-    }
-
-    @Override
-    public int hashCode() {
-        return nombre.hashCode();
-    }
 }

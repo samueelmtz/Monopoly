@@ -78,3 +78,11 @@ hipotecar Solar19
 deshipotecar Solar18
 deshipotecar Solar19
 ver tablero
+trato Maria: cambiar (Solar18, Solar4)
+acabar turno
+aceptar Trato0
+trato Pedro: cambiar (Solar3, Solar19)
+acabar turno
+tratos
+eliminar Trato1
+describir jugador Maria
