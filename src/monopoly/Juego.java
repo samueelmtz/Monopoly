@@ -311,17 +311,33 @@ public class Juego implements Comandos{
                     }
                     break;
 
-                case "proponer":
-                    if (comandos.length >= 2 && comandos[1].equals("trato")) {
-                        String[] partesTrato = comando.substring("proponer trato".length()).trim().split(":");
-                        if (partesTrato.length >= 2) {
-                            proponerTrato(partesTrato);
-                        } else {
-                            throw new ExcepcionComandoNoReconocido("proponer trato <jugador>: cambiar (<oferta>, <solicitud>)", comando);
-                        }
-                    } else {
-                        throw new ExcepcionComandoNoReconocido("proponer trato <jugador>: cambiar (<oferta>, <solicitud>)", comando);
+                case "trato":
+                    // Get the rest of the command after "trato"
+                    String restoComando = comando.substring(comando.indexOf("trato") + "trato".length()).trim();
+                    
+                    // Find the first space to separate player name from the rest
+                    int spaceIndex = restoComando.indexOf(' ');
+                    if (spaceIndex == -1) {
+                        throw new ExcepcionComandoNoReconocido("trato <jugador>: cambiar (<oferta>, <solicitud>)", comando);
                     }
+                    
+                    // Extract player name (everything before the first space)
+                    String nombreJugador = restoComando.substring(0, spaceIndex).trim();
+                    
+                    // The rest should be ": cambiar (...)"
+                    String resto = restoComando.substring(spaceIndex).trim();
+                    
+                    // Check if it starts with ":" and has the "cambiar" part
+                    if (!resto.startsWith(":")) {
+                        throw new ExcepcionComandoNoReconocido("trato <jugador>: cambiar (<oferta>, <solicitud>)", comando);
+                    }
+                    
+                    // Remove the ":" and trim
+                    String ofertaSolicitud = resto.substring(1).trim();
+                    
+                    // Pass both parts to proponerTrato
+                    String[] partesTrato = new String[]{nombreJugador, ofertaSolicitud};
+                    proponerTrato(partesTrato);
                     break;
 
                 case "hipotecar":
@@ -1331,10 +1347,10 @@ public class Juego implements Comandos{
 
     @Override
     public void proponerTrato(String[] partes) {
-        // Formato: proponer trato <jugador>: cambiar (<oferta>, <solicitud>)
-        // Ejemplo: proponer trato Juan: cambiar (Solar1, Solar2)
-        // Ejemplo: proponer trato Maria: cambiar (Solar1, 200000)
-        // Ejemplo: proponer trato Pedro: cambiar (Solar1 y 100000, Solar2)
+        // Formato: trato <jugador>: cambiar (<oferta>, <solicitud>)
+        // Ejemplo: trato Juan: cambiar (Solar1, Solar2)
+        // Ejemplo: trato Maria: cambiar (Solar1, 200000)
+        // Ejemplo: trato Pedro: cambiar (Solar1 y 100000, Solar2)
 
         if (partes == null || partes.length == 0) {
             consola.imprimir("Error: Comando de trato inválido.");
@@ -1351,12 +1367,12 @@ public class Juego implements Comandos{
             // Parsear el comando
             String[] partesComando = comando.split(":", 2);
             if (partesComando.length != 2) {
-                consola.imprimir("Formato incorrecto. Uso: proponer trato <jugador>: cambiar (<oferta>, <solicitud>)");
+                consola.imprimir("Formato incorrecto. Uso: trato <jugador>: cambiar (<oferta>, <solicitud>)");
                 return;
             }
 
             // Obtener el nombre del receptor y validar
-            String nombreReceptor = partes[0].trim();
+            String nombreReceptor = partesComando[0].trim();
             Jugador receptor = null;
             for (Jugador j : jugadores) {
                 if (j.getNombre().equalsIgnoreCase(nombreReceptor)) {
