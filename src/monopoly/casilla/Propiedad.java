@@ -10,6 +10,7 @@ import monopoly.casilla.propiedad.*;
 import monopoly.Juego;
 import monopoly.Tablero;
 
+
 public class Propiedad extends Casilla {
     // Atributos específicos de propiedades - PRIVADOS
     private float valor;
