@@ -1,11 +1,11 @@
 package partida;
 
+import excepciones.ExcepcionCasillaNoEncontrada;
 import monopoly.*;
 import monopoly.casilla.*;
 
 import java.util.Random;
 import java.util.ArrayList;
-
 
 public class Avatar {
 
@@ -86,28 +86,32 @@ public class Avatar {
 
     //Nueva función que mueve el avatar a una casilla en específico (necesario para la carcel o para moverAvatar)
     public void colocar(ArrayList<ArrayList<Casilla>> casillas, int nuevaPosicion) {
-        if (this.lugar != null) {
-            this.lugar.eliminarAvatar(this);
-        }
+        try {
+            if (this.lugar != null) {
+                this.lugar.eliminarAvatar(this);
+            }
 
-        // Buscar la casilla con la nueva posición
-        for (ArrayList<Casilla> lado : casillas) {
-            for (Casilla casilla : lado) {
-                if (casilla.getPosicion() == nuevaPosicion) {
-                    // Establecer la nueva ubicación
-                    this.lugar = casilla;
-                    // Añadir el avatar a la nueva casilla
-                    casilla.anhadirAvatar(this);
-                    casilla.registrarVisita();
+            // Buscar la casilla con la nueva posición
+            for (ArrayList<Casilla> lado : casillas) {
+                for (Casilla casilla : lado) {
+                    if (casilla.getPosicion() == nuevaPosicion) {
+                        // Establecer la nueva ubicación
+                        this.lugar = casilla;
+                        // Añadir el avatar a la nueva casilla
+                        casilla.anhadirAvatar(this);
+                        casilla.registrarVisita();
 
-                    Juego.consola.imprimir("Avatar " + this.id + " se movió a " + casilla.getNombre() + " (posición " + nuevaPosicion + ")");
-                    return;
+                        Juego.consola.imprimir("Avatar " + this.id + " se movió a " + casilla.getNombre() + " (posición " + nuevaPosicion + ")");
+                        return;
+                    }
                 }
             }
-        }
 
-        // Si no se encuentra la casilla, mostrar error
-        Juego.consola.imprimir("Error: No se pudo encontrar la casilla en posición " + nuevaPosicion);
+            // Si no se encuentra la casilla, mostrar error
+            throw new ExcepcionCasillaNoEncontrada(this.lugar.getNombre());
+        }catch (ExcepcionCasillaNoEncontrada e){
+            Juego.consola.imprimir("ERROR: " + e.getMessage());
+        }
     }
 
 
