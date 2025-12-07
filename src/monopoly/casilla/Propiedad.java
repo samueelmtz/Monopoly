@@ -149,14 +149,16 @@ public class Propiedad extends Casilla {
 
 
     public boolean puedeDeshipotecar(Jugador jugador) {
-        if (this.getDuenho() == null || !this.getDuenho().equals(jugador)) {
-            Juego.consola.imprimir(jugador.getNombre() + " no puede hipotecar " + this.getNombre() + ". No es una propiedad que le pertenece.");
-            return false;
+        try {
+            if (this.getDuenho() == null || !this.getDuenho().equals(jugador)) {
+                throw new ExcepcionPropiedadNoHipotecada(this.getNombre());
+            }
+            if(!this.hipotecada) {
+                throw new ExcepcionPropiedadNoHipotecada(this.getNombre());
+           }
+        }catch(ExcepcionPropiedadNoHipotecada e){
+            Juego.consola.imprimir("ERROR: " + e.getMessage());
         }
-        if(!this.hipotecada) {
-            Juego.consola.imprimir(jugador.getNombre() + " no puede deshipotecar " + this.getNombre() + ". No está hipotecada.");
-            return false;
-       }
         return true;
     }
 
