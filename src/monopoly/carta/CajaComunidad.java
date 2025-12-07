@@ -3,7 +3,6 @@ package monopoly.carta;
 import partida.Jugador;
 import monopoly.Tablero;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class CajaComunidad extends Carta {
     private static ArrayList<CajaComunidad> mazoCartas;

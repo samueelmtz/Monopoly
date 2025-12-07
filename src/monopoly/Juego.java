@@ -1129,7 +1129,7 @@ public class Juego implements Comandos{
         }
 
         // Solo si pasa la validación, proceder con la hipoteca
-        if (propiedad.esHipotecable()){ //Valor de hipotecada cambia a true
+        if (propiedad.esHipotecable() && propiedad.ejecutarHipoteca()){ //Valor de hipotecada cambia a true
 
             float valorHipoteca = propiedad.getValorHipoteca();
             jugadorActual.sumarFortuna(valorHipoteca);
@@ -1189,7 +1189,7 @@ public class Juego implements Comandos{
         }
 
         // Realizar la deshipoteca
-        if(propiedad.puedeDeshipotecar(jugadorActual)) {
+        if(propiedad.puedeDeshipotecar(jugadorActual) && propiedad.ejecutarDeshipoteca()){ //Valor de hipotecada cambia a false{
             jugadorActual.restarFortuna(costeDeshipoteca);
             jugadorActual.sumarPagoTasasEImpuestos(costeDeshipoteca);
 

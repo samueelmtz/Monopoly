@@ -1,5 +1,7 @@
 package monopoly.casilla.propiedad;
 
+import excepciones.ExcepcionPropiedadHipotecada;
+import excepciones.ExcepcionFondosInsuficientes;
 import monopoly.casilla.Propiedad;
 import monopoly.edificio.Edificio;
 import partida.Jugador;
@@ -97,16 +99,22 @@ public class Solar extends Propiedad {
             }
 
             if (this.getDuenho() != null && !this.getDuenho().equals(banca) && !this.getDuenho().equals(actual)) {
+                try{
                 if (this.isHipotecada()) {
-                    Juego.consola.imprimir("El solar " + this.getNombre() + " está hipotecado. No se cobra alquiler.");
-                    return true;
+                    throw new ExcepcionPropiedadHipotecada(this.getNombre());
                 }
+                }catch(ExcepcionPropiedadHipotecada e){
+                    Juego.consola.imprimir("Error: " + e.getMessage());
+            }
 
                 float aPagar = calcularAlquilerTotal();
 
-                if (actual.getFortuna() < aPagar) {
-                    Juego.consola.imprimir("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n", aPagar, actual.getFortuna());
-                    return false;
+                try {
+                    if (actual.getFortuna() < aPagar) {
+                        throw new ExcepcionFondosInsuficientes(actual.getNombre(), aPagar, actual.getFortuna(), "pagar alquiler");
+                    }
+                }catch (ExcepcionFondosInsuficientes e){
+                    Juego.consola.imprimir("ERROR: " + e.getMessage());
                 }
 
                 actual.restarFortuna(aPagar);

@@ -6,7 +6,7 @@ import monopoly.casilla.Propiedad;
 public class Tratos {
 
     //Atributos
-    private final String id; //Identificador del atributo
+    private final String id; //Identificador de la clase
     private static int contadorTratos = 0; //Atributo para añadirle al id un número identificativo
     private final Jugador ofertante; //Jugador que propone el trato
     private final Jugador receptor; //Jugador que recibe la oferta

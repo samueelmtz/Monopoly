@@ -3,7 +3,6 @@ package monopoly.carta;
 import partida.Jugador;
 import monopoly.Tablero;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class Suerte extends Carta {
     private static ArrayList<Suerte> mazoCartas;
@@ -30,7 +29,6 @@ public class Suerte extends Carta {
             mazoInicializado = true;
         }
     }
-
 
     public static Suerte sacarCarta() {
         if (!mazoInicializado) {
