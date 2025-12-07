@@ -1,5 +1,6 @@
 package monopoly.casilla.propiedad;
 
+import excepciones.ExcepcionFondosInsuficientes;
 import monopoly.casilla.Propiedad;
 import partida.Jugador;
 import monopoly.Valor;
@@ -75,9 +76,12 @@ public class Transporte extends Propiedad {
                 float aPagar = calcularAlquilerTransporte();
 
                 // Verificar solvencia
-                if (actual.getFortuna() < aPagar) {
-                    Juego.consola.imprimir("¡NO ERES SOLVENTE! Debes pagar %,.0f€ pero solo tienes %,.0f€\n", aPagar, actual.getFortuna());
-                    return false;
+                try {
+                    if (actual.getFortuna() < aPagar) {
+                        throw new ExcepcionFondosInsuficientes(actual.getNombre(), aPagar, actual.getFortuna(), "pagar alquiler");
+                    }
+                }catch (ExcepcionFondosInsuficientes e){
+                    Juego.consola.imprimir("ERROR: " + e.getMessage());
                 }
 
                 // Aplicar pago
