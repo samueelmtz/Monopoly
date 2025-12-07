@@ -121,8 +121,7 @@ public class Propiedad extends Casilla {
             Solar solar = (Solar) this;
             for (ArrayList<Edificio> tipoEdificio : solar.getEdificios()) {
                 if (!tipoEdificio.isEmpty()) {
-                    Juego.consola.imprimir("No puedes hipotecar la casilla " + this.getNombre() +
-                            " porque tienes que vender todas tus edificaciones.");
+                    Juego.consola.imprimir("No puedes hipotecar la casilla " + this.getNombre() + " porque tienes que vender todas tus edificaciones.");
                     return false;
                 }
             }
@@ -163,6 +162,7 @@ public class Propiedad extends Casilla {
         }
         return false;
     }
+
 
     // GETTERS Y SETTERS
     public float getValorPropiedad() {
