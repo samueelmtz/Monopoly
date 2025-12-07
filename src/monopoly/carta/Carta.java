@@ -3,6 +3,7 @@ package monopoly.carta;
 import monopoly.casilla.Casilla;
 import partida.Jugador;
 import monopoly.*;
+import excepciones.ExcepcionFondosInsuficientes;
 
 import java.util.ArrayList;
 
@@ -28,6 +29,7 @@ public abstract class Carta {
 
     // Método protegido para ejecutar acciones comunes (las subclases pueden usarlo)
     protected void ejecutarAccionComun(Jugador jugador, Tablero tablero, ArrayList<Jugador> jugadores, Jugador banca) {
+        try {
         Juego.consola.imprimir("Carta elegida: " + this.id);
         Juego.consola.imprimir("Descripción: " + this.descripcion);
 
@@ -56,16 +58,15 @@ public abstract class Carta {
 
         } else if (accion.startsWith("pagarTodos:")) {
             float cantidad = Float.parseFloat(accion.split(":")[1]);
-            boolean puedePagar = true;
-
             float totalAPagar = cantidad * (jugadores.size() - 1);
-            if (jugador.getFortuna() < totalAPagar) {
-                Juego.consola.imprimir("No tienes suficiente dinero para pagar a todos los jugadores. Necesitas %,.0f€ pero tienes %,.0f€\n",
-                        totalAPagar, jugador.getFortuna());
-                puedePagar = false;
-            }
 
-            if (puedePagar) {
+
+                // Verificar si el jugador tiene fondos suficientes
+                if (jugador.getFortuna() < totalAPagar) {
+                    throw new ExcepcionFondosInsuficientes(jugador.getNombre(), totalAPagar, jugador.getFortuna(), "pagar a todos los jugadores");
+                }
+
+                // Si pasa la verificación, realizar el pago
                 Juego.consola.imprimir("%s paga %,.0f€ a cada jugador:\n", jugador.getNombre(), cantidad);
                 for (Jugador otro : jugadores) {
                     if (otro != jugador && otro != banca) {
@@ -75,9 +76,6 @@ public abstract class Carta {
                         Juego.consola.imprimir("  - Paga %,.0f€ a %s\n", cantidad, otro.getNombre());
                     }
                 }
-            }
-
-
         } else if (accion.startsWith("retroceder:")) {
             int casillas = Integer.parseInt(accion.split(":")[1]);
             int posicionActual = jugador.getAvatar().getLugar().getPosicion();
@@ -93,7 +91,7 @@ public abstract class Carta {
                 tablero.añadirAlBote(cantidadPago);
                 Juego.consola.imprimir("Has pagado %,.0f€\n", cantidadPago);
             } else {
-                Juego.consola.imprimir("No tienes suficiente dinero para pagar.");
+                throw new ExcepcionFondosInsuficientes(jugador.getNombre(), cantidadPago, jugador.getFortuna(), "pagar");
             }
 
         } else if (accion.equals("transporteCercano")) {
@@ -129,6 +127,11 @@ public abstract class Carta {
         }
 
         Juego.consola.imprimir("Fortuna actual de %s: %,.0f€\n", jugador.getNombre(), jugador.getFortuna());
+        } catch (ExcepcionFondosInsuficientes e) {
+            // Manejar la excepción imprimiendo el mensaje
+            Juego.consola.imprimir("ERROR: " + e.getMessage());
+            // No se realizan los pagos si no hay fondos suficientes
+        }
     }
 
 

@@ -142,8 +142,19 @@ public class Juego implements Comandos{
                 consola.imprimir(line);
                 analizarComando(line);
             }
+            sc.close();
         } catch (FileNotFoundException e) {
-            consola.imprimir("Error al abrir el fichero");
+            try {
+                throw new ExcepcionComandosFichero(fichero, "Archivo no encontrado: " + e.getMessage());
+            } catch (ExcepcionComandosFichero ex) {
+                consola.imprimir("✗ " + ex.getMessage());
+            }
+        } catch (Exception e) {
+            try {
+                throw new ExcepcionComandosFichero(fichero, "Error al procesar archivo: " + e.getMessage());
+            } catch (ExcepcionComandosFichero ex) {
+                consola.imprimir("✗ " + ex.getMessage());
+            }
         }
     }
 
@@ -160,7 +171,7 @@ public class Juego implements Comandos{
                     if (comandos.length >= 4 && comandos[1].equals("jugador")) {
                         crearJugador(comandos[2], comandos[3]);
                     } else {
-                        consola.imprimir("Comando incorrecto. Uso: crear jugador <nombre> <tipo_avatar>");
+                        throw new ExcepcionComandoNoReconocido("crear jugador <nombre> <tipo_avatar>", comando);
                     }
                     break;
 
@@ -168,7 +179,7 @@ public class Juego implements Comandos{
                     if (comandos.length == 1) {
                         turnoJugador();
                     } else {
-                        consola.imprimir("Comando incorrecto. Uso: jugador");
+                        throw new ExcepcionComandoNoReconocido("jugador", comando);
                     }
                     break;
 
@@ -183,24 +194,26 @@ public class Juego implements Comandos{
                                 break;
                         }
                     } else {
-                        consola.imprimir("Comando erróneo. Uso: describir <jugador> [nombre] o describir [nombre_casilla]");
-
+                        throw new ExcepcionComandoNoReconocido("describir <jugador> [nombre] o describir [nombre_casilla]", comando);
                     }
                     break;
 
                 case "lanzar":
                     if (comandos.length == 2 && comandos[1].equals("dados")) {
-                        lanzarDados(null); // Lanzamiento normal
+                        lanzarDados(null);
                     } else if (comandos.length == 3 && comandos[1].equals("dados")) {
-                        lanzarDados(comandos[2]); // Lanzamiento con dados forzados
+                        lanzarDados(comandos[2]);
                     } else {
-                        consola.imprimir("Comando incorrecto. Uso: lanzar dados [valor1+valor2]");
+                        throw new ExcepcionComandoNoReconocido(
+                                "lanzar dados [valor1+valor2]",
+                                comando
+                        );
                     }
                     break;
 
                 case "comprar":
                     if (comandos.length < 2) {
-                        consola.imprimir("Falta el nombre de la casilla. Uso: comprar <nombre_casilla>");
+                        throw new ExcepcionComandoNoReconocido("comprar <nombre_casilla>", comando);
                     } else {
                         String nombreCasilla = comando.substring(comando.indexOf(" ") + 1);
                         comprar(nombreCasilla);
@@ -210,20 +223,19 @@ public class Juego implements Comandos{
                 case "salir":
                     if (comandos.length >= 2) {
                         String subcomando = comandos[1].toLowerCase();
-                        // Aceptar ambas versiones
                         if (subcomando.equals("carcel") || subcomando.equals("cárcel")) {
                             salirCarcel();
                         } else {
-                            consola.imprimir("Comando incorrecto. Uso: salir cárcel");
+                            throw new ExcepcionComandoNoReconocido("salir cárcel", comando);
                         }
                     } else {
-                        consola.imprimir("Comando incorrecto. Uso: salir cárcel");
+                        throw new ExcepcionComandoNoReconocido("salir cárcel", comando);
                     }
                     break;
 
                 case "listar":
                     if (comandos.length < 2) {
-                        consola.imprimir("Comando incompleto. Uso: listar <enventa|jugadores|avatares>");
+                        throw new ExcepcionComandoNoReconocido("listar <enventa|jugadores|edificios>", comando);
                     } else {
                         switch (comandos[1]) {
                             case "enventa":
@@ -240,8 +252,7 @@ public class Juego implements Comandos{
                                 }
                                 break;
                             default:
-                                consola.imprimir("Comando incorrecto. Uso: listar <enventa|jugadores|avatares|edificios>");
-                                break;
+                                throw new ExcepcionComandoNoReconocido("listar <enventa|jugadores|edificios>", comando);
                         }
                     }
                     break;
@@ -250,7 +261,7 @@ public class Juego implements Comandos{
                     if (comandos.length == 2 && comandos[1].equals("tablero")) {
                         verTablero();
                     } else {
-                        consola.imprimir("Comando incorrecto. Uso: ver tablero");
+                        throw new ExcepcionComandoNoReconocido("ver tablero", comando);
                     }
                     break;
 
@@ -258,7 +269,7 @@ public class Juego implements Comandos{
                     if (comandos.length == 2 && comandos[1].equals("turno")) {
                         acabarTurno();
                     } else {
-                        consola.imprimir("Comando incorrecto. Uso: acabar turno");
+                        throw new ExcepcionComandoNoReconocido("acabar turno", comando);
                     }
                     break;
 
@@ -268,7 +279,7 @@ public class Juego implements Comandos{
                     } else if (comandos.length == 1) {
                         mostrarEstadisticasJuego();
                     } else {
-                        consola.imprimir("Comando incorrecto. Uso: estadisticas <nombre_jugador> o estadisticas");
+                        throw new ExcepcionComandoNoReconocido("estadisticas <nombre_jugador> o estadisticas", comando);
                     }
                     break;
 
@@ -276,12 +287,11 @@ public class Juego implements Comandos{
                     if (comandos.length == 2) {
                         edificar(comandos[1]);
                     } else {
-                        consola.imprimir("Comando incorrecto. Uso: edificar <tipo_edificio>");
+                        throw new ExcepcionComandoNoReconocido("edificar <tipo_edificio>", comando);
                     }
                     break;
 
                 case "vender":
-                    // vender <casas|hoteles|piscina|pista_deporte> <nombre_casilla> <cantidad>
                     if (comandos.length >= 4) {
                         String tipoVenta = comandos[1].toLowerCase();
                         String nombreCasilla = comandos[2];
@@ -289,27 +299,24 @@ public class Juego implements Comandos{
                         try {
                             cantidad = Integer.parseInt(comandos[3]);
                         } catch (NumberFormatException e) {
-                            consola.imprimir("Cantidad inválida. Uso: vender <tipo> <nombre_casilla> <cantidad>");
-                            break;
+                            throw new ExcepcionComandoNoReconocido("vender <casas|hoteles|piscina|pista_deporte> <nombre_casilla> <cantidad>", comando);
                         }
                         venderEdificios(tipoVenta, nombreCasilla, cantidad);
                     } else {
-                        consola.imprimir("Comando incorrecto. Uso: vender <casas|hoteles|piscina|pista_deporte> <nombre_casilla> <cantidad>");
+                        throw new ExcepcionComandoNoReconocido("vender <casas|hoteles|piscina|pista_deporte> <nombre_casilla> <cantidad>", comando);
                     }
                     break;
-                    
+
                 case "proponer":
                     if (comandos.length >= 2 && comandos[1].equals("trato")) {
-                        // Obtener la parte del comando después de "proponer trato"
                         String[] partesTrato = comando.substring("proponer trato".length()).trim().split(":");
                         if (partesTrato.length >= 2) {
-                            // Procesar el trato
                             proponerTrato(partesTrato);
                         } else {
-                            consola.imprimir("Formato incorrecto. Uso: proponer trato <jugador>: cambiar (<oferta>, <solicitud>)");
+                            throw new ExcepcionComandoNoReconocido("proponer trato <jugador>: cambiar (<oferta>, <solicitud>)", comando);
                         }
                     } else {
-                        consola.imprimir("Comando incorrecto. Uso: proponer trato <jugador>: cambiar (<oferta>, <solicitud>)");
+                        throw new ExcepcionComandoNoReconocido("proponer trato <jugador>: cambiar (<oferta>, <solicitud>)", comando);
                     }
                     break;
 
@@ -317,7 +324,7 @@ public class Juego implements Comandos{
                     if (comandos.length == 2) {
                         hipotecarPropiedad(comandos[1]);
                     } else {
-                        consola.imprimir("Comando incorrecto. Uso: hipotecar <nombre_casilla>");
+                        throw new ExcepcionComandoNoReconocido("hipotecar <nombre_casilla>", comando);
                     }
                     break;
 
@@ -325,7 +332,7 @@ public class Juego implements Comandos{
                     if (comandos.length == 2) {
                         deshipotecarPropiedad(comandos[1]);
                     } else {
-                        consola.imprimir("Comando incorrecto. Uso: deshipotecar <nombre_casilla>");
+                        throw new ExcepcionComandoNoReconocido("deshipotecar <nombre_casilla>", comando);
                     }
                     break;
 
@@ -333,26 +340,39 @@ public class Juego implements Comandos{
                     if (comandos.length == 2) {
                         aceptarTrato(comandos[1]);
                     } else {
-                        consola.imprimir("Comando incorrecto. Uso: aceptar <idTrato>");
+                        throw new ExcepcionComandoNoReconocido("aceptar <idTrato>", comando);
                     }
+                    break;
 
                 case "tratos":
                     if (comandos.length == 1) {
                         listarTratos();
+                    } else {
+                        throw new ExcepcionComandoNoReconocido("tratos", comando);
                     }
+                    break;
 
                 case "eliminar":
                     if (comandos.length == 2) {
                         eliminarTrato(comandos[1]);
                     } else {
-                        consola.imprimir("Comando incorrecto. Uso: eliminar <idTrato>");
+                        throw new ExcepcionComandoNoReconocido("eliminar <idTrato>", comando);
                     }
+                    break;
 
                 default:
-                    throw new ExcepcionComandoNoReconocido(comando);
+                    throw new ExcepcionComandoNoReconocido("" , comando);
             }
-            }catch(ExcepcionComandoNoReconocido e) {
-            consola.imprimir(e.getMessage());
+
+        } catch (ExcepcionComandoNoReconocido e) {
+            consola.imprimir("✗ " + e.getMessage());
+
+        } catch (ExcepcionMonopoly e) {
+            consola.imprimir("✗ " + e.getMessage());
+
+        } catch (Exception e) {
+            consola.imprimir("⚠ Error inesperado procesando comando: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -422,16 +442,21 @@ public class Juego implements Comandos{
      */
     @Override
     public void descCasilla(String nombre) {
-        Casilla casilla = tablero.encontrar_casilla(nombre);
+        try {
+            Casilla casilla = tablero.encontrar_casilla(nombre);
 
-        if (casilla == null) {
-            consola.imprimir("Casilla no encontrada: " + nombre);
-            return;
+            if (casilla == null) {
+                throw new ExcepcionCasillaNoEncontrada(nombre);
+            }
+
+            // En lugar de mostrar la información manualmente, usar infoCasilla
+            consola.imprimir("Información de la casilla " + nombre + ":");
+            casilla.infoCasilla();
+        } catch (ExcepcionCasillaNoEncontrada e) {
+            consola.imprimir("✗ " + e.getMessage());
+        } catch (Exception e) {
+            consola.imprimir("⚠ Error inesperado al describir casilla: " + e.getMessage());
         }
-
-        // En lugar de mostrar la información manualmente, usar infoCasilla
-        consola.imprimir("Información de la casilla " + nombre + ":");
-        casilla.infoCasilla();
     }
 
     //Método que ejecuta todas las acciones relacionadas con el comando 'lanzar dados'.
