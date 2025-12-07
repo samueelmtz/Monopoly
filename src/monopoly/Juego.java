@@ -500,7 +500,6 @@ public class Juego implements Comandos{
         try {
             Jugador actual = jugadores.get(turno);
 
-
             // 1. Verificar si el jugador está en la cárcel
             if (actual.isEnCarcel()) {
                 throw new ExcepcionJugadorEnCarcel(actual.getNombre());
@@ -528,15 +527,15 @@ public class Juego implements Comandos{
 
                         // Validar valores entre 1 y 6
                         if (valorDado1 < 1 || valorDado1 > 6 || valorDado2 < 1 || valorDado2 > 6) {
-                            consola.imprimir(" Valores de dados forzados inválidos. Deben estar entre 1 y 6.");
+                            throw new ExcepcionFormatoDadosIncorrecto("Valores de dados forzados inválidos: " + valorDado1 + " y " + valorDado2 + ". Deben estar entre 1 y 6.");
                         }
 
                         consola.imprimir("Dados forzados a: " + valorDado1 + " y " + valorDado2);
                     } else {
-                        consola.imprimir("Formato de dados forzados incorrecto.");
+                        throw new ExcepcionFormatoDadosIncorrecto("Formato de dados forzados incorrecto: '" + valoresForzados + "'. Formato correcto: valor1+valor2 (ej: 3+4).");
                     }
                 } catch (NumberFormatException e) {
-                    consola.imprimir("Formato de dados incorrecto.");
+                    throw new ExcepcionFormatoDadosIncorrecto("Formato de dados incorrecto: '" + valoresForzados + "'. Formato correcto: valor1+valor2 (ej: 3+4).");
                 }
             } else {
                 // Lanzamiento normal
@@ -584,16 +583,7 @@ public class Juego implements Comandos{
             // Capturar excepciones personalizadas del Monopoly
             consola.imprimir("✗ " + e.getMessage());
 
-            // Si es tercer doble, enviar a la cárcel y terminar turno
-            if (e instanceof ExcepcionDadosDoblesTresVeces) {
-                Jugador actual = jugadores.get(turno);
-                actual.encarcelar(tablero.getPosiciones());
-                tirado = true;
-                lanzamientos = 0;
-            }
-
         } catch (Exception e) {
-            // Capturar cualquier otra excepción inesperada
             consola.imprimir("Error inesperado al lanzar dados: " + e.getMessage());
             e.printStackTrace();
         }
