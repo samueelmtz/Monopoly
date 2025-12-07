@@ -17,7 +17,7 @@ public class Tratos {
 
     //Constructor
     public Tratos(Jugador ofertante, Jugador receptor, Propiedad propiedadOfrecida, Propiedad propiedadDemandada, float dineroOfrecido, float dineroDemandado) {
-        this.id = "Tratos" + contadorTratos++;
+        this.id = "Trato" + contadorTratos++;
         this.ofertante = ofertante;
         this.receptor = receptor;
         this.propiedadOfrecida = propiedadOfrecida;
