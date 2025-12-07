@@ -1189,7 +1189,7 @@ public class Juego implements Comandos{
         }
 
         // Realizar la deshipoteca
-        if(propiedad.puedeDeshipotecar(jugadorActual) && propiedad.ejecutarDeshipoteca()){ //Valor de hipotecada cambia a false{
+        if(propiedad.puedeDeshipotecar(jugadorActual) && propiedad.ejecutarDeshipoteca()){
             jugadorActual.restarFortuna(costeDeshipoteca);
             jugadorActual.sumarPagoTasasEImpuestos(costeDeshipoteca);
 
