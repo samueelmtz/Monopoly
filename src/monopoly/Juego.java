@@ -76,7 +76,7 @@ public class Juego implements Comandos{
         tirado = false;
         solvente = true;
 
-        //Leemos el fichero txt de entrada (si lo hay)
+        // Leemos el fichero txt de entrada (si lo hay)
         String respuesta = consola.leer("¿Desea cargar comandos desde un fichero? (s/n): ");
         if (respuesta.equalsIgnoreCase("s")) {
             String rutaFichero = consola.leer("Introduce la ruta del fichero de comandos (.txt): ");
@@ -123,7 +123,11 @@ public class Juego implements Comandos{
                     analizarComando(comando);
                 }
             } catch (Exception e) {
-                consola.imprimir("Error procesando comando: " + e.getMessage());
+                try {
+                    throw new ExcepcionComandoNoReconocido("comando válido", e.getMessage());
+                } catch (ExcepcionComandoNoReconocido ex) {
+                    consola.imprimir("✗ " + ex.getMessage());
+                }
             }
         }
 
@@ -340,7 +344,7 @@ public class Juego implements Comandos{
                     if (comandos.length == 2) {
                         aceptarTrato(comandos[1]);
                     } else {
-                        throw new ExcepcionComandoNoReconocido("aceptar <idTrato>", comando);
+                        throw new ExcepcionComandoNoReconocido("aceptar Tratos <idTrato>", comando);
                     }
                     break;
 
@@ -385,56 +389,71 @@ public class Juego implements Comandos{
      * Parámetro: comando introducido*/
     @Override
     public void descJugador(String[] partes) {
-        if (partes.length < 3) {
-            consola.imprimir("Error: Comando incompleto. Uso: describir jugador <nombre_jugador>");
-            return;
-        }
-
-        String nombreJugador = partes[2];
-        for (Jugador jugador : jugadores) {
-            if (jugador.getNombre().equalsIgnoreCase(nombreJugador)) {
-                // Encabezado
-                consola.imprimir("{");
-                consola.imprimir("    nombre: " + jugador.getNombre() + ",");
-                consola.imprimir("    avatar: " + (jugador.getAvatar() != null ? jugador.getAvatar().getId() : "-") + ",");
-                consola.imprimir("    fortuna: " + String.format("%,.0f", jugador.getFortuna()) + ",");
-
-                // Propiedades en una línea
-                String props = "";
-                for (Casilla c : jugador.getPropiedades()) {
-                    if (!props.isEmpty()) props += ", ";
-                    props += c.getNombre();
-                    if (c instanceof Propiedad && ((Propiedad)c).isHipotecada()) {
-                        props += "(H)";
-                    }
-                }
-                consola.imprimir("    propiedades: [" + props + "],");
-
-                // Edificios en una línea
-                String edifs = "";
-                for (Edificio e : jugador.getEdificios()) {
-                    if (!edifs.isEmpty()) edifs += ", ";
-                    edifs += e.getId() + "(" + e.getSolar().getNombre() + ")";
-                }
-                consola.imprimir("    edificios: [" + edifs + "],");
-
-                // Hipotecas en una línea
-                String hips = "";
-                for (Casilla c : jugador.getPropiedades()) {
-                    if (c instanceof Propiedad && ((Propiedad)c).isHipotecada()) {
-                        if (!hips.isEmpty()) hips += ", ";
-                        hips += c.getNombre() + ":" +
-                                String.format("%,.0f", ((Propiedad)c).getValorHipoteca());
-                    }
-                }
-                if (hips.isEmpty()) hips = "-";
-                consola.imprimir("    hipotecas: [" + hips + "]");
-
-                consola.imprimir("}");
-                return;
+        try {
+            if (partes.length < 3) {
+                throw new ExcepcionComandoNoReconocido("describir jugador <nombre_jugador>", String.join(" ", partes));
             }
+
+            String nombreJugador = partes[2];
+            boolean jugadorEncontrado = false;
+
+            for (Jugador jugador : jugadores) {
+                if (jugador.getNombre().equalsIgnoreCase(nombreJugador)) {
+                    jugadorEncontrado = true;
+
+                    // Encabezado
+                    consola.imprimir("{");
+                    consola.imprimir("    nombre: " + jugador.getNombre() + ",");
+                    consola.imprimir("    avatar: " + (jugador.getAvatar() != null ? jugador.getAvatar().getId() : "-") + ",");
+                    consola.imprimir("    fortuna: " + String.format("%,.0f", jugador.getFortuna()) + ",");
+
+                    // Propiedades en una línea
+                    String props = "";
+                    for (Casilla c : jugador.getPropiedades()) {
+                        if (!props.isEmpty()) props += ", ";
+                        props += c.getNombre();
+                        if (c instanceof Propiedad && ((Propiedad)c).isHipotecada()) {
+                            props += "(H)";
+                        }
+                    }
+                    consola.imprimir("    propiedades: [" + props + "],");
+
+                    // Edificios en una línea
+                    String edifs = "";
+                    for (Edificio e : jugador.getEdificios()) {
+                        if (!edifs.isEmpty()) edifs += ", ";
+                        edifs += e.getId() + "(" + e.getSolar().getNombre() + ")";
+                    }
+                    consola.imprimir("    edificios: [" + edifs + "],");
+
+                    // Hipotecas en una línea
+                    String hips = "";
+                    for (Casilla c : jugador.getPropiedades()) {
+                        if (c instanceof Propiedad && ((Propiedad)c).isHipotecada()) {
+                            if (!hips.isEmpty()) hips += ", ";
+                            hips += c.getNombre() + ":" +
+                                    String.format("%,.0f", ((Propiedad)c).getValorHipoteca());
+                        }
+                    }
+                    if (hips.isEmpty()) hips = "-";
+                    consola.imprimir("    hipotecas: [" + hips + "]");
+
+                    consola.imprimir("}");
+                    break;
+                }
+            }
+
+            if (!jugadorEncontrado) {
+                throw new ExcepcionJugadorNoExistente(nombreJugador);
+            }
+
+        } catch (ExcepcionComandoNoReconocido e) {
+            consola.imprimir("✗ " + e.getMessage());
+        } catch (ExcepcionJugadorNoExistente e) {
+            consola.imprimir("✗ " + e.getMessage());
+        } catch (Exception e) {
+            consola.imprimir("⚠ Error inesperado al describir jugador: " + e.getMessage());
         }
-        consola.imprimir("Jugador no encontrado: " + nombreJugador);
     }
 
     /* Método que realiza las acciones asociadas al comando 'describir nombre_casilla'.
@@ -455,7 +474,7 @@ public class Juego implements Comandos{
         } catch (ExcepcionCasillaNoEncontrada e) {
             consola.imprimir("✗ " + e.getMessage());
         } catch (Exception e) {
-            consola.imprimir("⚠ Error inesperado al describir casilla: " + e.getMessage());
+            consola.imprimir("Error inesperado al describir casilla: " + e.getMessage());
         }
     }
 
