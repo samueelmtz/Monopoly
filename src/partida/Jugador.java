@@ -2,6 +2,9 @@ package partida;
 
 import java.util.ArrayList;
 
+import excepciones.ExcepcionEstadoJuego;
+import excepciones.ExcepcionSalirCarcelSinFondos;
+import excepciones.ExcepcionTratoNoEncontrado;
 import monopoly.Valor;
 import monopoly.edificio.Edificio;
 import monopoly.casilla.Casilla;
@@ -124,24 +127,26 @@ public class Jugador {
     }
 
     public boolean salirDeCarcel() {
-        float PRECIO_SALIDA_CARCEL = 500000;
-        if (!this.enCarcel) {
-            Juego.consola.imprimir(this.nombre + " no está en la cárcel.");
-            return true; // ya libre
+        try {
+            float PRECIO_SALIDA_CARCEL = 500000;
+            if (!this.enCarcel) {
+                Juego.consola.imprimir(this.nombre + " no está en la cárcel.");
+                return true; // ya libre
+            }
+            if (this.fortuna >= PRECIO_SALIDA_CARCEL) {
+                this.restarFortuna(PRECIO_SALIDA_CARCEL);
+                this.sumarPagoTasasEImpuestos(PRECIO_SALIDA_CARCEL);
+                this.enCarcel = false;
+                this.tiradasCarcel = 0;
+                Juego.consola.imprimir(this.nombre + " ha pagado " + PRECIO_SALIDA_CARCEL + " para salir de la cárcel.");
+                return true;
+            } else {
+                throw new ExcepcionSalirCarcelSinFondos(this.nombre, PRECIO_SALIDA_CARCEL, this.fortuna);
+            }
+        } catch (ExcepcionSalirCarcelSinFondos e){
+            Juego.consola.imprimir("ERROR: " + e.getMessage());
         }
-        if (this.fortuna >= PRECIO_SALIDA_CARCEL) {
-            this.restarFortuna(PRECIO_SALIDA_CARCEL);
-            this.sumarPagoTasasEImpuestos(PRECIO_SALIDA_CARCEL);
-            this.enCarcel = false;
-            this.tiradasCarcel = 0;
-            Juego.consola.imprimir(this.nombre + " ha pagado " + PRECIO_SALIDA_CARCEL + " para salir de la cárcel.");
-            return true;
-        } else {
-            Juego.consola.imprimir(this.nombre + " no tiene suficiente dinero para salir de la cárcel ("
-                    + this.fortuna + " < " + PRECIO_SALIDA_CARCEL + ").");
-            return false;
-        }
-
+        return false;
     }
 
     //Métodos de tratos
@@ -152,10 +157,14 @@ public class Jugador {
     }
 
     public void eliminarTrato(Tratos trato) {
-        if (!this.tratosPendientes.remove(trato)) {
-            Juego.consola.imprimir(String.format("No se encontró el trato %s en los pendientes.\n", trato.getId()));
-        } else {
-            this.tratosPendientes.remove(trato);
+        try {
+            if (!this.tratosPendientes.remove(trato)) {
+                throw new ExcepcionTratoNoEncontrado(trato.getId());
+            } else {
+                this.tratosPendientes.remove(trato);
+            }
+        }catch (ExcepcionTratoNoEncontrado e){
+            Juego.consola.imprimir("ERROR: " + e.getMessage());
         }
     }
 
