@@ -8,7 +8,7 @@ import monopoly.casilla.Propiedad;
 
 public class Tratos {
 
-    //Atributos
+    //ATRIBUTOS
     private final String id; //Identificador de la clase
     private static int contadorTratos = 0; //Atributo para añadirle al id un número identificativo
     private final Jugador ofertante; //Jugador que propone el trato
@@ -96,7 +96,6 @@ public class Tratos {
     }
 
     //Método para aceptar el trato
-// Método para aceptar el trato
     public boolean aceptar() {
         try {
             if (!esTratoValido()) {
@@ -169,7 +168,6 @@ public class Tratos {
             return false;
         } catch (Exception e) {
             Juego.consola.imprimir("⚠ Error inesperado al aceptar trato: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }

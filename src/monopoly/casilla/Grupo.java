@@ -5,14 +5,15 @@ import java.util.ArrayList;
 import monopoly.Juego;
 
 public class Grupo {
+    //ATRIBUTOS
     private final ArrayList<Propiedad> propiedades;
     private String colorGrupo;
-    private int numCasillas;;
+    private int numCasillas;
 
 
-    /**
-     * Constructor para un grupo con dos propiedades.
-     */
+    //CONSTRUCTORES
+
+    //Constructor para grupos de dos solares
     public Grupo(Propiedad prop1, Propiedad prop2, String colorGrupo) {
         this.propiedades = new ArrayList<>();
         this.colorGrupo = colorGrupo;
@@ -25,9 +26,7 @@ public class Grupo {
         prop2.setGrupo(this);
     }
 
-    /**
-     * Constructor para un grupo con tres propiedades.
-     */
+    //Constructor para grupos de tres solares
     public Grupo(Propiedad prop1, Propiedad prop2, Propiedad prop3, String colorGrupo) {
         this.propiedades = new ArrayList<>();
         this.colorGrupo = colorGrupo;
@@ -42,15 +41,7 @@ public class Grupo {
         prop3.setGrupo(this);
     }
 
-    public void anhadirPropiedad(Propiedad propiedad) {
-        this.propiedades.add(propiedad);
-        this.numCasillas++;
-        propiedad.setGrupo(this);
-    }
-
-    /**
-     * Verifica si un jugador tiene todas las propiedades del grupo.
-     */
+    // Método que verifica si un jugador tiene todas las propiedades del grupo.
     public boolean tieneTodoElGrupo(Jugador jugador) {
         for (Propiedad propiedad : propiedades) {
             if (!propiedad.perteneceAJugador(jugador)) {
@@ -60,9 +51,7 @@ public class Grupo {
         return true;
     }
 
-    /**
-     * Muestra información del grupo.
-     */
+    //Método que muestra información del grupo.
     public void mostrarInfo() {
         Juego.consola.imprimir("{");
         Juego.consola.imprimir("    Grupo: " + colorGrupo);

@@ -40,6 +40,7 @@ public class Solar extends Propiedad {
     }
 
     // MÉTODOS REQUERIDOS
+
     @Override
     public boolean perteneceAJugador(Jugador jugador) {
         return this.getDuenho() != null && this.getDuenho().equals(jugador);
@@ -323,7 +324,7 @@ public class Solar extends Propiedad {
     }
 
     private void eliminarEdificios(String tipoEdificio, int cantidad) {
-        String tipo = tipoEdificio.toLowerCase();
+        String tipo = tipoEdificio;
 
         switch (tipo) {
             case "casa":
@@ -554,6 +555,7 @@ public class Solar extends Propiedad {
         }
     }
 
+    //Método que añade un edificio a la lista
     private void añadirEdificioALista(Edificio edificio, int indice) {
         if (indice >= 0 && indice < edificios.size()) {
             edificios.get(indice).add(edificio);

@@ -16,8 +16,8 @@ import monopoly.casilla.propiedad.Servicio;
 public class Tablero {
     //Atributos
     private ArrayList<ArrayList<Casilla>> posiciones; //Posiciones del tablero: se define como un arraylist de arraylists de casillas (uno por cada lado del tablero).
-    private HashMap<String, Grupo> grupos; //Grupos del tablero, almacenados como un HashMap con clave String (será el color del grupo).
-    private Jugador banca;//Un jugador que será la banca.
+    private final HashMap<String, Grupo> grupos; //Grupos del tablero, almacenados como un HashMap con clave String (será el color del grupo).
+    private final Jugador banca;//Un jugador que será la banca.
     private float boteParking; //Atributo auxiliar para acumular el bote del parking
 
     //Constructor: únicamente le pasamos el jugador banca (que se creará desde el menú).

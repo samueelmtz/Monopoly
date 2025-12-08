@@ -134,7 +134,7 @@ public class Juego implements Comandos{
         consola.imprimir("El juego ha terminado. Esperamos que hayáis disfrutado la experiencia!!!");
     }
 
-    /*Metodo que lee un fichero de texto con comandos y los ejecuta.
+    /*Método que lee un fichero de texto con comandos y los ejecuta.
      * Parámetro: cadena de caracteres (ruta del fichero).
      */
     public void lecturaFichero(String fichero) {
@@ -645,7 +645,6 @@ public class Juego implements Comandos{
 
         } catch (Exception e) {
             consola.imprimir("Error inesperado al lanzar dados: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 

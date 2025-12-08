@@ -19,7 +19,7 @@ public class Transporte extends Propiedad {
         super(nombre, posicion, valor, Valor.ALQUILER_TRANSPORTE, duenho);
     }
 
-    // MÉTODOS REQUERIDOS por el PDF - IMPLEMENTACIÓN
+    // MÉTODOS REQUERIDOS
     @Override
     public boolean perteneceAJugador(Jugador jugador) {
         return this.getDuenho() != null && this.getDuenho().equals(jugador);
@@ -63,7 +63,7 @@ public class Transporte extends Propiedad {
         Juego.consola.imprimir("}");
     }
 
-    // MÉTODO de evaluación de casilla - Polimorfismo
+    // MÉTODO de evaluación de casilla
     @Override
     public boolean evaluarCasilla(Jugador actual, Jugador banca, Tablero tablero, ArrayList<Jugador> jugadores, int tirada) {
         if (actual.getAvatar().getLugar() == this) {
@@ -79,7 +79,6 @@ public class Transporte extends Propiedad {
                         Juego.consola.imprimir("✗ La propiedad %s está hipotecada. No se paga alquiler.", this.getNombre());
                         return true; // No hay que pagar alquiler si está hipotecada
                     }
-
 
                 float aPagar = calcularAlquilerTransporte();
                 Jugador propietario = this.getDuenho();
@@ -129,7 +128,7 @@ public class Transporte extends Propiedad {
         return false;
     }
 
-    // Método auxiliar para calcular valor hipotecable total (si no lo tienes en Jugador)
+    // Método auxiliar para calcular valor hipotecable total
     private float calcularValorHipotecaDisponible(Jugador jugador) {
         float total = 0;
         for (Casilla propiedad : jugador.getPropiedades()) {
@@ -144,8 +143,7 @@ public class Transporte extends Propiedad {
         return total;
     }
 
-
-
+    //Método para calcular el alquiler del transporte
     private float calcularAlquilerTransporte() {
         // Contar cuántos transportes tiene el dueño
         int transportesDelDuenho = 0;

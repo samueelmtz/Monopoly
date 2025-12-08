@@ -3,7 +3,6 @@ package monopoly.casilla.propiedad;
 
 import monopoly.casilla.Casilla;
 import excepciones.ExcepcionPropiedadHipotecada;
-import excepciones.ExcepcionFondosInsuficientes;
 import monopoly.casilla.Propiedad;
 import partida.Jugador;
 import monopoly.Valor;
@@ -41,7 +40,7 @@ public class Servicio extends Propiedad {
                 this.getNombre(), this.getPosicion(), this.getValorPropiedad());
     }
 
-    // MÉTODO infoCasilla() IMPLEMENTADO
+    // MÉTODO infoCasilla()
     @Override
     public void infoCasilla() {
         Juego.consola.imprimir("{");

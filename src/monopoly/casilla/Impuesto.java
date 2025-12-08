@@ -1,7 +1,5 @@
-// monopoly/casilla/Impuesto.java
 package monopoly.casilla;
 
-import excepciones.ExcepcionFondosInsuficientes;
 import partida.Jugador;
 import partida.Avatar;
 import monopoly.Juego;
@@ -17,7 +15,7 @@ public class Impuesto extends Casilla {
         this.cantidadImpuesto = cantidadImpuesto;
     }
 
-    // MÉTODOS REQUERIDOS por el PDF - IMPLEMENTACIÓN
+    // MÉTODOS REQUERIDOS
     @Override
     public boolean estaAvatar(Avatar avatar) {
         return this.getAvatares().contains(avatar);
@@ -60,7 +58,7 @@ public class Impuesto extends Casilla {
                     return false;
                 }
 
-                // Si tiene suficiente dinero, pagar normalmente
+                // Si tiene suficiente dinero paga normalmente
                 if (actual.getFortuna() >= impuestoAPagar) {
                     actual.restarFortuna(impuestoAPagar);
                     actual.sumarPagoTasasEImpuestos(impuestoAPagar);
@@ -85,7 +83,6 @@ public class Impuesto extends Casilla {
 
         } catch (Exception e) {
             Juego.consola.imprimir("⚠ Error inesperado en casilla de impuestos: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
