@@ -721,48 +721,39 @@ public class Juego implements Comandos{
             consola.imprimir("    avatar: " + jugador.getAvatar().getId() + ",");
             consola.imprimir("    fortuna: " + String.format("%,.0f", jugador.getFortuna()) + ",");
 
-            // Propiedades
-            consola.imprimir("    propiedades: [");
-            ArrayList<Casilla> propiedades = jugador.getPropiedades();
-            for (int i = 0; i < propiedades.size(); i++) {
-                consola.imprimir(propiedades.get(i).getNombre());
-                if (i < propiedades.size() - 1) {
-                    consola.imprimir(", ");
+            // Propiedades en una línea
+            String props = "";
+            for (Casilla c : jugador.getPropiedades()) {
+                if (!props.isEmpty()) props += ", ";
+                props += c.getNombre();
+                if (c instanceof Propiedad && ((Propiedad)c).isHipotecada()) {
+                    props += "(H)";
                 }
             }
-            consola.imprimir("],");
+            consola.imprimir("    propiedades: [" + props + "],");
 
-            // Edificios
-            consola.imprimir("    edificios: [");
-            ArrayList<Edificio> edificiosJugador = jugador.getEdificios();
-            for (int i = 0; i < edificiosJugador.size(); i++) {
-                Edificio edificio = edificiosJugador.get(i);
-                consola.imprimir(edificio.getId() + "(" + edificio.getSolar().getNombre() + ")");
-                if (i < edificiosJugador.size() - 1) {
-                    consola.imprimir(", ");
-                }
+            // Edificios en una línea
+            String edifs = "";
+            for (Edificio e : jugador.getEdificios()) {
+                if (!edifs.isEmpty()) edifs += ", ";
+                edifs += e.getId() + "(" + e.getSolar().getNombre() + ")";
             }
-            consola.imprimir("],");
+            consola.imprimir("    edificios: [" + edifs + "],");
 
-            // Hipotecas
-            consola.imprimir("    hipotecas: [");
-            boolean primeraHipoteca = true;
-            for (Casilla propiedad : propiedades) {
-                if (!(propiedad instanceof Propiedad)){
-                    Propiedad prop = (Propiedad) propiedad;
-                    if (prop.isHipotecada()) {
-                        if (!primeraHipoteca) {
-                            consola.imprimir(", ");
-                        }
-                        consola.imprimir(prop.getNombre());
-                        primeraHipoteca = false;
-                    }
+            // Hipotecas en una línea
+            String hips = "";
+            for (Casilla c : jugador.getPropiedades()) {
+                if (c instanceof Propiedad && ((Propiedad)c).isHipotecada()) {
+                    if (!hips.isEmpty()) hips += ", ";
+                    hips += c.getNombre() + ":" +
+                            String.format("%,.0f", ((Propiedad)c).getValorHipoteca());
                 }
             }
-            if (primeraHipoteca) {
-                consola.imprimir("-");
-            }
-            consola.imprimir("]");
+            if (hips.isEmpty()) hips = "-";
+            consola.imprimir("    hipotecas: [" + hips + "]");
+
+            consola.imprimir("}");
+            break;
         }
     }
 
@@ -1243,6 +1234,14 @@ public class Juego implements Comandos{
 
             Solar solar = (Solar) casilla;
 
+            if (tipoVenta.equals("hotel")) {
+                if (solar.getNumPiscinas() > 0 || solar.getNumPistas() > 0) {
+                    throw new ExcepcionVenderEdificios("vender hotel", solar.getNombre(),
+                            "no se puede vender el hotel mientras haya piscinas (" + solar.getNumPiscinas() + ") o pistas de deporte (" + solar.getNumPistas() + ") construidas. Vende primero las piscinas y pistas."
+                    );
+                }
+            }
+
             // 4. DELEGAR la venta al Solar
             int cantidadVendida = solar.venderEdificios(tipoVenta, cantidadSolicitada, jugadorActual);
             float ingresoTotal = cantidadVendida * solar.obtenerPrecioVentaEdificio(tipoVenta);
@@ -1255,7 +1254,8 @@ public class Juego implements Comandos{
 
             // 7. Mostrar resultado
             consola.imprimir("✓ " + jugadorActual.getNombre() + " ha vendido " + cantidadVendida + " " + tipoVenta + " en " + solar.getNombre() + " por " + String.format("%,.0f", ingresoTotal) + "€");
-
+        } catch (ExcepcionVenderEdificios e){
+            consola.imprimir("✗ " + e.getMessage());
         } catch (ExcepcionMonopoly e) {
             consola.imprimir("✗ " + e.getMessage());
         } catch (Exception e) {
@@ -1324,13 +1324,6 @@ public class Juego implements Comandos{
 
                 consola.imprimir("Fortuna actual de %s: %,.0f€\n",
                         jugadorActual.getNombre(), jugadorActual.getFortuna());
-            } else {
-                // Si no se pudo hipotecar, lanzar excepción
-                throw new ExcepcionPropiedadNoValida(
-                        nombreCasilla,
-                        jugadorActual.getNombre(),
-                        "hipotecar"
-                );
             }
 
         } catch (ExcepcionCasillaNoEncontrada e) {
@@ -1338,8 +1331,6 @@ public class Juego implements Comandos{
         } catch (ExcepcionJugadorNoPropietario e) {
             consola.imprimir("✗ " + e.getMessage());
         } catch (ExcepcionAccionNoPermitida e) {
-            consola.imprimir("✗ " + e.getMessage());
-        } catch (ExcepcionPropiedadNoValida e) {
             consola.imprimir("✗ " + e.getMessage());
         } catch (ExcepcionMonopoly e) {
             consola.imprimir("✗ Error al hipotecar propiedad: " + e.getMessage());

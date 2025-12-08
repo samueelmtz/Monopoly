@@ -585,11 +585,7 @@ public class Solar extends Propiedad {
         return casasEliminadas;
     }
 
-    public int eliminarEdificiosDeListasGlobales(
-            ArrayList<Edificio> listaEdificiosGlobal,
-            Jugador jugadorActual,
-            String tipoEdificio,
-            int cantidad) {
+    public int eliminarEdificiosDeListasGlobales(ArrayList<Edificio> listaEdificiosGlobal, Jugador jugadorActual, String tipoEdificio, int cantidad) {
 
         // 1. Normalizar tipo
         String tipoNormalizado = normalizarTipoEdificio(tipoEdificio);
@@ -780,7 +776,7 @@ public class Solar extends Propiedad {
             case "Solar20": return 2800000;
             case "Solar21": return 3400000;
             case "Solar22": return 4000000;
-            default: return 0; //no se ejecuta esta linea porque no hay mas casillas
+            default: return 0; //no se ejecuta esta línea porque no hay más casillas
         }
     }
 
