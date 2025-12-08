@@ -12,7 +12,7 @@ import monopoly.Tablero;
 
 
 public class Propiedad extends Casilla {
-    // Atributos específicos de propiedades - PRIVADOS
+    // Atributos específicos de propiedades
     private float valor;
     private boolean hipotecada;
     private float valorHipoteca;
@@ -31,19 +31,24 @@ public class Propiedad extends Casilla {
         this.dineroGenerado = 0;
     }
 
-    // MÉTODOS REQUERIDOS - IMPLEMENTACIÓN POR DEFECTO
+    // MÉTODOS REQUERIDOS
+
+    //Método que indica si la propiedad pertenece a un jugador
     public boolean perteneceAJugador(Jugador jugador) {
         return super.getDuenho() != null && super.getDuenho().equals(jugador);
     }
 
+    //Método que indica si la propiedad está en alquiler
     public boolean alquiler() {
         return !this.hipotecada && this.getDuenho() != null;
     }
 
+    //Método que devuelve el valor de la propiedad
     public float valor() {
         return this.valor;
     }
 
+    //Método para comprar una propiedad
     public void comprar(Jugador jugador) {
         try {
             if (jugador.getFortuna() >= this.valor) {
