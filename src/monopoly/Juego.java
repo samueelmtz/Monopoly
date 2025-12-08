@@ -312,20 +312,16 @@ public class Juego implements Comandos{
                     break;
 
                 case "trato":
-                    // Get the rest of the command after "trato"
                     String restoComando = comando.substring(comando.indexOf("trato") + "trato".length()).trim();
-                    
-                    // Split the command into player name and trade details
+
                     String[] partes = restoComando.split(":", 2);
                     if (partes.length != 2) {
                         throw new ExcepcionComandoNoReconocido("trato <jugador>: cambiar (<oferta>, <solicitud>)", comando);
                     }
-                    
-                    // Extract player name and trade details
+
                     String nombreJugador = partes[0].trim();
                     String ofertaSolicitud = partes[1].trim();
-                    
-                    // Pass to proponerTrato as a single string
+
                     proponerTrato(new String[]{nombreJugador, ofertaSolicitud});
                     break;
 
@@ -1360,7 +1356,7 @@ public class Juego implements Comandos{
         } catch (ExcepcionMonopoly e) {
             consola.imprimir("✗ Error al deshipotecar propiedad: " + e.getMessage());
         } catch (Exception e) {
-            consola.imprimir("⚠ Error inesperado al deshipotecar: " + e.getMessage());
+            consola.imprimir("Error inesperado al deshipotecar: " + e.getMessage());
         }
     }
 
@@ -1394,8 +1390,7 @@ public class Juego implements Comandos{
 
                 // Construir el mensaje detallado
                 StringBuilder mensaje = new StringBuilder();
-                mensaje.append("Se ha aceptado el siguiente trato con ")
-                        .append(jugador2.getNombre()).append(": ");
+                mensaje.append("Se ha aceptado el siguiente trato con ").append(jugador2.getNombre()).append(": ");
 
                 if (trato.getPropiedadOfrecida() != null) {
                     mensaje.append("le doy ").append(trato.getPropiedadOfrecida().getNombre());
