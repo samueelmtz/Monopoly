@@ -489,7 +489,7 @@ public class Juego implements Comandos{
         try {
             Jugador actual = jugadores.get(turno);
 
-            // 1. CASO: Jugador está en la cárcel
+            //Jugador está en la cárcel
             if (actual.estaEnCarcel()) {
                 int valorDado1 = 0, valorDado2 = 0;
 
@@ -566,7 +566,7 @@ public class Juego implements Comandos{
                 return;
             }
 
-            // 2. CASO: Jugador NO está en la cárcel (código original)
+            //Jugador NO está en la cárcel
 
             // Verificar si ya ha tirado (y no tiene dobles pendientes)
             if (tirado && lanzamientos == 0) {
@@ -661,7 +661,7 @@ public class Juego implements Comandos{
     public void comprar(String nombre) {
         try {
             Jugador jugadorActual = jugadores.get(turno);
-            jugadorActual.verificarAccionPermitidaEnCarcel("comprar " + nombre);
+            jugadorActual.verificarAccionPermitidaEnCarcel("comprar " + nombre);//No puede comprar si está en la cárcel.
             Casilla casilla = tablero.encontrar_casilla(nombre);
 
             if (casilla == null) {

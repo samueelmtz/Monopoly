@@ -142,8 +142,7 @@ public class Jugador {
         this.yaTiroEsteTurno = false;
         this.turnosEnCarcel++;
 
-        Juego.consola.imprimir("%s está en la cárcel (turno %d/3)",
-                nombre, turnosEnCarcel);
+        Juego.consola.imprimir("%s está en la cárcel (turno %d/3)", nombre, turnosEnCarcel);
 
         if (turnosEnCarcel >= 3) {
             Juego.consola.imprimir("¡Última oportunidad! Si no sales con dobles, deberás pagar 500.000€.");
