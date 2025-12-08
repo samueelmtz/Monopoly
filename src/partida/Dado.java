@@ -3,11 +3,12 @@ import java.util.Random;
 import monopoly.Juego;
 
 public class Dado {
-    private int valor;
-    private final Random rand;
+    private int valor; // Valor del dado
+    private final Random rand; //Valor aleatorio
     private final boolean forzado; // Indica si el dado está forzado
     private final int valorForzado; // Valor forzado
 
+    //CONSTRUCTOR PRINCIPAL
     public Dado(){
         this.rand = new Random();
         this.valor = 1;
@@ -26,8 +27,7 @@ public class Dado {
         return this.valor;
     }
 
-
-    //Getters y setters:
+    //GETTERS Y SETTERS:
     public int getValor() {
         return valor;
     }
