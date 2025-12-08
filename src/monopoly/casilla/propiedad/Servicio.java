@@ -84,7 +84,7 @@ public class Servicio extends Propiedad {
                     }
                 } catch(ExcepcionPropiedadHipotecada e) {
                     Juego.consola.imprimir("ERROR: " + e.getMessage());
-                    return true; // No hay que pagar alquiler si está hipotecada
+                    return true;
                 }
 
                 float aPagar = calcularAlquilerServicio(tirada);

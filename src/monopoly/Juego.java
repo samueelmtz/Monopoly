@@ -380,7 +380,7 @@ public class Juego implements Comandos{
             consola.imprimir("✗ " + e.getMessage());
 
         } catch (Exception e) {
-            consola.imprimir("⚠ Error inesperado procesando comando: " + e.getMessage());
+            consola.imprimir("Error inesperado procesando comando: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -457,7 +457,7 @@ public class Juego implements Comandos{
         } catch (ExcepcionJugadorNoExistente e) {
             consola.imprimir("✗ " + e.getMessage());
         } catch (Exception e) {
-            consola.imprimir("⚠ Error inesperado al describir jugador: " + e.getMessage());
+            consola.imprimir("Error inesperado al describir jugador: " + e.getMessage());
         }
     }
 
@@ -677,7 +677,7 @@ public class Juego implements Comandos{
         } catch (ExcepcionMonopoly e) {
             consola.imprimir("✗ " + e.getMessage());
         } catch (Exception e) {
-            consola.imprimir("⚠ Error inesperado al comprar: " + e.getMessage());
+            consola.imprimir("Error inesperado al comprar: " + e.getMessage());
         }
     }
 
@@ -759,9 +759,9 @@ public class Juego implements Comandos{
 
     //Método que realiza las acciones asociadas al comando 'listar edificios'
     @Override
-    public void listarEdificios(String _ignor) {
-        String filtro = (_ignor == null) ? "" : _ignor.trim();
-        boolean any = false;
+    public void listarEdificios(String edif) {
+        String filtro = (edif == null) ? "" : edif.trim();
+        boolean hayEdificios = false;
 
         if (tablero == null || tablero.getPosiciones() == null) {
             consola.imprimir("\t(no hay edificios construidos)");
@@ -786,13 +786,13 @@ public class Juego implements Comandos{
                     if (lista == null) continue;
                     for (Edificio ed : lista) {
                         consola.imprimir(ed.toString());
-                        any = true;
+                        hayEdificios = true;
                     }
                 }
             }
         }
 
-        if (!any) {
+        if (!hayEdificios) {
             if (filtro.isEmpty()) {
                 consola.imprimir("\t(no hay edificios construidos)");
             } else {
@@ -809,47 +809,43 @@ public class Juego implements Comandos{
         try {
             // Verificar pago forzoso por 3 turnos en cárcel
             if (jugadorActual.debePagarForzosamenteCarcel()) {
-                consola.imprimir("¡%s lleva 3 turnos en cárcel! Pago forzoso de 500.000€.",
-                        jugadorActual.getNombre());
+                consola.imprimir("¡%s lleva 3 turnos en cárcel! Pago forzoso de 500.000€.", jugadorActual.getNombre());
 
                 // Intentar salir pagando
                 boolean pudoSalir = jugadorActual.salirDeCarcel();
 
                 if (!pudoSalir) {
-                    // No pudo pagar la fianza - VERIFICAR SI PUEDE HIPOTECAR
+                    // No pudo pagar la fianza - Verificar si puede hipotecar
                     float deuda = 500000;
                     float falta = deuda - jugadorActual.getFortuna();
                     boolean puedeHipotecar = jugadorActual.puedeHipotecarAlgoParaPagar(falta);
 
                     if (!puedeHipotecar) {
-                        // NO puede pagar NI hipotecar → BANCARROTA INMEDIATA
-                        consola.imprimir("✗ %s no tiene propiedades hipotecables para cubrir la fianza.",
-                                jugadorActual.getNombre());
+                        // NO puede pagar NI hipotecar - BANCARROTA INMEDIATA
+                        consola.imprimir("✗ %s no tiene propiedades hipotecables para cubrir la fianza.", jugadorActual.getNombre());
 
                         // Declarar bancarrota por cárcel
                         jugadorActual.declararBancarrotaPorCarcel();
 
                         // Eliminar jugador del juego
                         eliminarJugadorBancarrota(jugadorActual);
-                        return; // No cambiar turno (ya se eliminó el jugador)
+                        return; //
                     } else {
                         // Puede hipotecar pero NO LO HIZO - BANCARROTA FORZADA
-                        // Porque ya tuvo 3 turnos para hacerlo
-                        consola.imprimir("✗ %s tuvo 3 turnos para hipotecar y no lo hizo. BANCARROTA FORZADA.",
-                                jugadorActual.getNombre());
+                        consola.imprimir("✗ %s tuvo 3 turnos para hipotecar y no lo hizo. BANCARROTA FORZADA.", jugadorActual.getNombre());
 
                         // Declarar bancarrota por cárcel
                         jugadorActual.declararBancarrotaPorCarcel();
 
                         // Eliminar jugador del juego
                         eliminarJugadorBancarrota(jugadorActual);
-                        return; // No cambiar turno (ya se eliminó el jugador)
+                        return; //
                     }
                 }
             }
 
         } catch (Exception e) {
-            consola.imprimir("⚠ Error inesperado en acabarTurno: " + e.getMessage());
+            consola.imprimir("Error inesperado en acabarTurno: " + e.getMessage());
         } finally {
             // Reiniciar estado del turno
             tirado = false;
@@ -881,15 +877,12 @@ public class Juego implements Comandos{
                 avatares.remove(jugadorBancarrota.getAvatar());
             }
 
-            consola.imprimir("\n=== %s HA SIDO ELIMINADO DEL JUEGO POR BANCARROTA ===\n",
-                    jugadorBancarrota.getNombre());
+            consola.imprimir("\nHA SIDO ELIMINADO DEL JUEGO POR BANCARROTA\n", jugadorBancarrota.getNombre());
 
             // Verificar si queda solo un jugador (fin del juego)
             if (jugadores.size() == 1) {
-                consola.imprimir("=========================================");
                 consola.imprimir("¡FIN DEL JUEGO!");
                 consola.imprimir("¡%s ES EL GANADOR!", jugadores.get(0).getNombre());
-                consola.imprimir("=========================================");
                 System.exit(0); // Terminar el programa
             }
 
@@ -903,12 +896,11 @@ public class Juego implements Comandos{
             // Mostrar jugadores restantes
             consola.imprimir("Jugadores restantes:");
             for (Jugador j : jugadores) {
-                consola.imprimir("• %s (Fortuna: %,.0f€)",
-                        j.getNombre(), j.getFortuna());
+                consola.imprimir("• %s (Fortuna: %,.0f€)", j.getNombre(), j.getFortuna());
             }
 
         } catch (Exception e) {
-            consola.imprimir("⚠ Error al eliminar jugador en bancarrota: " + e.getMessage());
+            consola.imprimir("Error al eliminar jugador en bancarrota: " + e.getMessage());
         }
     }
 
@@ -932,7 +924,7 @@ public class Juego implements Comandos{
                  throw new ExcepcionMaxJugadores(4, jugadores.size());
             }
 
-            // Obtener la casilla Salida del tablero (antes se usaba una variable no declarada 'salida')
+            // Obtener la casilla Salida del tablero
             Casilla salidaCasilla = tablero.encontrar_casilla("Salida");
             if (salidaCasilla == null) {
                 throw new ExcepcionCasillaNoEncontrada("Salida");
@@ -942,7 +934,7 @@ public class Juego implements Comandos{
             Jugador nuevoJugador = new Jugador(nombre, tipoValidado, salidaCasilla, avatares);
             jugadores.add(nuevoJugador);
 
-            // Mostrar la información como en el PDF
+            // Mostrar la información
             consola.imprimir("{");
             consola.imprimir("    nombre: " + nombre + ",");
             consola.imprimir("    avatar: " + nuevoJugador.getAvatar().getId());
@@ -955,7 +947,7 @@ public class Juego implements Comandos{
             consola.imprimir("✗ " + e.getMessage());
         } catch (Exception e) {
             // Manejar errores inesperados
-            consola.imprimir("⚠ Error inesperado al crear jugador: " + e.getMessage());
+            consola.imprimir("Error inesperado al crear jugador: " + e.getMessage());
         }
     }
 
@@ -993,11 +985,6 @@ public class Juego implements Comandos{
         consola.imprimir("nombre: " + actual.getNombre() + ",");
         consola.imprimir("avatar: " + avatarId);
         consola.imprimir("}");
-    }
-
-    private void ejecutarCarta(Jugador jugador, String tipoCarta) {
-        Carta carta = Carta.obtenerSiguienteCarta(tipoCarta);
-        carta.ejecutarAccion(jugador, tablero, jugadores, banca);
     }
 
 
@@ -1061,7 +1048,7 @@ public class Juego implements Comandos{
 
                     // Solo considerar tipos que pueden generar renta (Propiedad)
                     if (casilla instanceof Propiedad) {
-                        // Calcular rentabilidad: usar dinero generado acumulado
+                        // Usar dinero generado acumulado
                         Propiedad propiedad = (Propiedad) casilla;
                         float dineroGenerado = propiedad.getDineroGenerado();
 
@@ -1182,15 +1169,12 @@ public class Juego implements Comandos{
 
             // Verificar que es un solar
             if (!(casillaActual instanceof Solar)) {
-                throw new ExcepcionPropiedadNoEdificable(
-                        casillaActual.getNombre(),
-                        casillaActual.getClass().getSimpleName()
-                );
+                throw new ExcepcionPropiedadNoEdificable(casillaActual.getNombre(), casillaActual.getClass().getSimpleName());
             }
 
             Solar solar = (Solar) casillaActual;
 
-            // DELEGAR TODA LA LÓGICA AL SOLAR
+            // Logica de edificar en solar
             Edificio nuevoEdificio = solar.construirEdificio(tipoEdificio, jugadorActual);
 
             // Registrar el edificio
@@ -1200,7 +1184,7 @@ public class Juego implements Comandos{
             // Mostrar éxito
             consola.imprimir("✓ " + jugadorActual.getNombre() + " ha construido un " + tipoEdificio + " en " + solar.getNombre());
 
-            // Obtener el coste desde el Solar en lugar de pedirlo al Edificio
+            // Obtener el coste desde el Solar
             float coste = solar.obtenerCosteEdificio(tipoEdificio, "edificar");
             consola.imprimir("  Coste: " + String.format("%,.0f", coste) + "€");
             consola.imprimir("  Fortuna actual: " + String.format("%,.0f", jugadorActual.getFortuna()) + "€");
@@ -1208,7 +1192,7 @@ public class Juego implements Comandos{
         } catch (ExcepcionMonopoly e) {
             consola.imprimir("✗ " + e.getMessage());
         } catch (Exception e) {
-            consola.imprimir("⚠ Error inesperado: " + e.getMessage());
+            consola.imprimir("Error inesperado: " + e.getMessage());
         }
     }
 
@@ -1217,17 +1201,17 @@ public class Juego implements Comandos{
     @Override
     public void venderEdificios(String tipoVenta, String nombreCasilla, int cantidadSolicitada) {
         try {
-            // 1. Obtener jugador actual
+            //Obtener jugador actual
             Jugador jugadorActual = jugadores.get(turno);
             jugadorActual.verificarAccionPermitidaEnCarcel("comprar " + nombreCasilla);
 
-            // 2. Encontrar la casilla
+            // Encontrar la casilla
             Casilla casilla = tablero.encontrar_casilla(nombreCasilla);
             if (casilla == null) {
                 throw new ExcepcionCasillaNoEncontrada(nombreCasilla);
             }
 
-            // 3. Verificar que es un solar
+            // Verificar que es un solar
             if (!(casilla instanceof Solar)) {
                 throw new ExcepcionPropiedadNoEdificable(nombreCasilla, casilla.getClass().getSimpleName());
             }
@@ -1242,24 +1226,24 @@ public class Juego implements Comandos{
                 }
             }
 
-            // 4. DELEGAR la venta al Solar
+            // Venta desde el solar
             int cantidadVendida = solar.venderEdificios(tipoVenta, cantidadSolicitada, jugadorActual);
             float ingresoTotal = cantidadVendida * solar.obtenerPrecioVentaEdificio(tipoVenta);
 
-            // 5. Actualizar dinero del jugador
+            // Actualizar dinero del jugador
             jugadorActual.sumarFortuna(ingresoTotal);
 
-            // 6. Eliminar edificios de las listas globales
+            // Eliminar edificios de las listas globales
             solar.eliminarEdificiosDeListasGlobales(edificios, jugadorActual, tipoVenta, cantidadVendida);
 
-            // 7. Mostrar resultado
+            // Mostrar resultado
             consola.imprimir("✓ " + jugadorActual.getNombre() + " ha vendido " + cantidadVendida + " " + tipoVenta + " en " + solar.getNombre() + " por " + String.format("%,.0f", ingresoTotal) + "€");
         } catch (ExcepcionVenderEdificios e){
             consola.imprimir("✗ " + e.getMessage());
         } catch (ExcepcionMonopoly e) {
             consola.imprimir("✗ " + e.getMessage());
         } catch (Exception e) {
-            consola.imprimir("⚠ Error inesperado al vender edificios: " + e.getMessage());
+            consola.imprimir("Error inesperado al vender edificios: " + e.getMessage());
         }
     }
 
@@ -1273,57 +1257,38 @@ public class Juego implements Comandos{
             jugadorActual.verificarAccionPermitidaEnCarcel("comprar " + nombreCasilla);
             Casilla casilla = tablero.encontrar_casilla(nombreCasilla);
 
-            // 1. Verificar que existe la casilla
+            // Verificar que existe la casilla
             if (casilla == null) {
                 throw new ExcepcionCasillaNoEncontrada(nombreCasilla);
             }
 
-            // 2. Verificar que es una propiedad
+            // Verificar que es una propiedad
             if (!(casilla instanceof Propiedad)) {
-                throw new ExcepcionAccionNoPermitida(
-                        "hipotecar",
-                        "la casilla '" + casilla.getNombre() + "' no es una propiedad"
-                );
+                throw new ExcepcionAccionNoPermitida("hipotecar", "la casilla '" + casilla.getNombre() + "' no es una propiedad");
             }
 
             Propiedad propiedad = (Propiedad) casilla;
 
-            // 3. Verificar que el jugador es el dueño
+            // Verificar que el jugador es el dueño
             if (propiedad.getDuenho() != jugadorActual) {
-                throw new ExcepcionJugadorNoPropietario(
-                        jugadorActual.getNombre(),
-                        nombreCasilla,
-                        "propiedad"
-                );
+                throw new ExcepcionJugadorNoPropietario(jugadorActual.getNombre(), nombreCasilla, "propiedad");
             }
 
-            // 4. Verificar que es un Solar
-            if (!(propiedad instanceof Solar)) {
-                throw new ExcepcionAccionNoPermitida(
-                        "hipotecar",
-                        "solo las propiedades tipo Solar pueden hipotecarse. " +
-                                nombreCasilla + " es de tipo: " + propiedad.getClass().getSimpleName()
-                );
-            }
-
-            // 4. Intentar hipotecar
+            // Intentar hipotecar
             if (propiedad.esHipotecable() && propiedad.ejecutarHipoteca()) {
                 float valorHipoteca = propiedad.getValorHipoteca();
                 jugadorActual.sumarFortuna(valorHipoteca);
 
-                consola.imprimir("%s recibe %,.0f€ por la hipoteca de %s. ",
-                        jugadorActual.getNombre(), valorHipoteca, nombreCasilla);
+                consola.imprimir("%s recibe %,.0f€ por la hipoteca de %s. ", jugadorActual.getNombre(), valorHipoteca, nombreCasilla);
 
                 // Mostrar información adicional sobre restricciones
                 if (propiedad.getGrupo() != null) {
-                    consola.imprimir("No puede recibir alquileres ni edificar en el grupo " +
-                            propiedad.getGrupo().getColorGrupo() + ".");
+                    consola.imprimir("No puede recibir alquileres ni edificar en el grupo " + propiedad.getGrupo().getColorGrupo() + ".");
                 } else {
                     consola.imprimir("No puede recibir alquileres de esta propiedad.");
                 }
 
-                consola.imprimir("Fortuna actual de %s: %,.0f€\n",
-                        jugadorActual.getNombre(), jugadorActual.getFortuna());
+                consola.imprimir("Fortuna actual de %s: %,.0f€\n", jugadorActual.getNombre(), jugadorActual.getFortuna());
             }
 
         } catch (ExcepcionCasillaNoEncontrada e) {
@@ -1335,7 +1300,7 @@ public class Juego implements Comandos{
         } catch (ExcepcionMonopoly e) {
             consola.imprimir("✗ Error al hipotecar propiedad: " + e.getMessage());
         } catch (Exception e) {
-            consola.imprimir("⚠ Error inesperado al hipotecar: " + e.getMessage());
+            consola.imprimir("Error inesperado al hipotecar: " + e.getMessage());
         }
     }
 

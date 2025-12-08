@@ -62,8 +62,7 @@ public class Propiedad extends Casilla {
                 jugador.anhadirPropiedad(this);
                 this.setDuenho(jugador);
 
-                Juego.consola.imprimir("%s ha comprado la propiedad %s por el precio de %,.0f€\n",
-                        jugador.getNombre(), this.getNombre(), this.valor);
+                Juego.consola.imprimir("%s ha comprado la propiedad %s por el precio de %,.0f€\n", jugador.getNombre(), this.getNombre(), this.valor);
             } else {
                 throw new ExcepcionFondosInsuficientes(jugador.getNombre(), this.valor, jugador.getFortuna(), "comprar propiedad");
             }
