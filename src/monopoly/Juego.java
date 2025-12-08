@@ -1434,7 +1434,7 @@ public class Juego implements Comandos{
         } catch (ExcepcionMonopoly e) {
             consola.imprimir("✗ Error al aceptar trato: " + e.getMessage());
         } catch (Exception e) {
-            consola.imprimir("⚠ Error inesperado al aceptar trato: " + e.getMessage());
+            consola.imprimir("Error inesperado al aceptar trato: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -1538,13 +1538,11 @@ public class Juego implements Comandos{
             }
 
             if (!ofertaSolicitud.startsWith("cambiar (") || !ofertaSolicitud.endsWith(")")) {
-                throw new ExcepcionComandoNoReconocido("trato <jugador>: cambiar (<oferta>, <solicitud>)",
-                        "trato " + nombreReceptor + ": " + ofertaSolicitud
-                );
+                throw new ExcepcionComandoNoReconocido("trato <jugador>: cambiar (<oferta>, <solicitud>)", "trato " + nombreReceptor + ": " + ofertaSolicitud);
             }
 
-            String contenido = ofertaSolicitud.substring(9, ofertaSolicitud.length() - 1).trim();
-            String[] ofertaYSolicitud = contenido.split(",", 2);
+            String contenido = ofertaSolicitud.substring(9, ofertaSolicitud.length() - 1).trim(); // Extraer contenido dentro de los paréntesis
+            String[] ofertaYSolicitud = contenido.split(",", 2); // Dividir en oferta y solicitud
 
             if (ofertaYSolicitud.length != 2) {
                 throw new ExcepcionComandoNoReconocido("trato <jugador>: cambiar (<oferta>, <solicitud>)", "trato " + nombreReceptor + ": " + ofertaSolicitud);
@@ -1559,7 +1557,7 @@ public class Juego implements Comandos{
 
             if (!ofertaStr.equalsIgnoreCase("nada")) {
                 // Verificar si hay dinero en la oferta
-                if (ofertaStr.matches(".*\\d+.*")) {
+                if (ofertaStr.matches(".*\\d+.*")) { // Hay un número en la oferta (propiedad por dinero)
                     // Extraer el número de la oferta
                     String[] partesOferta = ofertaStr.split(" y ");
                     for (String parte : partesOferta) {
@@ -1574,7 +1572,7 @@ public class Juego implements Comandos{
                                 );
                             }
                         } else {
-                            // Es una propiedad
+                            // Es una propiedad (propiedad por propiedad)
                             propiedadOfrecida = (Propiedad) tablero.encontrar_casilla(parte);
                             if (propiedadOfrecida == null) {
                                 throw new ExcepcionCasillaNoEncontrada(parte);
@@ -1648,8 +1646,7 @@ public class Juego implements Comandos{
             }
 
             // Crear el trato
-            Tratos nuevoTrato = new Tratos(ofertante, receptor, propiedadOfrecida,
-                    propiedadDemandada, dineroOfrecido, dineroDemandado);
+            Tratos nuevoTrato = new Tratos(ofertante, receptor, propiedadOfrecida, propiedadDemandada, dineroOfrecido, dineroDemandado);
 
             // Verificar que el trato es válido
             if (!nuevoTrato.esTratoValido()) {
@@ -1706,7 +1703,8 @@ public class Juego implements Comandos{
         } catch (ExcepcionMonopoly e) {
             consola.imprimir("✗ Error al proponer trato: " + e.getMessage());
         } catch (Exception e) {
-            consola.imprimir("⚠ Error inesperado al proponer trato: " + e.getMessage());
+            consola.imprimir("Error inesperado al proponer trato: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
