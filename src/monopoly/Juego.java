@@ -1704,7 +1704,6 @@ public class Juego implements Comandos{
             consola.imprimir("✗ Error al proponer trato: " + e.getMessage());
         } catch (Exception e) {
             consola.imprimir("Error inesperado al proponer trato: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 }
