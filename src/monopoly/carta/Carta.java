@@ -23,7 +23,7 @@ public abstract class Carta {
     // Método abstracto para ejecutar la acción (debe implementarse en subclases)
     public abstract void ejecutarAccion(Jugador jugador, Tablero tablero, ArrayList<Jugador> jugadores, Jugador banca);
 
-    // Método auxiliar protegido para reutilizar lógica común
+    // Método protegido para verificar si el jugador pasa por la casilla de salida
     protected boolean pasaPorSalida(int desde, int hasta) {
         return hasta < desde;
     }
@@ -61,13 +61,12 @@ public abstract class Carta {
             float cantidad = Float.parseFloat(accion.split(":")[1]);
             float totalAPagar = cantidad * (jugadores.size() - 1);
 
-
                 // Verificar si el jugador tiene fondos suficientes
                 if (jugador.getFortuna() < totalAPagar) {
                     throw new ExcepcionFondosInsuficientes(jugador.getNombre(), totalAPagar, jugador.getFortuna(), "pagar a todos los jugadores");
                 }
 
-                // Si pasa la verificación, realizar el pago
+                //Si pasa la verificación realiza el pago
                 Juego.consola.imprimir("%s paga %,.0f€ a cada jugador:\n", jugador.getNombre(), cantidad);
                 for (Jugador otro : jugadores) {
                     if (otro != jugador && otro != banca) {
@@ -138,7 +137,7 @@ public abstract class Carta {
 
     public static Carta obtenerSiguienteCarta(String tipo) {
         try {
-            if (tipo == null) throw new ExcepcionCartaNoValida(tipo, "no existe");
+            if (tipo == null) throw new ExcepcionCartaNoValida("x", "no existe");
             if (tipo.equalsIgnoreCase("Suerte")) {
                 Suerte.inicializarCartasSuerte(); // garantiza inicialización si es necesario
                 return Suerte.sacarCarta();

@@ -22,26 +22,33 @@ public abstract class Casilla {
         this.contadorVisitas = 0;
     }
 
-    //Métodos abstractos comunes
+    //Métodos ABSTRACTOS
     public abstract boolean evaluarCasilla(Jugador actual, Jugador banca, Tablero tablero, ArrayList<Jugador> jugadores, int tirada);
 
     public abstract void infoCasilla();
 
-    public abstract String toString();
+    public abstract boolean estaAvatar(Avatar avatar);
 
+    public abstract int frecuenciaVisita();
 
+    //OTROS MÉTODOS
+
+    //Método para eliminar un avatar de la casilla
     public void eliminarAvatar(Avatar avatar) {
         this.avatares.remove(avatar);
     }
 
+    //Método para añadir una
     public void anhadirAvatar(Avatar avatar) {
         this.avatares.add(avatar);
     }
 
+    //Método para registrar una visita
     public void registrarVisita() {
         this.contadorVisitas++;
     }
 
+    //Método para mostrar la información de una casilla en venta
     public void casEnVenta() {
         if (this.getDuenho() == null || this.getDuenho().getNombre().equals("Banca")) {
             try {
@@ -61,9 +68,6 @@ public abstract class Casilla {
             Juego.consola.imprimir("La casilla " + this.getNombre() + " ya está vendida a " + this.getDuenho().getNombre());
         }
     }
-    public abstract boolean estaAvatar(Avatar avatar);
-
-    public abstract int frecuenciaVisita();
 
     // GETTERS y SETTERS comunes
     public String getNombre() {

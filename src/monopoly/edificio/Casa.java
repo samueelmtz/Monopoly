@@ -1,4 +1,3 @@
-// monopoly/edificio/Casa.java
 package monopoly.edificio;
 
 import monopoly.casilla.propiedad.Solar;
@@ -25,10 +24,6 @@ public class Casa extends Edificio {
     // Método estático para obtener el contador
     public static int getContadorCasas() {
         return contadorCasas;
-    }
-
-    public static void setContadorCasas(int contador) {
-        contadorCasas = contador;
     }
 
     @Override

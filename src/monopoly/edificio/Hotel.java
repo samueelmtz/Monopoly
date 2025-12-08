@@ -1,4 +1,3 @@
-// monopoly/edificio/Hotel.java
 package monopoly.edificio;
 
 import monopoly.Juego;
@@ -28,10 +27,6 @@ public class Hotel extends Edificio {
     // Método estático para obtener el contador
     public static int getContadorHoteles() {
         return contadorHoteles;
-    }
-
-    public static void setContadorHoteles(int contador) {
-        contadorHoteles = contador;
     }
 
     @Override

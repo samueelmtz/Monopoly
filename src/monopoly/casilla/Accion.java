@@ -1,4 +1,3 @@
-// monopoly/casilla/Accion.java
 package monopoly.casilla;
 
 import monopoly.carta.Carta;
@@ -17,7 +16,7 @@ public class Accion extends Casilla {
         this.tipoAccion = tipoAccion;
     }
 
-    // MÉTODOS REQUERIDOS por el PDF - IMPLEMENTACIÓN
+    // MÉTODOS REQUERIDOS por el PDF
     @Override
     public boolean estaAvatar(Avatar avatar) {
         return this.getAvatares().contains(avatar);
@@ -45,7 +44,6 @@ public class Accion extends Casilla {
 
             } catch (Exception e) {
                 Juego.consola.imprimir("✗ Error ejecutando carta: " + e.getClass().getSimpleName() + " - " + e.getMessage());
-                e.printStackTrace();
             }
             return true;
         }

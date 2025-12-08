@@ -4,19 +4,15 @@ import java.util.ArrayList;
 
 import monopoly.casilla.Propiedad;
 import excepciones.ExcepcionAccionNoPermitida;
-import excepciones.ExcepcionEstadoJuego;
-import excepciones.ExcepcionSalirCarcelSinFondos;
 import excepciones.ExcepcionTratoNoEncontrado;
-import monopoly.Valor;
 import monopoly.edificio.Edificio;
 import monopoly.casilla.Casilla;
-import monopoly.Juego;
-import monopoly.Tratos;
+import monopoly.*;
 
 
 public class Jugador {
 
-    //Atributos:
+    //ATRIBUTOS
     private final String nombre; //Nombre del jugador
     private Avatar avatar; //Avatar que tiene en la partida.
     private float fortuna; //Dinero que posee.
@@ -24,7 +20,7 @@ public class Jugador {
     private int tiradasCarcel; //Cuando está en la carcel, contará las tiradas sin éxito que ha hecho allí para intentar salir (se usa para limitar el número de intentos).
     private int vueltas; //Cuenta las vueltas dadas al tablero.
     private ArrayList<Casilla> propiedades; //Propiedades que posee el jugador.
-    private ArrayList<Edificio> edificios; //Edificios que posee el jugador
+    private final ArrayList<Edificio> edificios; //Edificios que posee el jugador
     private int vecesEnCarcel; //Contador del número de turnos en la cárcel
     private float dineroInvertido;
     private float pagoTasasEImpuestos;
@@ -37,6 +33,8 @@ public class Jugador {
     private int turnosEnCarcel;
     private Jugador acreedor;
     private boolean enBancarrota;
+
+    //CONSTRUCTORES
 
     //Constructor vacío. Se usará para crear la banca.
     public Jugador() {
@@ -137,6 +135,7 @@ public class Jugador {
         Juego.consola.imprimir("Error: No se encontró la casilla Carcel");
     }
 
+    //Método para iniciar el turno de la carcel
     public void iniciarTurnoCarcel() {
         if (!enCarcel) return;
 
@@ -151,6 +150,7 @@ public class Jugador {
         }
     }
 
+    //Método para intentar salir de la carcel con dados
     public boolean intentarSalirCarcelConDados(int dado1, int dado2) throws ExcepcionAccionNoPermitida {
         if (!enCarcel) {
             throw new ExcepcionAccionNoPermitida(
@@ -186,6 +186,7 @@ public class Jugador {
         return false;
     }
 
+    //Método para salir de la cárcel
     public boolean salirDeCarcel() {
         try {
             if (!enCarcel) {
@@ -194,11 +195,9 @@ public class Jugador {
                 );
             }
 
-            float PRECIO_SALIDA_CARCEL = 500000;
-
-            if (this.fortuna >= PRECIO_SALIDA_CARCEL) {
-                this.restarFortuna(PRECIO_SALIDA_CARCEL);
-                this.sumarPagoTasasEImpuestos(PRECIO_SALIDA_CARCEL);
+            if (this.fortuna >= Valor.SALIR_CARCEL) {
+                this.restarFortuna(Valor.SALIR_CARCEL);
+                this.sumarPagoTasasEImpuestos(Valor.SALIR_CARCEL);
 
                 this.enCarcel = false;
                 this.tiradasCarcel = 0;
@@ -206,14 +205,14 @@ public class Jugador {
                 this.yaTiroEsteTurno = false;
 
                 Juego.consola.imprimir("%s ha pagado %,.0f€ para salir de la cárcel.",
-                        nombre, PRECIO_SALIDA_CARCEL);
+                        nombre, Valor.SALIR_CARCEL);
                 Juego.consola.imprimir("Fortuna actual: %,.0f€", fortuna);
                 return true;
             } else {
                 throw new ExcepcionAccionNoPermitida(
                         "salir cárcel",
                         "fondos disponibles",
-                        nombre + " no tiene suficientes fondos (necesita " + PRECIO_SALIDA_CARCEL +
+                        nombre + " no tiene suficientes fondos (necesita " + Valor.SALIR_CARCEL +
                                 "€, tiene " + fortuna + "€)"
                 );
             }
@@ -223,6 +222,7 @@ public class Jugador {
         }
     }
 
+    //Método para salir de la cárcel gratis (por ejemplo al sacar dobles)
     private void salirDeCarcelGratis() {
         this.enCarcel = false;
         this.tiradasCarcel = 0;
@@ -230,6 +230,7 @@ public class Jugador {
         this.yaTiroEsteTurno = false;
     }
 
+    //Método que verifica que acciones se puedes realizar en la cárcel
     public void verificarAccionPermitidaEnCarcel(String comandoCompleto) throws ExcepcionAccionNoPermitida {
         if (!enCarcel) return;
 
@@ -263,11 +264,47 @@ public class Jugador {
         }
     }
 
+    //Método que verifica si se tiene que pagar para salir de la cárcel
     public boolean debePagarForzosamenteCarcel() {
         return enCarcel && turnosEnCarcel >= 3;
     }
 
-    // Metodos bancarrota
+    //Método que verifica si el jugador está en la cárcel
+    public boolean isEnCarcel() {
+        return enCarcel;
+    }
+
+    //Método que añade dinero invertido
+    public void sumarDineroInvertido(float cantidad) {
+        this.dineroInvertido += cantidad;
+    }
+
+    //Método que suma pago de tasas e impuestos
+    public void sumarPagoTasasEImpuestos(float cantidad) {
+        this.pagoTasasEImpuestos += cantidad;
+    }
+
+    //Método que suma pago de alquileres
+    public void sumarPagoDeAlquileres(float cantidad) {
+        this.pagoDeAlquileres += cantidad;
+    }
+
+    //Método que suma cobro de alquileres
+    public void sumarCobroDeAlquileres(float cantidad) {
+        this.cobroDeAlquileres += cantidad;
+    }
+
+    //Método que suma pasar por casilla de salida
+    public void sumarPasarPorCasillaDeSalida(float cantidad) {
+        this.pasarPorCasillaDeSalida += cantidad;
+    }
+
+    //Método que suma premios de inversiones o bote
+    public void sumarPremiosInversionesOBote(float cantidad) {
+        this.premiosInversionesBote += cantidad;
+    }
+
+    // Métodos bancarrota
     public void declararBancarrota(float deuda, Jugador acreedor) {
 
         this.enBancarrota = true;
@@ -287,31 +324,22 @@ public class Jugador {
 
     }
 
-    /**
-     * Declara bancarrota por no poder pagar la fianza de la cárcel
-     */
     public void declararBancarrotaPorCarcel() {
         float deudaCarcel = 500000;
         declararBancarrota(deudaCarcel, null); // A la banca
     }
 
-    /**
-     * Declara bancarrota por no poder pagar alquiler a otro jugador
-     */
+    //Método que declara bancarrota por no poder pagar alquiler a otro jugador
     public void declararBancarrotaPorAlquiler(float alquiler, Jugador propietario) {
         declararBancarrota(alquiler, propietario);
     }
 
-    /**
-     * Declara bancarrota por no poder pagar impuestos
-     */
+    // Método que declara bancarrota por no poder pagar impuestos
     public void declararBancarrotaPorImpuesto(float impuesto) {
         declararBancarrota(impuesto, null); // A la banca
     }
 
-    /**
-     * Transfiere todas las propiedades a la banca
-     */
+    //Método que transfiere todas las propiedades a la banca
     private void transferirPropiedadesABanca() {
         if (propiedades.isEmpty()) {
             Juego.consola.imprimir("%s no tenía propiedades.", nombre);
@@ -332,6 +360,7 @@ public class Jugador {
         propiedades.clear();
     }
 
+    //Método que transfiere todas las propiedades a un acreedor
     private void transferirPropiedadesAAcreedor(Jugador acreedor) {
         if (propiedades.isEmpty()) {
             Juego.consola.imprimir("%s no tenía propiedades para transferir.", nombre);
@@ -352,9 +381,7 @@ public class Jugador {
         propiedades.clear();
     }
 
-    /**
-     * Verifica si el jugador puede hipotecar propiedades para conseguir cierta cantidad
-     */
+    //Método que verifica si el jugador puede hipotecar propiedades para conseguir cierta cantidad
     public boolean puedeHipotecarAlgoParaPagar(float cantidadNecesaria) {
         if (cantidadNecesaria <= 0) return true;
 
@@ -380,7 +407,7 @@ public class Jugador {
         return (this.fortuna + totalPotencial) >= cantidadNecesaria;
     }
 
-    // Método para añadir una propiedad (usado desde Propiedad.comprar)
+    // Método para añadir una propiedad
     public void anadirPropiedad(Propiedad propiedad) {
         if (propiedad == null) return;
         if (this.propiedades == null) {
@@ -389,13 +416,15 @@ public class Jugador {
         this.propiedades.add(propiedad);
     }
 
-    //Métodos de tratos
+    // Métodos de tratos
 
+    //Método para agregar un trato pendiente
     public void agregarTrato(Tratos trato) {
         this.tratosPendientes.add(trato);
 
     }
 
+    //Método para eliminar un trato
     public void eliminarTrato(Tratos trato) {
         try {
             if (!this.tratosPendientes.remove(trato)) {
@@ -408,6 +437,7 @@ public class Jugador {
         }
     }
 
+    //Método para buscar un trato en pendientes
     public Tratos buscarTratoPorId(String id) {
         for (Tratos trato : tratosPendientes) {
             if (trato.getId().equals(id)) {
@@ -417,37 +447,7 @@ public class Jugador {
         return null; // Devuelve null si no encuentra el trato
     }
 
-
-    public boolean isEnCarcel() {
-        return enCarcel;
-    }
-
-    public void sumarDineroInvertido(float cantidad) {
-        this.dineroInvertido += cantidad;
-    }
-
-    public void sumarPagoTasasEImpuestos(float cantidad) {
-        this.pagoTasasEImpuestos += cantidad;
-    }
-
-    public void sumarPagoDeAlquileres(float cantidad) {
-        this.pagoDeAlquileres += cantidad;
-    }
-
-    public void sumarCobroDeAlquileres(float cantidad) {
-        this.cobroDeAlquileres += cantidad;
-    }
-
-    public void sumarPasarPorCasillaDeSalida(float cantidad) {
-        this.pasarPorCasillaDeSalida += cantidad;
-    }
-
-    public void sumarPremiosInversionesOBote(float cantidad) {
-        this.premiosInversionesBote += cantidad;
-    }
-
     //Getters y setters:
-
     public boolean estaEnCarcel() { return enCarcel; }
 
     public String getNombre() {

@@ -30,7 +30,6 @@ public class CajaComunidad extends Carta {
         }
     }
 
-
     // Método para sacar una carta del mazo
     public static CajaComunidad sacarCarta() {
         if (!mazoInicializado) {

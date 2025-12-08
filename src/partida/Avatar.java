@@ -9,13 +9,13 @@ import java.util.ArrayList;
 
 public class Avatar {
 
-    //Atributos
+    //ATRIBUTOS
     private String id; //Identificador: una letra generada aleatoriamente.
     private final String tipo; //Sombrero, Esfinge, Pelota, Coche
     private Jugador jugador; //Un jugador al que pertenece ese avatar.
     private Casilla lugar; //Los avatares se sitúan en casillas del tablero.
 
-    /*Constructor principal. Requiere estos parámetros:
+    /*CONSTRUCTOR PRINCIPAL. Requiere estos parámetros:
      * Tipo del avatar, jugador al que pertenece, lugar en el que estará ubicado, y un arraylist con los
      * avatares creados (usado para crear un ID distinto del de los demás avatares).
      */
@@ -38,7 +38,7 @@ public class Avatar {
      */
     public void moverAvatar(ArrayList<ArrayList<Casilla>> casillas, int valorTirada) {
 
-        //calcular la nueva posición
+        // Calcular la posición actual
         int posicionActual = this.lugar.getPosicion();
 
         // Calcular la nueva posición en el tablero después de la tirada

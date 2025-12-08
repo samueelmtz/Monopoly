@@ -27,10 +27,6 @@ public class PistaDeporte extends Edificio {
         return contadorPistas;
     }
 
-    public static void setContadorPistas(int contador) {
-        contadorPistas = contador;
-    }
-
     @Override
     public String toString() {
         return String.format("PistaDeporte{id='%s', solar='%s', coste=%,.0f€}",

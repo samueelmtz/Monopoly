@@ -1,7 +1,6 @@
 crear jugador maria coche
 crear jugador pedro esfinge
-lanzar dados 3+4
-ver tablero
+lanzar dados 3+3
 comprar Solar3
 lanzar dados 1+1
 comprar Solar4

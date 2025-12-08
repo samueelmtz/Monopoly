@@ -1,4 +1,3 @@
-// monopoly/edificio/Piscina.java
 package monopoly.edificio;
 
 import monopoly.casilla.propiedad.Solar;
@@ -25,10 +24,6 @@ public class Piscina extends Edificio {
     // Método estático para obtener el contador
     public static int getContadorPiscinas() {
         return contadorPiscinas;
-    }
-
-    public static void setContadorPiscinas(int contador) {
-        contadorPiscinas = contador;
     }
 
     @Override

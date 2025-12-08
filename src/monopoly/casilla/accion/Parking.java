@@ -41,7 +41,6 @@ public class Parking extends Accion {
             return false; // Indicamos que hubo un problema
         } catch (Exception e) {
             Juego.consola.imprimir("⚠ Error inesperado en Parking: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }

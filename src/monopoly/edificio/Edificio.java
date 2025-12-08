@@ -1,16 +1,15 @@
-// monopoly/edificio/Edificio.java
 package monopoly.edificio;
 
 import partida.Jugador;
 import monopoly.casilla.propiedad.Solar;
 
 public abstract class Edificio {
-    // Atributos COMUNES a todos los edificios - PRIVADOS
+    // Atributos COMUNES a todos los edificios
     private String id;
-    private String tipoEdificio;
+    private final String tipoEdificio;
     private Jugador duenho;
     private Solar solar;
-    private float coste;
+    private final float coste;
 
     // Constructores
     public Edificio(String tipoEdificio, Solar solar, float coste) {
@@ -21,11 +20,7 @@ public abstract class Edificio {
         this.id = generarID(tipoEdificio);
     }
 
-    public Edificio() {
-        // Constructor vacío
-    }
-
-    // MÉTODO ABSTRACTO requerido por el PDF
+    // MÉTODO ABSTRACTO
     public abstract void accion();
 
     // MÉTODOS COMUNES
@@ -49,13 +44,11 @@ public abstract class Edificio {
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
     public String getTipoEdificio() { return tipoEdificio; }
-    public void setTipoEdificio(String tipoEdificio) { this.tipoEdificio = tipoEdificio; }
     public Jugador getDuenho() { return duenho; }
     public void setDuenho(Jugador duenho) { this.duenho = duenho; }
     public Solar getSolar() { return solar; }
     public void setSolar(Solar solar) { this.solar = solar; }
     public float getCoste() { return coste; }
-    public void setCoste(float coste) { this.coste = coste; }
 
     @Override
     public String toString() {
