@@ -1,88 +1,71 @@
-crear jugador Pedro pelota
-crear jugador Maria coche
-lanzar dados 6+6
-edificar casa
-lanzar dados 6+6
-lanzar dados 5+6
-acabar turno
+crear jugador maria coche
+crear jugador pedro esfinge
 lanzar dados 3+3
 comprar Solar3
-edificar piscina
 lanzar dados 1+1
 comprar Solar4
-edificar casa
-lanzar dados 5+6
+lanzar dados 3+2
 acabar turno
-jugador
-lanzar dados 6+6
-comprar Solar19
-lanzar dados 4+4
-edificar casa
-lanzar dados 5+3
 acabar turno
 lanzar dados 6+6
-comprar Solar19
 lanzar dados 6+6
-lanzar dados 4+2
+ver tablero
+lanzar dados 6+2
+acabar turno
+lanzar dados 2+1
+comprar Solar2
+acabar turno
+ver tablero
+lanzar dados 2+2
 comprar Solar5
 edificar casa
 edificar casa
 edificar casa
+edificar piscina
 edificar casa
+edificar hotel
+edificar piscina
+edificar pista
+edificar pista_deporte
+listar edificios
+acabar turno
+ver tablero
+lanzar dados 3+3
+lanzar dados 6+6
+comprar Solar12
+lanzar dados 3+2
+acabar turno
 acabar turno
 lanzar dados 6+6
-lanzar dados 6+6
-lanzar dados 5+6
+jugador
+lanzar dados 2+1
+comprar Solar1
+listar jugadores
 acabar turno
-lanzar dados 4+4
+ver tablero
+acabar turno
 lanzar dados 2+1
 acabar turno
-lanzar dados 3+3
-lanzar dados 3+5
 acabar turno
-lanzar dados 6+6
-lanzar dados 6+6
-lanzar dados 3+2
-edificar hotel
+ver tablero
+lanzar dados 2+2
+lanzar dados 2+2
+comprar Serv1
+lanzar dados 2+1
+comprar Trans2
+listar jugadores
+acabar turno
+acabar turno
+ver tablero
+lanzar dados 2+2
+lanzar dados 2+2
+lanzar dados 2+2
+acabar turno
 acabar turno
 salir carcel
-lanzar dados 5+5
-lanzar dados 4+5
 acabar turno
-lanzar dados 1+4
 acabar turno
-lanzar dados 1+1
-comprar Solar18
-lanzar dados 1+2
-comprar Solar20
-edificar casa
-edificar casa
-edificar casa
 acabar turno
-lanzar dados 4+3
+salir carcel
 acabar turno
-listar edificios
-listar edificios celeste
-estadisticas
-estadisticas Maria
-estadisticas Pedro
-lanzar dados 5+5
-lanzar dados 3+2
-hipotecar Solar22
-hipotecar Solar20
-vender Solar20
-vender casas Solar20 4
-vender casas Solar20 3
-hipotecar Solar20
-hipotecar Solar19
-deshipotecar Solar18
-deshipotecar Solar19
-ver tablero
-trato Maria: cambiar (Solar18, Solar4)
 acabar turno
-aceptar Trato0
-trato Pedro: cambiar (Solar3, Solar19)
-acabar turno
-tratos
-eliminar Trato1
-describir jugador Maria

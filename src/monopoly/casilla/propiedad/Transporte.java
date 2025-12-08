@@ -1,5 +1,7 @@
 package monopoly.casilla.propiedad;
 
+import monopoly.casilla.Casilla;
+import monopoly.Juego;
 import excepciones.ExcepcionFondosInsuficientes;
 import monopoly.casilla.Propiedad;
 import partida.Jugador;
@@ -73,29 +75,73 @@ public class Transporte extends Propiedad {
 
             // Si tiene dueño y no es el jugador actual, calcular alquiler
             if (this.getDuenho() != null && this.getDuenho() != banca && this.getDuenho() != actual) {
-                float aPagar = calcularAlquilerTransporte();
-
-                // Verificar solvencia
-                try {
-                    if (actual.getFortuna() < aPagar) {
-                        throw new ExcepcionFondosInsuficientes(actual.getNombre(), aPagar, actual.getFortuna(), "pagar alquiler");
+                    if (this.isHipotecada()) {
+                        Juego.consola.imprimir("✗ La propiedad %s está hipotecada. No se paga alquiler.", this.getNombre());
+                        return true; // No hay que pagar alquiler si está hipotecada
                     }
-                }catch (ExcepcionFondosInsuficientes e){
-                    Juego.consola.imprimir("ERROR: " + e.getMessage());
+
+
+                float aPagar = calcularAlquilerTransporte();
+                Jugador propietario = this.getDuenho();
+
+                // Calcular recursos TOTALES disponibles (dinero + valor hipotecable)
+                float dineroDisponible = actual.getFortuna();
+                float valorHipotecaDisponible = calcularValorHipotecaDisponible(actual);
+                float totalDisponible = dineroDisponible + valorHipotecaDisponible;
+
+                if (totalDisponible < aPagar) {
+                    // NO PUEDE PAGAR NI CON DINERO NI HIPOTECANDO → BANCARROTA INMEDIATA
+                    Juego.consola.imprimir("✗ %s no puede pagar el alquiler de %,.0f€ por %s",
+                            actual.getNombre(), aPagar, this.getNombre());
+                    Juego.consola.imprimir("✗ Recursos totales: %,.0f€ (Dinero: %,.0f€ + Hipoteca: %,.0f€)",
+                            totalDisponible, dineroDisponible, valorHipotecaDisponible);
+
+                    // Declarar bancarrota automáticamente
+                    actual.declararBancarrotaPorAlquiler(aPagar, propietario);
+                    return false;
                 }
 
-                // Aplicar pago
-                actual.restarFortuna(aPagar);
-                actual.sumarPagoDeAlquileres(aPagar);
-                this.getDuenho().sumarFortuna(aPagar);
-                this.getDuenho().sumarCobroDeAlquileres(aPagar);
-                this.anhadirDineroGenerado(aPagar);
+                // Si tiene suficiente dinero, pagar normalmente
+                if (actual.getFortuna() >= aPagar) {
+                    actual.restarFortuna(aPagar);
+                    actual.sumarPagoDeAlquileres(aPagar);
+                    propietario.sumarFortuna(aPagar);
+                    propietario.sumarCobroDeAlquileres(aPagar);
+                    this.anhadirDineroGenerado(aPagar);
 
-                Juego.consola.imprimir("%s ha pagado %,.0f€ de alquiler a %s\n", actual.getNombre(), aPagar, this.getDuenho().getNombre());
+                    Juego.consola.imprimir("%s ha pagado %,.0f€ de alquiler a %s",
+                            actual.getNombre(), aPagar, propietario.getNombre());
+                    Juego.consola.imprimir("Fortuna actual de %s: %,.0f€",
+                            actual.getNombre(), actual.getFortuna());
+                    return true;
+                } else {
+                    // Tiene recursos totales pero no efectivo suficiente
+                    Juego.consola.imprimir("✗ %s no tiene suficiente efectivo (% ,.0f€) para pagar alquiler de %,.0f€",
+                            actual.getNombre(), actual.getFortuna(), aPagar);
+                    Juego.consola.imprimir("✓ Pero podría hipotecar propiedades por %,.0f€ para pagar",
+                            valorHipotecaDisponible);
+                    Juego.consola.imprimir("Usa 'hipotecar propiedad' para obtener efectivo y pagar.");
+                    return false; // No solvente por ahora
+                }
             }
             return true;
         }
         return false;
+    }
+
+    // Método auxiliar para calcular valor hipotecable total (si no lo tienes en Jugador)
+    private float calcularValorHipotecaDisponible(Jugador jugador) {
+        float total = 0;
+        for (Casilla propiedad : jugador.getPropiedades()) {
+            if (propiedad instanceof Propiedad) {
+                Propiedad prop = (Propiedad) propiedad;
+                // Solo propiedades no hipotecadas y que se puedan hipotecar
+                if (!prop.isHipotecada() && prop.esHipotecable()) {
+                    total += prop.getValorHipoteca();
+                }
+            }
+        }
+        return total;
     }
 
 

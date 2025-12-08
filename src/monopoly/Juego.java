@@ -489,17 +489,91 @@ public class Juego implements Comandos{
         try {
             Jugador actual = jugadores.get(turno);
 
-            // 1. Verificar si el jugador está en la cárcel
-            if (actual.isEnCarcel()) {
-                throw new ExcepcionJugadorEnCarcel(actual.getNombre());
+            // 1. CASO: Jugador está en la cárcel
+            if (actual.estaEnCarcel()) {
+                int valorDado1 = 0, valorDado2 = 0;
+
+                // Procesar valores forzados si los hay
+                if (valoresForzados != null && valoresForzados.contains("+")) {
+                    try {
+                        String[] valoresArray = valoresForzados.split("\\+");
+                        if (valoresArray.length == 2) {
+                            valorDado1 = Integer.parseInt(valoresArray[0].trim());
+                            valorDado2 = Integer.parseInt(valoresArray[1].trim());
+
+                            // Validar valores entre 1 y 6
+                            if (valorDado1 < 1 || valorDado1 > 6 || valorDado2 < 1 || valorDado2 > 6) {
+                                throw new ExcepcionFormatoDadosIncorrecto("Valores de dados forzados inválidos: " + valorDado1 + " y " + valorDado2 + ". Deben estar entre 1 y 6.");
+                            }
+                            consola.imprimir("Dados forzados a: " + valorDado1 + " y " + valorDado2);
+                        } else {
+                            // Formato incorrecto, usar dados normales
+                            valorDado1 = dado1.hacerTirada();
+                            valorDado2 = dado2.hacerTirada();
+                            consola.imprimir("Formato de dados forzados incorrecto. Lanzamiento normal: " + valorDado1 + " y " + valorDado2);
+                        }
+                    } catch (NumberFormatException e) {
+                        // Error en el formato, usar dados normales
+                        valorDado1 = dado1.hacerTirada();
+                        valorDado2 = dado2.hacerTirada();
+                        consola.imprimir("Formato de dados incorrecto. Lanzamiento normal: " + valorDado1 + " y " + valorDado2);
+                    }
+                } else {
+                    // Lanzamiento normal desde cárcel
+                    valorDado1 = dado1.hacerTirada();
+                    valorDado2 = dado2.hacerTirada();
+                    consola.imprimir("Lanzamiento normal: " + valorDado1 + " y " + valorDado2);
+                }
+
+                consola.imprimir(actual.getNombre() + " intenta dobles: " + valorDado1 + " y " + valorDado2);
+                boolean salio = actual.intentarSalirCarcelConDados(valorDado1, valorDado2);
+
+                if (salio) {
+                    consola.imprimir("¡Dobles! " + actual.getNombre() + " sale de la cárcel.");
+                    int suma = valorDado1 + valorDado2;
+                    actual.getAvatar().moverAvatar(tablero.getPosiciones(), suma);
+
+                    // Mover y evaluar la casilla destino
+                    Casilla casillaActual = actual.getAvatar().getLugar();
+                    solvente = casillaActual.evaluarCasilla(actual, banca, tablero, jugadores, suma);
+
+                    // Manejar dobles para salir de cárcel
+                    if (valorDado1 == valorDado2) {
+                        consola.imprimir("¡Dobles (" + valorDado1 + "," + valorDado2 + ")! Puedes lanzar de nuevo.");
+                        lanzamientos++;
+
+                        if (lanzamientos == 3) {
+                            consola.imprimir("¡Tercer doble consecutivo! Vas a la cárcel.");
+                            actual.encarcelar(tablero.getPosiciones());
+                            tirado = true;
+                            lanzamientos = 0;
+                            consola.imprimir("Turno finalizado automáticamente por tercer doble.");
+                            acabarTurno(); // Cambiar turno
+                        } else {
+                            tirado = false; // Permite otro lanzamiento
+                        }
+                    } else {
+                        // No son dobles
+                        tirado = true;
+                        lanzamientos = 0;
+                        consola.imprimir("No son dobles. Puedes realizar otras acciones antes de terminar tu turno.");
+                    }
+                } else {
+                    consola.imprimir("No sacó dobles. " + actual.getNombre() + " sigue en la cárcel.");
+                    tirado = true; // Termina el turno
+                    lanzamientos = 0;
+                }
+                return;
             }
 
-            // 2. Verificar si ya ha tirado (y no tiene dobles pendientes)
+            // 2. CASO: Jugador NO está en la cárcel (código original)
+
+            // Verificar si ya ha tirado (y no tiene dobles pendientes)
             if (tirado && lanzamientos == 0) {
                 throw new ExcepcionJugadorNoTurno(actual.getNombre());
             }
 
-            // 3. Verificar límite de 3 lanzamientos con dobles
+            // Verificar límite de 3 lanzamientos con dobles
             if (lanzamientos >= 3) {
                 throw new ExcepcionDadosDoblesTresVeces(actual.getNombre());
             }
@@ -538,16 +612,16 @@ public class Juego implements Comandos{
             consola.imprimir("Has lanzado los dados: " + valorDado1 + " y " + valorDado2 + ". Total: " + suma);
             consola.imprimir("El avatar " + actual.getAvatar().getId() + " avanza " + suma + " posiciones");
 
-            // 4. Mover avatar
+            // Mover avatar
             actual.getAvatar().moverAvatar(tablero.getPosiciones(), suma);
 
-            // 5. Obtener casilla actual
+            // Obtener casilla actual
             Casilla casillaActual = actual.getAvatar().getLugar();
 
-            // 6. EVALUAR LA CASILLA
+            // EVALUAR LA CASILLA
             solvente = casillaActual.evaluarCasilla(actual, banca, tablero, jugadores, suma);
 
-            // 7. Manejar dobles y cárcel
+            // Manejar dobles y cárcel
             if (valorDado1 == valorDado2) {
                 consola.imprimir("¡Dobles (" + valorDado1 + "," + valorDado2 + ")! Puedes lanzar de nuevo.");
                 lanzamientos++;
@@ -558,6 +632,7 @@ public class Juego implements Comandos{
                     tirado = true;
                     lanzamientos = 0;
                     consola.imprimir("Turno finalizado automáticamente por tercer doble.");
+                    acabarTurno(); // Cambiar turno automáticamente
                 } else {
                     tirado = false; // Permite otro lanzamiento
                 }
@@ -586,6 +661,7 @@ public class Juego implements Comandos{
     public void comprar(String nombre) {
         try {
             Jugador jugadorActual = jugadores.get(turno);
+            jugadorActual.verificarAccionPermitidaEnCarcel("comprar " + nombre);
             Casilla casilla = tablero.encontrar_casilla(nombre);
 
             if (casilla == null) {
@@ -608,7 +684,7 @@ public class Juego implements Comandos{
 
     //Método que ejecuta todas las acciones relacionadas con el comando 'salir carcel'.
     @Override
-    public void salirCarcel() {
+    public void salirCarcel(){
         Jugador jugadorActual = jugadores.get(turno);
         jugadorActual.salirDeCarcel();
     }
@@ -739,15 +815,110 @@ public class Juego implements Comandos{
     public void acabarTurno() {
         Jugador jugadorActual = jugadores.get(turno);
 
-        // Resetear todas las variables de control del turno
-        tirado = false;
-        lanzamientos = 0;
+        try {
+            // Verificar pago forzoso por 3 turnos en cárcel
+            if (jugadorActual.debePagarForzosamenteCarcel()) {
+                consola.imprimir("¡%s lleva 3 turnos en cárcel! Pago forzoso de 500.000€.",
+                        jugadorActual.getNombre());
 
-        // Pasar al siguiente jugador
+                // Intentar salir pagando
+                boolean pudoSalir = jugadorActual.salirDeCarcel();
+
+                if (!pudoSalir) {
+                    // No pudo pagar la fianza - VERIFICAR SI PUEDE HIPOTECAR
+                    float deuda = 500000;
+                    float falta = deuda - jugadorActual.getFortuna();
+                    boolean puedeHipotecar = jugadorActual.puedeHipotecarAlgoParaPagar(falta);
+
+                    if (!puedeHipotecar) {
+                        // NO puede pagar NI hipotecar → BANCARROTA INMEDIATA
+                        consola.imprimir("✗ %s no tiene propiedades hipotecables para cubrir la fianza.",
+                                jugadorActual.getNombre());
+
+                        // Declarar bancarrota por cárcel
+                        jugadorActual.declararBancarrotaPorCarcel();
+
+                        // Eliminar jugador del juego
+                        eliminarJugadorBancarrota(jugadorActual);
+                        return; // No cambiar turno (ya se eliminó el jugador)
+                    } else {
+                        // Puede hipotecar pero NO LO HIZO - BANCARROTA FORZADA
+                        // Porque ya tuvo 3 turnos para hacerlo
+                        consola.imprimir("✗ %s tuvo 3 turnos para hipotecar y no lo hizo. BANCARROTA FORZADA.",
+                                jugadorActual.getNombre());
+
+                        // Declarar bancarrota por cárcel
+                        jugadorActual.declararBancarrotaPorCarcel();
+
+                        // Eliminar jugador del juego
+                        eliminarJugadorBancarrota(jugadorActual);
+                        return; // No cambiar turno (ya se eliminó el jugador)
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            consola.imprimir("⚠ Error inesperado en acabarTurno: " + e.getMessage());
+        } finally {
+            // Reiniciar estado del turno
+            tirado = false;
+            lanzamientos = 0;
+            solvente = true;
+        }
+
+        // Cambiar turno (solo si no hubo bancarrota)
         turno = (turno + 1) % jugadores.size();
+        Jugador siguiente = jugadores.get(turno);
 
-        Jugador siguienteJugador = jugadores.get(turno);
-        consola.imprimir("El jugador actual es " + siguienteJugador.getNombre() + ".");
+        // Iniciar turno si está en cárcel
+        if (siguiente.estaEnCarcel()) {
+            siguiente.iniciarTurnoCarcel();
+        }
+
+        consola.imprimir("\n===== Turno de %s =====", siguiente.getNombre());
+    }
+
+    // Método para eliminar un jugador en bancarrota
+    private void eliminarJugadorBancarrota(Jugador jugadorBancarrota) {
+        try {
+            // Remover el jugador de la lista
+            int indiceBancarrota = jugadores.indexOf(jugadorBancarrota);
+            jugadores.remove(indiceBancarrota);
+
+            // Remover su avatar
+            if (jugadorBancarrota.getAvatar() != null) {
+                avatares.remove(jugadorBancarrota.getAvatar());
+            }
+
+            consola.imprimir("\n=== %s HA SIDO ELIMINADO DEL JUEGO POR BANCARROTA ===\n",
+                    jugadorBancarrota.getNombre());
+
+            // Verificar si queda solo un jugador (fin del juego)
+            if (jugadores.size() == 1) {
+                consola.imprimir("=========================================");
+                consola.imprimir("¡FIN DEL JUEGO!");
+                consola.imprimir("¡%s ES EL GANADOR!", jugadores.get(0).getNombre());
+                consola.imprimir("=========================================");
+                System.exit(0); // Terminar el programa
+            }
+
+            // Ajustar el índice del turno si el jugador eliminado estaba antes del actual
+            if (indiceBancarrota < turno) {
+                turno--; // Ajustar para que no se salte un jugador
+            } else if (turno >= jugadores.size()) {
+                turno = 0; // Volver al inicio si está al final
+            }
+
+            // Mostrar jugadores restantes
+            consola.imprimir("Jugadores restantes:");
+            for (Jugador j : jugadores) {
+                consola.imprimir("• %s (Fortuna: %,.0f€)",
+                        j.getNombre(), j.getFortuna());
+            }
+
+        } catch (Exception e) {
+            consola.imprimir("⚠ Error al eliminar jugador en bancarrota: " + e.getMessage());
+        }
     }
 
     @Override
@@ -1016,6 +1187,7 @@ public class Juego implements Comandos{
         try {
             Jugador jugadorActual = jugadores.get(turno);
             Casilla casillaActual = jugadorActual.getAvatar().getLugar();
+            jugadorActual.verificarAccionPermitidaEnCarcel("comprar " + casillaActual);
 
             // Verificar que es un solar
             if (!(casillaActual instanceof Solar)) {
@@ -1056,6 +1228,7 @@ public class Juego implements Comandos{
         try {
             // 1. Obtener jugador actual
             Jugador jugadorActual = jugadores.get(turno);
+            jugadorActual.verificarAccionPermitidaEnCarcel("comprar " + nombreCasilla);
 
             // 2. Encontrar la casilla
             Casilla casilla = tablero.encontrar_casilla(nombreCasilla);
@@ -1097,6 +1270,7 @@ public class Juego implements Comandos{
     public void hipotecarPropiedad(String nombreCasilla) {
         try {
             Jugador jugadorActual = jugadores.get(turno);
+            jugadorActual.verificarAccionPermitidaEnCarcel("comprar " + nombreCasilla);
             Casilla casilla = tablero.encontrar_casilla(nombreCasilla);
 
             // 1. Verificar que existe la casilla
@@ -1120,6 +1294,15 @@ public class Juego implements Comandos{
                         jugadorActual.getNombre(),
                         nombreCasilla,
                         "propiedad"
+                );
+            }
+
+            // 4. Verificar que es un Solar
+            if (!(propiedad instanceof Solar)) {
+                throw new ExcepcionAccionNoPermitida(
+                        "hipotecar",
+                        "solo las propiedades tipo Solar pueden hipotecarse. " +
+                                nombreCasilla + " es de tipo: " + propiedad.getClass().getSimpleName()
                 );
             }
 
@@ -1169,6 +1352,7 @@ public class Juego implements Comandos{
     public void deshipotecarPropiedad(String nombreCasilla) {
         try {
             Jugador jugadorActual = jugadores.get(turno);
+            jugadorActual.verificarAccionPermitidaEnCarcel("comprar " + nombreCasilla);
             Casilla casilla = tablero.encontrar_casilla(nombreCasilla);
 
             if (casilla == null) {

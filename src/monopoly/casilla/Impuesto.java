@@ -40,36 +40,69 @@ public class Impuesto extends Casilla {
     public boolean evaluarCasilla(Jugador actual, Jugador banca, Tablero tablero, ArrayList<Jugador> jugadores, int tirada) {
         try {
             if (actual.getAvatar().getLugar() == this) {
-                Juego.consola.imprimir("Impuesto a pagar: %,.0f€\n", this.cantidadImpuesto);
+                float impuestoAPagar = this.cantidadImpuesto;
+                Juego.consola.imprimir("Impuesto a pagar: %,.0f€", impuestoAPagar);
 
-                // Verificar solvencia
-                if (actual.getFortuna() < this.cantidadImpuesto) {
-                    throw new ExcepcionFondosInsuficientes(
-                            actual.getNombre(),
-                            this.cantidadImpuesto,
-                            actual.getFortuna(),
-                            "pagar impuestos en " + this.getNombre()
-                    );
+                // Calcular recursos TOTALES disponibles (dinero + valor hipotecable)
+                float dineroDisponible = actual.getFortuna();
+                float valorHipotecaDisponible = calcularValorHipotecaDisponible(actual);
+                float totalDisponible = dineroDisponible + valorHipotecaDisponible;
+
+                if (totalDisponible < impuestoAPagar) {
+                    // NO PUEDE PAGAR NI CON DINERO NI HIPOTECANDO → BANCARROTA INMEDIATA
+                    Juego.consola.imprimir("✗ %s no puede pagar el impuesto de %,.0f€ en %s",
+                            actual.getNombre(), impuestoAPagar, this.getNombre());
+                    Juego.consola.imprimir("✗ Recursos totales: %,.0f€ (Dinero: %,.0f€ + Hipoteca: %,.0f€)",
+                            totalDisponible, dineroDisponible, valorHipotecaDisponible);
+
+                    // Declarar bancarrota automáticamente (la banca es el acreedor)
+                    actual.declararBancarrotaPorImpuesto(impuestoAPagar);
+                    return false;
                 }
 
-                // Aplicar pago del impuesto
-                actual.restarFortuna(this.cantidadImpuesto);
-                actual.sumarPagoTasasEImpuestos(this.cantidadImpuesto);
+                // Si tiene suficiente dinero, pagar normalmente
+                if (actual.getFortuna() >= impuestoAPagar) {
+                    actual.restarFortuna(impuestoAPagar);
+                    actual.sumarPagoTasasEImpuestos(impuestoAPagar);
+                    tablero.añadirAlBote(impuestoAPagar);
 
-                tablero.añadirAlBote(this.cantidadImpuesto);
-                Juego.consola.imprimir("%s ha pagado %,.0f€ de impuestos\n", actual.getNombre(), this.cantidadImpuesto);
-                return true;
+                    Juego.consola.imprimir("Se han añadido %,.0f€ al bote del Parking. Bote actual: %,.0f€",
+                            impuestoAPagar, tablero.getBoteParking());
+                    Juego.consola.imprimir("%s ha pagado %,.0f€ de impuestos",
+                            actual.getNombre(), impuestoAPagar);
+                    return true;
+                } else {
+                    // Tiene recursos totales pero no efectivo suficiente
+                    Juego.consola.imprimir("✗ %s no tiene suficiente efectivo (% ,.0f€) para pagar impuesto de %,.0f€",
+                            actual.getNombre(), actual.getFortuna(), impuestoAPagar);
+                    Juego.consola.imprimir("✓ Pero podría hipotecar propiedades por %,.0f€ para pagar",
+                            valorHipotecaDisponible);
+                    Juego.consola.imprimir("Usa 'hipotecar propiedad' para obtener efectivo y pagar.");
+                    return false; // No solvente por ahora
+                }
             }
             return false;
 
-        } catch (ExcepcionFondosInsuficientes e) {
-            Juego.consola.imprimir("✗ " + e.getMessage());
-            return false;
         } catch (Exception e) {
             Juego.consola.imprimir("⚠ Error inesperado en casilla de impuestos: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
+    }
+
+    // Método auxiliar para calcular valor hipotecable total (si no lo tienes en Jugador)
+    private float calcularValorHipotecaDisponible(Jugador jugador) {
+        float total = 0;
+        for (Casilla propiedad : jugador.getPropiedades()) {
+            if (propiedad instanceof Propiedad) {
+                Propiedad prop = (Propiedad) propiedad;
+                // Solo propiedades no hipotecadas y que se puedan hipotecar
+                if (!prop.isHipotecada() && prop.esHipotecable()) {
+                    total += prop.getValorHipoteca();
+                }
+            }
+        }
+        return total;
     }
 
     // MÉTODO de información

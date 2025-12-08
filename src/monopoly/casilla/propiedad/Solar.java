@@ -1,5 +1,6 @@
 package monopoly.casilla.propiedad;
 
+import monopoly.casilla.Casilla;
 import excepciones.ExcepcionPropiedadHipotecada;
 import excepciones.ExcepcionFondosInsuficientes;
 import monopoly.casilla.Propiedad;
@@ -88,7 +89,6 @@ public class Solar extends Propiedad {
 
 
     // MÉTODO de evaluación de casilla
-    @Override
     public boolean evaluarCasilla(Jugador actual, Jugador banca, Tablero tablero, ArrayList<Jugador> jugadores, int tirada) {
         if (actual.getAvatar().getLugar() == this) {
             if (this.getDuenho() == null || this.getDuenho().equals(banca) || this.getDuenho().getNombre().equals("Banca")) {
@@ -97,36 +97,74 @@ public class Solar extends Propiedad {
             }
 
             if (this.getDuenho() != null && !this.getDuenho().equals(banca) && !this.getDuenho().equals(actual)) {
-                try{
-                if (this.isHipotecada()) {
-                    throw new ExcepcionPropiedadHipotecada(this.getNombre());
-                }
-                }catch(ExcepcionPropiedadHipotecada e){
+                try {
+                    if (this.isHipotecada()) {
+                        throw new ExcepcionPropiedadHipotecada(this.getNombre());
+                    }
+                } catch (ExcepcionPropiedadHipotecada e) {
                     Juego.consola.imprimir("Error: " + e.getMessage());
-            }
+                    return true; // No hay que pagar alquiler si está hipotecada
+                }
 
                 float aPagar = calcularAlquilerTotal();
+                Jugador propietario = this.getDuenho();
 
-                try {
-                    if (actual.getFortuna() < aPagar) {
-                        throw new ExcepcionFondosInsuficientes(actual.getNombre(), aPagar, actual.getFortuna(), "pagar alquiler");
-                    }
-                }catch (ExcepcionFondosInsuficientes e){
-                    Juego.consola.imprimir("ERROR: " + e.getMessage());
+                // 1. Calcular si puede pagar INMEDIATAMENTE (dinero + valor de hipoteca disponible)
+                float dineroDisponible = actual.getFortuna();
+                float valorHipotecaDisponible = calcularValorHipotecaDisponible(actual);
+                float totalDisponible = dineroDisponible + valorHipotecaDisponible;
+
+                if (totalDisponible < aPagar) {
+                    // NO PUEDE PAGAR NI INMEDIATAMENTE NI CON HIPOTECA → BANCARROTA INMEDIATA
+                    Juego.consola.imprimir("✗ %s no puede pagar el alquiler de %,.0f€ por %s",
+                            actual.getNombre(), aPagar, this.getNombre());
+                    Juego.consola.imprimir("✗ Dinero disponible: %,.0f€ + Valor hipoteca disponible: %,.0f€ = Total: %,.0f€",
+                            dineroDisponible, valorHipotecaDisponible, totalDisponible);
+
+                    // Declarar bancarrota automáticamente
+                    actual.declararBancarrotaPorAlquiler(aPagar, propietario);
+                    return false;
                 }
 
-                actual.restarFortuna(aPagar);
-                actual.sumarPagoDeAlquileres(aPagar);
-                this.getDuenho().sumarFortuna(aPagar);
-                this.getDuenho().sumarCobroDeAlquileres(aPagar);
-                this.anhadirDineroGenerado(aPagar);
+                // 2. Si tiene suficiente dinero, pagar normalmente
+                if (actual.getFortuna() >= aPagar) {
+                    actual.restarFortuna(aPagar);
+                    actual.sumarPagoDeAlquileres(aPagar);
+                    propietario.sumarFortuna(aPagar);
+                    propietario.sumarCobroDeAlquileres(aPagar);
 
-
-                Juego.consola.imprimir("%s ha pagado %,.0f€ de alquiler a %s\n", actual.getNombre(), aPagar, this.getDuenho().getNombre());
+                    Juego.consola.imprimir("%s paga %,.0f€ de alquiler a %s por %s.",
+                            actual.getNombre(), aPagar, propietario.getNombre(), this.getNombre());
+                    Juego.consola.imprimir("Fortuna actual de %s: %,.0f€",
+                            actual.getNombre(), actual.getFortuna());
+                    return true;
+                } else {
+                    // 3. Tiene suficiente contando hipotecas, pero no dinero en efectivo
+                    // Esto debería ser un error - no debería llegar aquí porque el jugador
+                    // debería tener que hipotecar manualmente primero
+                    Juego.consola.imprimir("✗ %s no tiene suficiente efectivo (% ,.0f€) para pagar alquiler de %,.0f€",
+                            actual.getNombre(), actual.getFortuna(), aPagar);
+                    Juego.consola.imprimir("✗ Necesita hipotecar propiedades primero. Si no puede pagar ahora, es BANCARROTA.");
+                    return false; // No solvente - pero ya verificamos que podría hipotecar
+                }
             }
-            return true;
         }
-        return false;
+        return true;
+    }
+
+    // Método auxiliar para calcular cuánto podría hipotecar INMEDIATAMENTE
+    private float calcularValorHipotecaDisponible(Jugador jugador) {
+        float totalHipotecaDisponible = 0;
+        for (Casilla propiedad : jugador.getPropiedades()) {
+            if (propiedad instanceof Propiedad) {
+                Propiedad prop = (Propiedad) propiedad;
+                // Solo propiedades no hipotecadas y que se puedan hipotecar
+                if (!prop.isHipotecada() && prop.esHipotecable()) {
+                    totalHipotecaDisponible += prop.getValorHipoteca();
+                }
+            }
+        }
+        return totalHipotecaDisponible;
     }
 
     private float calcularAlquilerTotal() {
@@ -246,16 +284,11 @@ public class Solar extends Propiedad {
 
         // 4. Validar
         if (disponibles == 0) {
-            throw new ExcepcionEdificioNoExistente(
-                    "No hay " + tipoNormalizado + "(s) en " + this.getNombre(),
-                    this.getNombre()
-            );
+            throw new ExcepcionEdificioNoExistente("No hay " + tipoNormalizado + "(s) en " + this.getNombre(), this.getNombre());
         }
 
         if (cantidad > disponibles) {
-            throw new ExcepcionCantidadEdificiosInsuficiente(
-                    this.getNombre(), tipoEdificio, cantidad, disponibles
-            );
+            throw new ExcepcionCantidadEdificiosInsuficiente(this.getNombre(), tipoEdificio, cantidad, disponibles);
         }
 
         switch (tipoNormalizado) {
@@ -649,7 +682,7 @@ public class Solar extends Propiedad {
             case "Solar15": case "Solar16": case "Solar17": return 1500000;
             case "Solar18": case "Solar19": case "Solar20":
             case "Solar21": case "Solar22": return 2000000;
-            default: return this.getValorPropiedad() * 0.60f;
+            default: return 0;
         }
     }
 
@@ -667,7 +700,7 @@ public class Solar extends Propiedad {
             case "Solar15": case "Solar16": case "Solar17": return 300000;
             case "Solar18": case "Solar19": case "Solar20":
             case "Solar21": case "Solar22": return 400000;
-            default: return this.getValorPropiedad() * 0.40f;
+            default: return 0;
         }
     }
 
@@ -681,7 +714,7 @@ public class Solar extends Propiedad {
             case "Solar15": case "Solar16": case "Solar17": return 600000;
             case "Solar18": case "Solar19": case "Solar20":
             case "Solar21": case "Solar22": return 800000;
-            default: return this.getValorPropiedad() * 1.25f;
+            default: return 0;
         }
     }
 
@@ -703,7 +736,7 @@ public class Solar extends Propiedad {
             case "Solar20": return 3000000;
             case "Solar21": return 3250000;
             case "Solar22": return 4250000;
-            default: return this.getImpuesto() * 5f;
+            default: return 0;
         }
     }
 
@@ -725,7 +758,7 @@ public class Solar extends Propiedad {
             case "Solar20": return 14000000;
             case "Solar21": return 17000000;
             case "Solar22": return 20000000;
-            default: return this.getImpuesto() * 70f;
+            default: return 0;
         }
     }
 
@@ -747,7 +780,7 @@ public class Solar extends Propiedad {
             case "Solar20": return 2800000;
             case "Solar21": return 3400000;
             case "Solar22": return 4000000;
-            default: return this.getImpuesto() * 25f;
+            default: return 0; //no se ejecuta esta linea porque no hay mas casillas
         }
     }
 
