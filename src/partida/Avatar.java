@@ -37,24 +37,31 @@ public class Avatar {
      * EN ESTA VERSIÓN SUPONEMOS QUE valorTirada siempre es positivo.
      */
     public void moverAvatar(ArrayList<ArrayList<Casilla>> casillas, int valorTirada) {
-
-        // Calcular la posición actual
         int posicionActual = this.lugar.getPosicion();
+        int nuevaPosicion = posicionActual + valorTirada;
 
-        // Calcular la nueva posición en el tablero después de la tirada
-        int nuevaPosicion;
-        nuevaPosicion = (posicionActual + valorTirada) % 40;
+        // Si supera 40, calcular correctamente
+        if (nuevaPosicion > 40) {
+            nuevaPosicion = nuevaPosicion % 40;
+            if (nuevaPosicion == 0) {
+                nuevaPosicion = 40;
+            }
 
-        // DETECTAR SI PASA POR LA SALIDA
-        if (posicionActual + valorTirada > 40) { // Si la suma supera 40, pasa por salida
+            // Pasa por salida
             this.jugador.sumarFortuna(Valor.SUMA_VUELTA);
             this.jugador.sumarPasarPorCasillaDeSalida(Valor.SUMA_VUELTA);
             this.jugador.setVueltas(this.jugador.getVueltas() + 1);
-            Juego.consola.imprimir("¡" + this.jugador.getNombre() + " ha pasado por la Salida y recibe " +
-                    String.format("%,.0f", Valor.SUMA_VUELTA) + "€! Vueltas: " + this.jugador.getVueltas());
+            Juego.consola.imprimir("¡" + this.jugador.getNombre() +
+                    " ha pasado por la Salida y recibe " +
+                    String.format("%,.0f", Valor.SUMA_VUELTA) +
+                    "€! Vueltas: " + this.jugador.getVueltas());
         }
 
-        // colocar el avatar en la nueva posicion
+        // Si es 40 o menos, mantener igual
+        if (nuevaPosicion > 40) {
+            nuevaPosicion = 40;  // Por seguridad
+        }
+
         this.colocar(casillas, nuevaPosicion);
     }
 
