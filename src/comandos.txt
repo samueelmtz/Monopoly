@@ -1,88 +1,42 @@
-crear jugador maria coche
-crear jugador pedro esfinge
-lanzar dados 3+3
-comprar Solar3
-lanzar dados 1+1
-comprar Solar4
-lanzar dados 3+2
-acabar turno
-acabar turno
+crear jugador Pedro pelota
+crear jugador Maria coche
 lanzar dados 6+6
 lanzar dados 6+6
-ver tablero
-lanzar dados 6+2
+lanzar dados 5+6
 acabar turno
-lanzar dados 2+1
+lanzar dados 4+2
 comprar Solar2
+comprar Solar3
 acabar turno
-ver tablero
-lanzar dados 2+2
-comprar Solar5
+lanzar dados 1+1
+comprar Solar21
 edificar casa
-edificar casa
-edificar casa
-vender casas Solar5 2
-edificar piscina
+lanzar dados 1+1
+comprar Solar22
 edificar hotel
 edificar casa
 edificar casa
-edificar casa
-edificar hotel
-edificar piscina
-edificar pista
-edificar pista_deporte
-describir jugador maria
-listar edificios
-listar edificios Celeste
-ver tablero
-vender hotel Solar22
-vender hotel Solar5 1
-vender piscina Solar5 2
-vender piscina Solar5 1
-vender pista_deporte Solar5 1
-vender hotel Solar5 1
-hipotecar Solar5
-edificar casa
-hipotecar Solar5
 acabar turno
-ver tablero
-lanzar dados 3+3
-lanzar dados 6+6
+describir jugador Pedro
+describir jugador Maria
+lanzar dados 6+5
+acabar turno
+describir jugador Maria
+lanzar dados 2+4
+trato Maria: cambiar (16000000, Solar3)
+trato Maria: cambiar (Solar1, 1000)
+trato Maria: cambiar (100000, Solar3)
+acabar turno
+lanzar dados 1+3
 comprar Solar12
-lanzar dados 3+2
+aceptar Trato1
+trato Pedro:  cambiar (Solar12, Solar3)
+eliminar Trato2
+trato Pedro:  cambiar (Solar12, Solar3 y 100000)
+tratos
 acabar turno
-acabar turno
-lanzar dados 6+6
-jugador
-lanzar dados 2+1
-comprar Solar1
-listar jugadores
-acabar turno
-ver tablero
-acabar turno
-lanzar dados 2+1
-acabar turno
-acabar turno
-ver tablero
-lanzar dados 2+2
-lanzar dados 2+2
-comprar Serv1
-lanzar dados 2+1
-comprar Trans2
-listar jugadores
-acabar turno
-acabar turno
-ver tablero
-lanzar dados 2+2
-lanzar dados 2+2
-lanzar dados 2+2
-acabar turno
-acabar turno
-salir carcel
-acabar turno
-acabar turno
-acabar turno
-estadisticas pedro
-salir carcel
-acabar turno
-acabar turno
+eliminar Trato3
+aceptar Trato1
+aceptar Trato3
+describir jugador Pedro
+describir jugador Maria
