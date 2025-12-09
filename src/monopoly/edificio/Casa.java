@@ -16,9 +16,7 @@ public class Casa extends Edificio {
     // Implementación del método abstracto
     @Override
     public void accion() {
-        Juego.consola.imprimir("Casa construída en " + this.getSolar().getNombre() +
-                ". Aumenta el alquiler en " +
-                String.format("%,.0f", this.getSolar().getAlquilerCasa()) + "€");
+        Juego.consola.imprimir("Casa construída en " + this.getSolar().getNombre() + ". Aumenta el alquiler en " + String.format("%,.0f", this.getSolar().getAlquilerCasa()) + "€");
     }
 
     // Método estático para obtener el contador

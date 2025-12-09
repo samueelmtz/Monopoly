@@ -90,10 +90,8 @@ public class Transporte extends Propiedad {
 
                 if (totalDisponible < aPagar) {
                     // NO PUEDE PAGAR NI CON DINERO NI HIPOTECANDO → BANCARROTA INMEDIATA
-                    Juego.consola.imprimir("✗ %s no puede pagar el alquiler de %,.0f€ por %s",
-                            actual.getNombre(), aPagar, this.getNombre());
-                    Juego.consola.imprimir("✗ Recursos totales: %,.0f€ (Dinero: %,.0f€ + Hipoteca: %,.0f€)",
-                            totalDisponible, dineroDisponible, valorHipotecaDisponible);
+                    Juego.consola.imprimir("✗ %s no puede pagar el alquiler de %,.0f€ por %s", actual.getNombre(), aPagar, this.getNombre());
+                    Juego.consola.imprimir("✗ Recursos totales: %,.0f€ (Dinero: %,.0f€ + Hipoteca: %,.0f€)", totalDisponible, dineroDisponible, valorHipotecaDisponible);
 
                     // Declarar bancarrota automáticamente
                     actual.declararBancarrotaPorAlquiler(aPagar, propietario);
@@ -108,17 +106,13 @@ public class Transporte extends Propiedad {
                     propietario.sumarCobroDeAlquileres(aPagar);
                     this.anhadirDineroGenerado(aPagar);
 
-                    Juego.consola.imprimir("%s ha pagado %,.0f€ de alquiler a %s",
-                            actual.getNombre(), aPagar, propietario.getNombre());
-                    Juego.consola.imprimir("Fortuna actual de %s: %,.0f€",
-                            actual.getNombre(), actual.getFortuna());
+                    Juego.consola.imprimir("%s ha pagado %,.0f€ de alquiler a %s", actual.getNombre(), aPagar, propietario.getNombre());
+                    Juego.consola.imprimir("Fortuna actual de %s: %,.0f€", actual.getNombre(), actual.getFortuna());
                     return true;
                 } else {
                     // Tiene recursos totales pero no efectivo suficiente
-                    Juego.consola.imprimir("✗ %s no tiene suficiente efectivo (% ,.0f€) para pagar alquiler de %,.0f€",
-                            actual.getNombre(), actual.getFortuna(), aPagar);
-                    Juego.consola.imprimir("✓ Pero podría hipotecar propiedades por %,.0f€ para pagar",
-                            valorHipotecaDisponible);
+                    Juego.consola.imprimir("✗ %s no tiene suficiente efectivo (% ,.0f€) para pagar alquiler de %,.0f€", actual.getNombre(), actual.getFortuna(), aPagar);
+                    Juego.consola.imprimir("✓ Pero podría hipotecar propiedades por %,.0f€ para pagar", valorHipotecaDisponible);
                     Juego.consola.imprimir("Usa 'hipotecar propiedad' para obtener efectivo y pagar.");
                     return false; // No solvente por ahora
                 }

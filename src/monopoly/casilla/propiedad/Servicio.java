@@ -95,11 +95,9 @@ public class Servicio extends Propiedad {
                 float totalDisponible = dineroDisponible + valorHipotecaDisponible;
 
                 if (totalDisponible < aPagar) {
-                    // NO PUEDE PAGAR NI CON DINERO NI HIPOTECANDO → BANCARROTA INMEDIATA
-                    Juego.consola.imprimir("✗ %s no puede pagar el alquiler de %,.0f€ por %s",
-                            actual.getNombre(), aPagar, this.getNombre());
-                    Juego.consola.imprimir("✗ Recursos totales: %,.0f€ (Dinero: %,.0f€ + Hipoteca: %,.0f€)",
-                            totalDisponible, dineroDisponible, valorHipotecaDisponible);
+                    // NO PUEDE PAGAR NI CON DINERO NI HIPOTECANDO - BANCARROTA INMEDIATA
+                    Juego.consola.imprimir("✗ %s no puede pagar el alquiler de %,.0f€ por %s", actual.getNombre(), aPagar, this.getNombre());
+                    Juego.consola.imprimir("✗ Recursos totales: %,.0f€ (Dinero: %,.0f€ + Hipoteca: %,.0f€)", totalDisponible, dineroDisponible, valorHipotecaDisponible);
 
                     // Declarar bancarrota automáticamente
                     actual.declararBancarrotaPorAlquiler(aPagar, propietario);
@@ -121,10 +119,8 @@ public class Servicio extends Propiedad {
                     return true;
                 } else {
                     // Tiene recursos totales pero no efectivo suficiente
-                    Juego.consola.imprimir("✗ %s no tiene suficiente efectivo (% ,.0f€) para pagar alquiler de %,.0f€",
-                            actual.getNombre(), actual.getFortuna(), aPagar);
-                    Juego.consola.imprimir("✓ Pero podría hipotecar propiedades por %,.0f€ para pagar",
-                            valorHipotecaDisponible);
+                    Juego.consola.imprimir("✗ %s no tiene suficiente efectivo (% ,.0f€) para pagar alquiler de %,.0f€", actual.getNombre(), actual.getFortuna(), aPagar);
+                    Juego.consola.imprimir("✓ Pero podría hipotecar propiedades por %,.0f€ para pagar", valorHipotecaDisponible);
                     Juego.consola.imprimir("Usa 'hipotecar propiedad' para obtener efectivo y pagar.");
                     return false; // No solvente por ahora
                 }
@@ -172,8 +168,7 @@ public class Servicio extends Propiedad {
 
         float aPagar = (float) tirada * multiplicador * Valor.FACTOR_SERVICIO;
 
-        Juego.consola.imprimir("Alquiler de servicio: dados(%d) × %d × %,.0f€ = %,.0f€\n",
-                tirada, multiplicador, Valor.FACTOR_SERVICIO, aPagar);
+        Juego.consola.imprimir("Alquiler de servicio: dados(%d) × %d × %,.0f€ = %,.0f€\n", tirada, multiplicador, Valor.FACTOR_SERVICIO, aPagar);
         Juego.consola.imprimir("El dueño tiene %d servicio(s)\n", serviciosDelDuenho);
 
         return aPagar;

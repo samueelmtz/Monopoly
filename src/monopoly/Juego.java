@@ -1221,9 +1221,9 @@ public class Juego implements Comandos{
                 }
             }
 
-            // Venta desde el solar
+            // Venta desde el solar (actualizacion interna del solar3)
             int cantidadVendida = solar.venderEdificios(tipoVenta, cantidadSolicitada, jugadorActual);
-            float ingresoTotal = cantidadVendida * solar.obtenerPrecioVentaEdificio(tipoVenta);
+            float ingresoTotal = cantidadVendida * solar.obtenerCosteEdificio(tipoVenta, "vender");
 
             // Actualizar dinero del jugador
             jugadorActual.sumarFortuna(ingresoTotal);

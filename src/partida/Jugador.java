@@ -247,9 +247,7 @@ public class Jugador {
             case "trato":
             case "aceptar":
             case "eliminar":
-                throw new ExcepcionAccionNoPermitida(
-                        accion,
-                        "estado del jugador",
+                throw new ExcepcionAccionNoPermitida(accion, "estado del jugador",
                         nombre + " no puede realizar esta acción mientras está en la cárcel. " +
                                 "Acciones permitidas: 'salir carcel', 'lanzar dados' (1 vez/turno), 'acabar turno'"
                 );

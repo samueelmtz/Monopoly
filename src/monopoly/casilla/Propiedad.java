@@ -85,6 +85,7 @@ public class Propiedad extends Casilla {
         return this.valor;
     }
 
+    // Método para gestionar la compra de una casilla
     public void comprarCasilla(Jugador solicitante, Jugador banca) {
         try {
             if (solicitante.getAvatar().getLugar() == this) {

@@ -51,30 +51,7 @@ public class Tablero {
             Juego.consola.imprimir("ERROR: " + e.getMessage());
         }
     }
-    // Método para que un jugador reclame el bote
-    public float reclamarBote(Jugador jugador) {
-        float boteActual = this.boteParking;
-        try {
-            if (boteActual > 0) {
-                jugador.sumarFortuna(boteActual);
-                jugador.sumarPremiosInversionesOBote(boteActual);
 
-                // Resetear el valor de la casilla Parking usando sumarValor
-                Casilla parking = encontrar_casilla("Parking");
-                if (parking != null) {
-                    // Restar el valor actual para ponerlo a 0
-                    ((Parking) parking).añadirAlBote(-boteActual);
-                }
-                Juego.consola.imprimir("¡%s ha ganado el bote del Parking: %,.0f€!\n", jugador.getNombre(), boteActual);
-                this.boteParking = 0f; // Resetear el bote
-            } else {
-                throw new ExcepcionBoteVacio(jugador.getNombre());
-            }
-        } catch (ExcepcionBoteVacio e){
-            Juego.consola.imprimir("ERROR: " + e.getMessage());
-        }
-        return boteActual;
-    }
 
     private void crearGrupos() {
         try {
@@ -112,19 +89,10 @@ public class Tablero {
         // Crear el grupo con el número correcto de propiedades
         switch (propiedadesGrupo.size()) {
             case 2:
-                grupos.put(color, new Grupo(
-                        propiedadesGrupo.get(0),
-                        propiedadesGrupo.get(1),
-                        color
-                ));
+                grupos.put(color, new Grupo(propiedadesGrupo.get(0), propiedadesGrupo.get(1), color));
                 break;
             case 3:
-                grupos.put(color, new Grupo(
-                        propiedadesGrupo.get(0),
-                        propiedadesGrupo.get(1),
-                        propiedadesGrupo.get(2),
-                        color
-                ));
+                grupos.put(color, new Grupo(propiedadesGrupo.get(0), propiedadesGrupo.get(1), propiedadesGrupo.get(2), color));
                 break;
             default:
                 throw new RuntimeException("Número incorrecto de propiedades para el grupo " + color);
@@ -153,7 +121,6 @@ public class Tablero {
 
         // Posiciones 1-10 con alquileres según PDF
         ladoSur.add(new Especial("Salida", 1, banca, "Salida"));
-        // Propiedades (solares)
         ladoSur.add(new Solar("Solar1", 2, 600000, 20000, banca, null));
         ladoSur.add(new CajaComunidad("Caja1", 3, banca));
         ladoSur.add(new Solar("Solar2", 4, 600000, 40000, banca, null));

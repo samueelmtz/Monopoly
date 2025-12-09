@@ -117,10 +117,8 @@ public class Solar extends Propiedad {
 
                 if (totalDisponible < aPagar) {
                     // NO PUEDE PAGAR NI INMEDIATAMENTE NI CON HIPOTECA → BANCARROTA INMEDIATA
-                    Juego.consola.imprimir("✗ %s no puede pagar el alquiler de %,.0f€ por %s",
-                            actual.getNombre(), aPagar, this.getNombre());
-                    Juego.consola.imprimir("✗ Dinero disponible: %,.0f€ + Valor hipoteca disponible: %,.0f€ = Total: %,.0f€",
-                            dineroDisponible, valorHipotecaDisponible, totalDisponible);
+                    Juego.consola.imprimir("✗ %s no puede pagar el alquiler de %,.0f€ por %s", actual.getNombre(), aPagar, this.getNombre());
+                    Juego.consola.imprimir("✗ Dinero disponible: %,.0f€ + Valor hipoteca disponible: %,.0f€ = Total: %,.0f€", dineroDisponible, valorHipotecaDisponible, totalDisponible);
 
                     // Declarar bancarrota automáticamente
                     actual.declararBancarrotaPorAlquiler(aPagar, propietario);
@@ -134,17 +132,14 @@ public class Solar extends Propiedad {
                     propietario.sumarFortuna(aPagar);
                     propietario.sumarCobroDeAlquileres(aPagar);
 
-                    Juego.consola.imprimir("%s paga %,.0f€ de alquiler a %s por %s.",
-                            actual.getNombre(), aPagar, propietario.getNombre(), this.getNombre());
-                    Juego.consola.imprimir("Fortuna actual de %s: %,.0f€",
-                            actual.getNombre(), actual.getFortuna());
+                    Juego.consola.imprimir("%s paga %,.0f€ de alquiler a %s por %s.", actual.getNombre(), aPagar, propietario.getNombre(), this.getNombre());
+                    Juego.consola.imprimir("Fortuna actual de %s: %,.0f€", actual.getNombre(), actual.getFortuna());
                     return true;
                 } else {
                     // 3. Tiene suficiente contando hipotecas, pero no dinero en efectivo
                     // Esto debería ser un error - no debería llegar aquí porque el jugador
                     // debería tener que hipotecar manualmente primero
-                    Juego.consola.imprimir("✗ %s no tiene suficiente efectivo (% ,.0f€) para pagar alquiler de %,.0f€",
-                            actual.getNombre(), actual.getFortuna(), aPagar);
+                    Juego.consola.imprimir("✗ %s no tiene suficiente efectivo (% ,.0f€) para pagar alquiler de %,.0f€", actual.getNombre(), actual.getFortuna(), aPagar);
                     Juego.consola.imprimir("✗ Necesita hipotecar propiedades primero. Si no puede pagar ahora, es BANCARROTA.");
                     return false; // No solvente - pero ya verificamos que podría hipotecar
                 }
@@ -237,19 +232,19 @@ public class Solar extends Propiedad {
     }
 
     public Edificio construirEdificio(String tipoEdificio, Jugador jugador) throws ExcepcionMonopoly {
-        // 1. Validar
+        // Validar
         validarEdificacion(tipoEdificio, jugador);
 
-        // 2. Obtener coste
+        // Obtener coste
         float coste = obtenerCosteEdificio(tipoEdificio, "edificar");
 
-        // 3. Verificar fondos
+        // Verificar fondos
         if (jugador.getFortuna() < coste) {
             throw new ExcepcionFondosInsuficientes(jugador.getNombre(), coste, jugador.getFortuna(), "edificar " + tipoEdificio + " en " + this.getNombre()
             );
         }
 
-        // 4. Construir
+        // Construir
         boolean construido = false;
         switch (tipoEdificio.toLowerCase()) {
             case "casa": construido = anhadirCasa(); break;
@@ -263,27 +258,27 @@ public class Solar extends Propiedad {
             );
         }
 
-        // 5. Restar dinero
+        // Restar dinero
         jugador.restarFortuna(coste);
         jugador.sumarDineroInvertido(coste);
 
-        // 6. Crear instancia
+        //Crear instancia modificando listas internas y del jugador
         return crearInstanciaEdificio(tipoEdificio, jugador);
     }
 
     public int venderEdificios(String tipoEdificio, int cantidad, Jugador jugador) throws ExcepcionMonopoly {
-        // 1. Normalizar tipo primero
+        //  Normalizar tipo primero
         String tipoNormalizado = normalizarTipoEdificio(tipoEdificio);
 
-        // 2. Verificar propiedad
+        //  Verificar propiedad
         if (!this.perteneceAJugador(jugador)) {
             throw new ExcepcionPropiedadNoPertenece(jugador.getNombre(), this.getNombre());
         }
 
-        // 3. Obtener cantidad disponible (usar tipo normalizado)
+        // Obtener cantidad disponible (usar tipo normalizado)
         int disponibles = obtenerCantidadEdificios(tipoNormalizado);
 
-        // 4. Validar
+        //  Validar
         if (disponibles == 0) {
             throw new ExcepcionEdificioNoExistente("No hay " + tipoNormalizado + "(s) en " + this.getNombre(), this.getNombre());
         }
@@ -292,6 +287,7 @@ public class Solar extends Propiedad {
             throw new ExcepcionCantidadEdificiosInsuficiente(this.getNombre(), tipoEdificio, cantidad, disponibles);
         }
 
+        //Actualizar contadores del SOLAR
         switch (tipoNormalizado) {
             case "casa":
                 numCasas = Math.max(0, numCasas - cantidad);
@@ -307,7 +303,7 @@ public class Solar extends Propiedad {
                 break;
         }
 
-        // 6. Eliminar edificios de listas internas
+        // 6. Eliminar edificios de listas internas del SOLAR
         eliminarEdificios(tipoNormalizado, cantidad);
 
         return cantidad;
@@ -323,6 +319,7 @@ public class Solar extends Propiedad {
         }
     }
 
+    //Actualiza las listas internas del SOLAR al eliminar edificios
     private void eliminarEdificios(String tipoEdificio, int cantidad) {
         String tipo = tipoEdificio;
 
@@ -375,28 +372,13 @@ public class Solar extends Propiedad {
         }
     }
 
-    public float obtenerPrecioVentaEdificio(String tipoEdificio) throws ExcepcionMonopoly {
-        String tipoNormalizado = normalizarTipoEdificio(tipoEdificio);
-
-        switch (tipoNormalizado) {
-            case "casa": return getPrecioCasa();
-            case "hotel": return getPrecioHotel();
-            case "piscina": return getPrecioPiscina();
-            case "pista_deporte": return getPrecioPistaDeporte();
-            default:
-                throw new ExcepcionAccionNoPermitida(
-                        "vender edificio",
-                        "tipo '" + tipoEdificio + "' no válido"
-                );
-        }
-    }
-
+    // Método para obtener el coste de un edificio
     public float obtenerCosteEdificio(String tipoEdificio, String contexto) throws ExcepcionMonopoly {
         String tipoNormalizado = normalizarTipoEdificio(tipoEdificio);
 
         if (!esTipoEdificioValido(tipoNormalizado)) {
             throw new ExcepcionAccionNoPermitida(
-                    contexto,  // ← "edificar" o "vender"
+                    contexto,  // "edificar" o "vender"
                     "tipo '" + tipoEdificio + "' no válido"
             );
         }
@@ -416,13 +398,14 @@ public class Solar extends Propiedad {
         return tipoNorm.equals("casa") || tipoNorm.equals("hotel") || tipoNorm.equals("piscina") || tipoNorm.equals("pista_deporte");
     }
 
+
     public Edificio crearInstanciaEdificio(String tipoEdificio, Jugador jugador) throws ExcepcionMonopoly {
         String tipoNormalizado = normalizarTipoEdificio(tipoEdificio);
         switch (tipoNormalizado) {
             case "casa":
                 Casa casa = new Casa(this);
-                añadirEdificioALista(casa, 0); // Índice 0 = casas
-                jugador.anhadirEdificio(casa);
+                añadirEdificioALista(casa, 0); // Modifica lista interna de solar
+                jugador.anhadirEdificio(casa); //modifica lista de edificios del jugador
                 return casa;
 
             case "hotel":
@@ -478,11 +461,10 @@ public class Solar extends Propiedad {
             throw new ExcepcionPropiedadGrupoIncompleto(this.getNombre(), grupo.getColorGrupo());
         }
 
-        // 4. Validar tipo de edificio y límites (TODO EN UNO)
+        // 4. Validar tipo de edificio y límites
         validarTipoYLimites(tipoEdificio);
     }
 
-    // UN SOLO MÉTODO PARA TODAS LAS VALIDACIONES
     private void validarTipoYLimites(String tipoEdificio) throws ExcepcionMonopoly {
         String tipo = normalizarTipoEdificio(tipoEdificio);
 
@@ -555,7 +537,7 @@ public class Solar extends Propiedad {
         }
     }
 
-    //Método que añade un edificio a la lista
+    //Método que añade un edificio a la lista (modifica lista interna de solar)
     private void añadirEdificioALista(Edificio edificio, int indice) {
         if (indice >= 0 && indice < edificios.size()) {
             edificios.get(indice).add(edificio);
@@ -589,11 +571,11 @@ public class Solar extends Propiedad {
 
     public int eliminarEdificiosDeListasGlobales(ArrayList<Edificio> listaEdificiosGlobal, Jugador jugadorActual, String tipoEdificio, int cantidad) {
 
-        // 1. Normalizar tipo
+        // Normalizar tipo
         String tipoNormalizado = normalizarTipoEdificio(tipoEdificio);
         int eliminados = 0;
 
-        // 2. Eliminar de lista global del juego
+        // Eliminar de lista global del juego
         for (int i = listaEdificiosGlobal.size() - 1; i >= 0 && eliminados < cantidad; i--) {
             Edificio e = listaEdificiosGlobal.get(i);
 
@@ -612,7 +594,7 @@ public class Solar extends Propiedad {
             }
         }
 
-        // 3. Eliminar de la lista del jugador
+        // Eliminar de la lista del jugador
         if (jugadorActual != null) {
             ArrayList<Edificio> edificiosJugador = jugadorActual.getEdificios();
             for (int i = edificiosJugador.size() - 1; i >= 0; i--) {

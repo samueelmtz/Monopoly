@@ -47,11 +47,9 @@ public class Impuesto extends Casilla {
                 float totalDisponible = dineroDisponible + valorHipotecaDisponible;
 
                 if (totalDisponible < impuestoAPagar) {
-                    // NO PUEDE PAGAR NI CON DINERO NI HIPOTECANDO → BANCARROTA INMEDIATA
-                    Juego.consola.imprimir("✗ %s no puede pagar el impuesto de %,.0f€ en %s",
-                            actual.getNombre(), impuestoAPagar, this.getNombre());
-                    Juego.consola.imprimir("✗ Recursos totales: %,.0f€ (Dinero: %,.0f€ + Hipoteca: %,.0f€)",
-                            totalDisponible, dineroDisponible, valorHipotecaDisponible);
+                    // NO PUEDE PAGAR NI CON DINERO NI HIPOTECANDO - BANCARROTA INMEDIATA
+                    Juego.consola.imprimir("✗ %s no puede pagar el impuesto de %,.0f€ en %s", actual.getNombre(), impuestoAPagar, this.getNombre());
+                    Juego.consola.imprimir("✗ Recursos totales: %,.0f€ (Dinero: %,.0f€ + Hipoteca: %,.0f€)", totalDisponible, dineroDisponible, valorHipotecaDisponible);
 
                     // Declarar bancarrota automáticamente (la banca es el acreedor)
                     actual.declararBancarrotaPorImpuesto(impuestoAPagar);
@@ -64,17 +62,13 @@ public class Impuesto extends Casilla {
                     actual.sumarPagoTasasEImpuestos(impuestoAPagar);
                     tablero.añadirAlBote(impuestoAPagar);
 
-                    Juego.consola.imprimir("Se han añadido %,.0f€ al bote del Parking. Bote actual: %,.0f€",
-                            impuestoAPagar, tablero.getBoteParking());
-                    Juego.consola.imprimir("%s ha pagado %,.0f€ de impuestos",
-                            actual.getNombre(), impuestoAPagar);
+                    Juego.consola.imprimir("Se han añadido %,.0f€ al bote del Parking. Bote actual: %,.0f€", impuestoAPagar, tablero.getBoteParking());
+                    Juego.consola.imprimir("%s ha pagado %,.0f€ de impuestos", actual.getNombre(), impuestoAPagar);
                     return true;
                 } else {
                     // Tiene recursos totales pero no efectivo suficiente
-                    Juego.consola.imprimir("✗ %s no tiene suficiente efectivo (% ,.0f€) para pagar impuesto de %,.0f€",
-                            actual.getNombre(), actual.getFortuna(), impuestoAPagar);
-                    Juego.consola.imprimir("✓ Pero podría hipotecar propiedades por %,.0f€ para pagar",
-                            valorHipotecaDisponible);
+                    Juego.consola.imprimir("✗ %s no tiene suficiente efectivo (% ,.0f€) para pagar impuesto de %,.0f€", actual.getNombre(), actual.getFortuna(), impuestoAPagar);
+                    Juego.consola.imprimir("✓ Pero podría hipotecar propiedades por %,.0f€ para pagar", valorHipotecaDisponible);
                     Juego.consola.imprimir("Usa 'hipotecar propiedad' para obtener efectivo y pagar.");
                     return false; // No solvente por ahora
                 }
